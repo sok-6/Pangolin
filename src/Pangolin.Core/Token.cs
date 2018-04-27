@@ -3,14 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pangolin.Common;
 using Pangolin.Core.TokenImplementations;
 
 namespace Pangolin.Core
 {
     public abstract class Token
     {
+        public abstract int Arity { get; }
         public abstract DataValue Evaluate(TokenQueue tokenQueue);
         public abstract override string ToString();
+
+        protected Exception GetInvalidArgumentTypeException(DataValueType invalidType)
+        {
+            return new PangolinInvalidArgumentTypeException($"Invalid argument passed to {ToString()} command - {invalidType} not supported");
+        }
 
         public static class Get
         {
@@ -22,6 +29,7 @@ namespace Pangolin.Core
             public static Token SingleArgument(IReadOnlyList<DataValue> arguments, int index) => new SingleArgument(arguments, index);
             public static Token ArgumentArray(IReadOnlyList<DataValue> arguments) => new ArgumentArray(arguments);
             public static Token Add() => new Add();
+            public static Token Range() => new Range();
         }
     }
 }

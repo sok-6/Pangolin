@@ -9,6 +9,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class SingleArgument : Token
     {
+        public override int Arity => 0;
+
         private string _argumentIndex;
         public DataValue Value { get; private set; }
 

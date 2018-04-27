@@ -10,18 +10,22 @@ namespace Pangolin.Core.DataValueImplementations
     {
         public override DataValueType Type => DataValueType.Numeric;
 
-        private decimal _value;
-        public decimal Value => _value;
-        public int IntValue => (int)_value;
+        public virtual decimal Value { get; private set; }
+        public int IntValue => (int)Value;
+
+        public NumericValue()
+        {
+            Value = 0;
+        }
 
         public NumericValue(decimal value)
         {
-            _value = value;
+            Value = value;
         }
 
-        public override bool IsTruthy => _value != 0;
+        public override bool IsTruthy => Value != 0;
 
-        public override string ToString() => _value.ToString();
+        public override string ToString() => Value.ToString();
 
         public static NumericValue Zero => new NumericValue(0);
     }

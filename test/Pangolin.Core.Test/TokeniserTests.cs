@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 using Shouldly;
 using Pangolin.Core.DataValueImplementations;
@@ -18,7 +17,7 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(0);
+            result.TokenList.Count.ShouldBe(0);
         }
 
         [Fact]
@@ -42,9 +41,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("a");
         }
 
@@ -69,9 +68,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("abc");
         }
 
@@ -85,9 +84,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("abc");
         }
 
@@ -101,9 +100,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("abc");
         }
 
@@ -117,9 +116,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("ab'c");
         }
 
@@ -133,9 +132,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("ab\"c");
         }
 
@@ -149,9 +148,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.StringLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.StringLiteral>();
             token1.LiteralValue.ShouldBe("ab'c");
         }
 
@@ -165,9 +164,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token1.LiteralValue.ShouldBe(0);
         }
 
@@ -181,12 +180,12 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(2);
+            result.TokenList.Count.ShouldBe(2);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token1.LiteralValue.ShouldBe(0);
 
-            var token2 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token2 = result.TokenList[1].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token2.LiteralValue.ShouldBe(0);
         }
 
@@ -200,36 +199,36 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(10);
+            result.TokenList.Count.ShouldBe(10);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token1 = result.TokenList[1].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token1.LiteralValue.ShouldBe(1);
 
-            var token2 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token2 = result.TokenList[2].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token2.LiteralValue.ShouldBe(2);
 
-            var token3 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token3 = result.TokenList[3].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token3.LiteralValue.ShouldBe(3);
 
-            var token4 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token4 = result.TokenList[4].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token4.LiteralValue.ShouldBe(4);
 
-            var token5 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token5 = result.TokenList[5].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token5.LiteralValue.ShouldBe(5);
 
-            var token6 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token6 = result.TokenList[6].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token6.LiteralValue.ShouldBe(6);
 
-            var token7 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token7 = result.TokenList[7].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token7.LiteralValue.ShouldBe(7);
 
-            var token8 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token8 = result.TokenList[8].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token8.LiteralValue.ShouldBe(8);
 
-            var token9 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token9 = result.TokenList[9].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token9.LiteralValue.ShouldBe(9);
         }
 
@@ -243,9 +242,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(123);
         }
 
@@ -259,9 +258,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(120);
         }
 
@@ -275,12 +274,12 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(2);
+            result.TokenList.Count.ShouldBe(2);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token1 = result.TokenList[1].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token1.LiteralValue.ShouldBe(123);
         }
 
@@ -294,9 +293,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(1.5m);
         }
 
@@ -310,9 +309,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0.5m);
         }
 
@@ -326,9 +325,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(10000);
         }
 
@@ -342,9 +341,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(1500);
         }
 
@@ -358,9 +357,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(500);
         }
 
@@ -374,9 +373,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0.01m);
         }
 
@@ -390,9 +389,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0.0015m);
         }
 
@@ -406,9 +405,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(0.0005m);
         }
 
@@ -422,9 +421,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(1000);
         }
 
@@ -438,9 +437,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(50);
         }
 
@@ -454,9 +453,9 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
+            result.TokenList.Count.ShouldBe(1);
 
-            var token0 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token0 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token0.LiteralValue.ShouldBe(10);
         }
 
@@ -470,8 +469,8 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
-            result.Dequeue().ShouldBeOfType(typeof(TokenImplementations.Truthify));
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.Truthify));
         }
 
         [Fact]
@@ -484,8 +483,8 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
-            result.Dequeue().ShouldBeOfType(typeof(TokenImplementations.UnTruthify));
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.UnTruthify));
         }
 
         [Fact]
@@ -504,15 +503,15 @@ namespace Pangolin.Core.Test
             var results = Tokeniser.Tokenise(code, arguments);
 
             // Assert
-            var token1 = results.Dequeue().ShouldBeOfType<TokenImplementations.SingleArgument>();
+            var token1 = results.TokenList[0].ShouldBeOfType<TokenImplementations.SingleArgument>();
             var value1 = token1.Value.ShouldBeOfType<NumericValue>();
             value1.Value.ShouldBe(1);
 
-            var token2 = results.Dequeue().ShouldBeOfType<TokenImplementations.SingleArgument>();
+            var token2 = results.TokenList[1].ShouldBeOfType<TokenImplementations.SingleArgument>();
             var value2 = token2.Value.ShouldBeOfType<NumericValue>();
             value2.Value.ShouldBe(2);
 
-            var token3 = results.Dequeue().ShouldBeOfType<TokenImplementations.SingleArgument>();
+            var token3 = results.TokenList[2].ShouldBeOfType<TokenImplementations.SingleArgument>();
             var value3 = token3.Value.ShouldBeOfType<NumericValue>();
             value3.Value.ShouldBe(3);
         }
@@ -532,8 +531,8 @@ namespace Pangolin.Core.Test
             var results = Tokeniser.Tokenise(code, arguments);
 
             // Assert
-            results.Count.ShouldBe(1);
-            var token = results.Dequeue().ShouldBeOfType<TokenImplementations.ArgumentArray>();
+            results.TokenList.Count.ShouldBe(1);
+            var token = results.TokenList[0].ShouldBeOfType<TokenImplementations.ArgumentArray>();
             var value1 = token.ArrayValue.Value[0].ShouldBeOfType<NumericValue>();
             value1.Value.ShouldBe(1);
             var value2 = token.ArrayValue.Value[1].ShouldBeOfType<StringValue>();
@@ -550,8 +549,8 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(1);
-            result.Dequeue().ShouldBeOfType(typeof(TokenImplementations.Add));
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.Add));
         }
 
         [Fact]
@@ -564,13 +563,27 @@ namespace Pangolin.Core.Test
             var result = Tokeniser.Tokenise(code, null);
 
             // Assert
-            result.Count.ShouldBe(2);
+            result.TokenList.Count.ShouldBe(2);
 
-            var token1 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token1 = result.TokenList[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token1.LiteralValue.ShouldBe(1);
 
-            var token2 = result.Dequeue().ShouldBeOfType<TokenImplementations.NumericLiteral>();
+            var token2 = result.TokenList[1].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token2.LiteralValue.ShouldBe(2);
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_range()
+        {
+            // Arrange
+            var code = "\u2192";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.Range));
         }
     }
 }

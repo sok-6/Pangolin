@@ -1,4 +1,6 @@
-﻿using Pangolin.Core.DataValueImplementations;
+﻿using Moq;
+using Pangolin.Common;
+using Pangolin.Core.DataValueImplementations;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -16,10 +18,9 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var token = Token.Get.NumericLiteral(1.5m);
-            var tokenQueue = new TokenQueue(NumericValue.Zero);
 
             // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(null);
 
             // Assert
             result.ShouldBeOfType(typeof(NumericValue));
@@ -31,10 +32,9 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var token = Token.Get.StringLiteral("abc");
-            var tokenQueue = new TokenQueue(NumericValue.Zero);
 
             // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(null);
 
             // Assert
             result.ShouldBeOfType(typeof(StringValue));
@@ -42,111 +42,17 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void Truthify_should_evaluate_0_as_falsey()
+        public void Truthify_should_evaluate_truthy_value_as_truthy()
         {
             // Arrange
+            var mockValue = new Mock<DataValue>();
+            mockValue.Setup(m => m.IsTruthy).Returns(true);
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
             var token = Token.Get.Truthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(0));
 
             // Act
-            var result = token.Evaluate(tokenQueue);
-
-            // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(0);
-        }
-
-        [Fact]
-        public void Truthify_should_evaluate_non_0_as_truthy()
-        {
-            // Arrange
-            var token = Token.Get.Truthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(5),
-                Token.Get.NumericLiteral(-5),
-                Token.Get.NumericLiteral(0.0000000001m),
-                Token.Get.NumericLiteral(decimal.MaxValue),
-                Token.Get.NumericLiteral(decimal.MinValue));
-
-            // Act
-            var result1 = token.Evaluate(tokenQueue);
-            var result2 = token.Evaluate(tokenQueue);
-            var result3 = token.Evaluate(tokenQueue);
-            var result4 = token.Evaluate(tokenQueue);
-            var result5 = token.Evaluate(tokenQueue);
-
-            // Assert
-            var result_5 = result1.ShouldBeOfType<NumericValue>();
-            result_5.Value.ShouldBe(1);
-
-            var result_minus5 = result1.ShouldBeOfType<NumericValue>();
-            result_minus5.Value.ShouldBe(1);
-
-            var result_nearly0 = result1.ShouldBeOfType<NumericValue>();
-            result_nearly0.Value.ShouldBe(1);
-
-            var result_max = result1.ShouldBeOfType<NumericValue>();
-            result_max.Value.ShouldBe(1);
-
-            var result_min = result1.ShouldBeOfType<NumericValue>();
-            result_min.Value.ShouldBe(1);
-        }
-
-        [Fact]
-        public void Truthify_should_evaluate_empty_string_as_falsey()
-        {
-            // Arrange
-            var token = Token.Get.Truthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral(""));
-
-            // Act
-            var result = token.Evaluate(tokenQueue);
-
-            // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(0);
-        }
-
-        [Fact]
-        public void Truthify_should_evaluate_populated_string_as_truthy()
-        {
-            // Arrange
-            var token = Token.Get.Truthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral("abc"));
-
-            // Act
-            var result = token.Evaluate(tokenQueue);
-
-            // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(1);
-        }
-
-        [Fact(Skip = "Array literal not implemented yet")]
-        public void Truthify_should_evaluate_empty_array_as_falsey()
-        {
-
-        }
-
-        [Fact(Skip = "Array literal not implemented yet")]
-        public void Truthify_should_evaluate_populated_array_as_truthy()
-        {
-
-        }
-
-        [Fact]
-        public void UnTruthify_should_evaluate_0_as_truthy()
-        {
-            // Arrange
-            var token = Token.Get.UnTruthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(0));
-
-            // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(mockQueue.Object);
 
             // Assert
             var numericResult = result.ShouldBeOfType<NumericValue>();
@@ -154,90 +60,63 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void UnTruthify_should_evaluate_non_0_as_falsey()
+        public void Truthify_should_evaluate_falsey_value_as_falsey()
         {
             // Arrange
-            var token = Token.Get.UnTruthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(5),
-                Token.Get.NumericLiteral(-5),
-                Token.Get.NumericLiteral(0.0000000001m),
-                Token.Get.NumericLiteral(decimal.MaxValue),
-                Token.Get.NumericLiteral(decimal.MinValue));
+            var mockValue = new Mock<DataValue>();
+            mockValue.Setup(m => m.IsTruthy).Returns(false);
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var token = Token.Get.Truthify();
 
             // Act
-            var result1 = token.Evaluate(tokenQueue);
-            var result2 = token.Evaluate(tokenQueue);
-            var result3 = token.Evaluate(tokenQueue);
-            var result4 = token.Evaluate(tokenQueue);
-            var result5 = token.Evaluate(tokenQueue);
-
-            // Assert
-            var result_5 = result1.ShouldBeOfType<NumericValue>();
-            result_5.Value.ShouldBe(0);
-
-            var result_minus5 = result1.ShouldBeOfType<NumericValue>();
-            result_minus5.Value.ShouldBe(0);
-
-            var result_nearly0 = result1.ShouldBeOfType<NumericValue>();
-            result_nearly0.Value.ShouldBe(0);
-
-            var result_max = result1.ShouldBeOfType<NumericValue>();
-            result_max.Value.ShouldBe(0);
-
-            var result_min = result1.ShouldBeOfType<NumericValue>();
-            result_min.Value.ShouldBe(0);
-        }
-
-        [Fact]
-        public void UnTruthify_should_evaluate_empty_string_as_truthy()
-        {
-            // Arrange
-            var token = Token.Get.UnTruthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral(""));
-
-            // Act
-            var result = token.Evaluate(tokenQueue);
-
-            // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(1);
-        }
-
-        [Fact]
-        public void UnTruthify_should_evaluate_populated_string_as_falsey()
-        {
-            // Arrange
-            var token = Token.Get.UnTruthify();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral("abc"));
-
-            // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(mockQueue.Object);
 
             // Assert
             var numericResult = result.ShouldBeOfType<NumericValue>();
             numericResult.Value.ShouldBe(0);
         }
 
-        [Fact(Skip = "Array literal not implemented yet")]
-        public void UnTruthify_should_evaluate_empty_array_as_truthy()
+        [Fact]
+        public void Untruthify_should_evaluate_truthy_value_as_falsey()
         {
+            // Arrange
+            var mockValue = new Mock<DataValue>();
+            mockValue.Setup(m => m.IsTruthy).Returns(true);
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var token = Token.Get.UnTruthify();
 
+            // Act
+            var result = token.Evaluate(mockQueue.Object);
+
+            // Assert
+            var numericResult = result.ShouldBeOfType<NumericValue>();
+            numericResult.Value.ShouldBe(0);
         }
 
-        [Fact(Skip = "Array literal not implemented yet")]
-        public void UnTruthify_should_evaluate_populated_array_as_falsey()
+        [Fact]
+        public void Untruthify_should_evaluate_falsey_value_as_truthy()
         {
+            // Arrange
+            var mockValue = new Mock<DataValue>();
+            mockValue.Setup(m => m.IsTruthy).Returns(false);
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var token = Token.Get.UnTruthify();
 
+            // Act
+            var result = token.Evaluate(mockQueue.Object);
+
+            // Assert
+            var numericResult = result.ShouldBeOfType<NumericValue>();
+            numericResult.Value.ShouldBe(1);
         }
 
         [Fact]
         public void SingleArgument_should_default_to_zero_if_unindexed()
         {
             // Arrange
-            var tokenQueue = new TokenQueue(NumericValue.Zero);
             var arguments = new DataValue[]
             {
 
@@ -245,7 +124,7 @@ namespace Pangolin.Core.Test
             var token = Token.Get.SingleArgument(arguments, 1);
 
             // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(null);
 
             // Assert
             var num = result.ShouldBeOfType<NumericValue>();
@@ -256,65 +135,79 @@ namespace Pangolin.Core.Test
         public void SingleArgument_should_retrieve_correct_argument()
         {
             // Arrange
-            var tokenQueue = new TokenQueue(NumericValue.Zero);
+            var value1 = new Mock<DataValue>();
+            var value2 = new Mock<DataValue>();
+            var value3 = new Mock<DataValue>();
+
             var arguments = new DataValue[]
             {
-                new NumericValue(1),
-                new NumericValue(2),
-                new NumericValue(3)
+                value1.Object,
+                value2.Object,
+                value3.Object
             };
+
             var token1 = Token.Get.SingleArgument(arguments, 0);
             var token2 = Token.Get.SingleArgument(arguments, 1);
             var token3 = Token.Get.SingleArgument(arguments, 2);
 
             // Act
-            var result1 = token1.Evaluate(tokenQueue);
-            var result2 = token2.Evaluate(tokenQueue);
-            var result3 = token3.Evaluate(tokenQueue);
+            var result1 = token1.Evaluate(null);
+            var result2 = token2.Evaluate(null);
+            var result3 = token3.Evaluate(null);
 
             // Assert
-            var num1 = result1.ShouldBeOfType<NumericValue>();
-            num1.Value.ShouldBe(1);
-            var num2 = result2.ShouldBeOfType<NumericValue>();
-            num2.Value.ShouldBe(2);
-            var num3 = result3.ShouldBeOfType<NumericValue>();
-            num3.Value.ShouldBe(3);
+            result1.ShouldBe(value1.Object);
+            result2.ShouldBe(value2.Object);
+            result3.ShouldBe(value3.Object);
         }
 
         [Fact]
         public void ArgumentArray_should_evaluate_to_correct_array_value()
         {
             // Arrange
-            var tokenQueue = new TokenQueue(NumericValue.Zero);
+            var value1 = new Mock<DataValue>();
+            var value2 = new Mock<DataValue>();
+            var value3 = new Mock<DataValue>();
+
             var arguments = new DataValue[]
             {
-                new NumericValue(1),
-                new NumericValue(2),
-                new NumericValue(3)
+                value1.Object,
+                value2.Object,
+                value3.Object
             };
             var token = Token.Get.ArgumentArray(arguments);
 
             // Act
-            var result = token.Evaluate(tokenQueue);
+            var result = token.Evaluate(null);
 
             // Assert
-            var value = result.ShouldBeOfType<ArrayValue>();
-            value.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
-            value.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
-            value.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value[0].ShouldBe(value1.Object);
+            arrayValue.Value[1].ShouldBe(value2.Object);
+            arrayValue.Value[2].ShouldBe(value3.Object);
         }
 
         [Fact]
         public void Add_should_add_two_integers()
         {
             // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.Setup(m => m.Value).Returns(1);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.Setup(m => m.Value).Returns(2);
+
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
             var addToken = Token.Get.Add();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(1),
-                Token.Get.NumericLiteral(2));
 
             // Act
-            var result = addToken.Evaluate(tokenQueue);
+            var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
             var numResult = result.ShouldBeOfType<NumericValue>();
@@ -325,13 +218,23 @@ namespace Pangolin.Core.Test
         public void Add_should_add_two_floats()
         {
             // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.Setup(m => m.Value).Returns(1.5m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.Setup(m => m.Value).Returns(2.3m);
+
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
             var addToken = Token.Get.Add();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(1.5m),
-                Token.Get.NumericLiteral(2.3m));
 
             // Act
-            var result = addToken.Evaluate(tokenQueue);
+            var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
             var numResult = result.ShouldBeOfType<NumericValue>();
@@ -342,13 +245,25 @@ namespace Pangolin.Core.Test
         public void Add_should_concatenate_two_strings()
         {
             // Arrange
+            var mockString1 = new Mock<StringValue>();
+            mockString1.Setup(m => m.Type).Returns(DataValueType.String);
+            mockString1.Setup(m => m.Value).Returns("ab");
+            mockString1.Setup(m => m.ToString()).Returns("ab");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.Setup(m => m.Type).Returns(DataValueType.String);
+            mockString2.Setup(m => m.Value).Returns("cd");
+            mockString2.Setup(m => m.ToString()).Returns("cd");
+
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockString1.Object)
+                .Returns(mockString2.Object);
+
             var addToken = Token.Get.Add();
-            var tokenQueue = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral("ab"),
-                Token.Get.StringLiteral("cd"));
 
             // Act
-            var result = addToken.Evaluate(tokenQueue);
+            var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
             var stringResult = result.ShouldBeOfType<StringValue>();
@@ -359,42 +274,241 @@ namespace Pangolin.Core.Test
         public void Add_should_concatenate_string_and_numeric()
         {
             // Arrange
+            var mockString = new Mock<StringValue>();
+            mockString.Setup(m => m.Type).Returns(DataValueType.String);
+            mockString.Setup(m => m.Value).Returns("ab");
+            mockString.Setup(m => m.ToString()).Returns("ab");
+
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            mockNumeric.Setup(m => m.Value).Returns(1);
+            mockNumeric.Setup(m => m.ToString()).Returns("1");
+
+            var mockQueue1 = new Mock<TokenQueue>();
+            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockString.Object)
+                .Returns(mockNumeric.Object);
+
+            var mockQueue2 = new Mock<TokenQueue>();
+            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockNumeric.Object)
+                .Returns(mockString.Object);
+
             var addToken = Token.Get.Add();
-            var tokenQueue1 = new TokenQueue(NumericValue.Zero,
-                Token.Get.StringLiteral("ab"),
-                Token.Get.NumericLiteral(1));
-            var tokenQueue2 = new TokenQueue(NumericValue.Zero,
-                Token.Get.NumericLiteral(2),
-                Token.Get.StringLiteral("cd"));
 
             // Act
-            var result1 = addToken.Evaluate(tokenQueue1);
-            var result2 = addToken.Evaluate(tokenQueue2);
+            var result1 = addToken.Evaluate(mockQueue1.Object);
+            var result2 = addToken.Evaluate(mockQueue2.Object);
 
             // Assert
-            var stringResult1 = result1.ShouldBeOfType<StringValue>();
-            stringResult1.Value.ShouldBe("ab1");
-
-            var stringResult2 = result2.ShouldBeOfType<StringValue>();
-            stringResult2.Value.ShouldBe("2cd");
+            result1.ShouldBeOfType<StringValue>().Value.ShouldBe("ab1");
+            result2.ShouldBeOfType<StringValue>().Value.ShouldBe("1ab");
         }
 
-        [Fact(Skip = "Array literal not implemented yet")]
+        [Fact]
         public void Add_should_concatenate_two_arrays()
         {
+            // Arrange
+            var mockValue1 = new Mock<NumericValue>();
+            var mockValue2 = new Mock<NumericValue>();
+            var mockValue3 = new Mock<NumericValue>();
+            var mockValue4 = new Mock<NumericValue>();
 
+            var mockArray1 = new Mock<ArrayValue>();
+            mockArray1.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
+            mockArray1.Setup(m => m.Type).Returns(DataValueType.Array);
+
+            var mockArray2 = new Mock<ArrayValue>();
+            mockArray2.Setup(m => m.Value).Returns(new DataValue[] { mockValue3.Object, mockValue4.Object });
+            mockArray2.Setup(m => m.Type).Returns(DataValueType.Array);
+
+            var mockQueue = new Mock<TokenQueue>();
+            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockArray1.Object)
+                .Returns(mockArray2.Object);
+
+            var token = Token.Get.Add();
+
+            // Act
+            var result = token.Evaluate(mockQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value[0].ShouldBe(mockValue1.Object);
+            arrayValue.Value[1].ShouldBe(mockValue2.Object);
+            arrayValue.Value[2].ShouldBe(mockValue3.Object);
+            arrayValue.Value[3].ShouldBe(mockValue4.Object);
         }
 
-        [Fact(Skip = "Array literal not implemented yet")]
+        [Fact]
         public void Add_should_concatenate_array_and_string()
         {
+            // Arrange
+            var mockValue1 = new Mock<NumericValue>();
+            var mockValue2 = new Mock<NumericValue>();
+            var mockValue3 = new Mock<StringValue>();
+            mockValue3.Setup(m => m.Type).Returns(DataValueType.String);
 
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
+            mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
+
+            var mockQueue1 = new Mock<TokenQueue>(); // Queue 1 is array -> string
+            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockArray.Object)
+                .Returns(mockValue3.Object);
+
+            var mockQueue2 = new Mock<TokenQueue>(); // Queue 2 is string -> array
+            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockValue3.Object)
+                .Returns(mockArray.Object);
+
+            var token = Token.Get.Add();
+
+            // Act
+            var result1 = token.Evaluate(mockQueue1.Object);
+            var result2 = token.Evaluate(mockQueue2.Object);
+
+            // Assert
+            var arrayValue1 = result1.ShouldBeOfType<ArrayValue>();
+            arrayValue1.Value[0].ShouldBe(mockValue1.Object);
+            arrayValue1.Value[1].ShouldBe(mockValue2.Object);
+            arrayValue1.Value[2].ShouldBe(mockValue3.Object);
+
+            var arrayValue2 = result2.ShouldBeOfType<ArrayValue>();
+            arrayValue2.Value[0].ShouldBe(mockValue3.Object);
+            arrayValue2.Value[1].ShouldBe(mockValue1.Object);
+            arrayValue2.Value[2].ShouldBe(mockValue2.Object);
         }
 
-        [Fact(Skip = "Array literal not implemented yet")]
+        [Fact]
         public void Add_should_concatenate_array_and_numeric()
         {
+            // Arrange
+            var mockValue1 = new Mock<NumericValue>();
+            var mockValue2 = new Mock<NumericValue>();
+            var mockValue3 = new Mock<NumericValue>();
+            mockValue3.Setup(m => m.Type).Returns(DataValueType.Numeric);
 
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
+            mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
+
+            var mockQueue1 = new Mock<TokenQueue>(); // Queue 1 is array -> numeric
+            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockArray.Object)
+                .Returns(mockValue3.Object);
+
+            var mockQueue2 = new Mock<TokenQueue>(); // Queue 2 is numeric -> array
+            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockValue3.Object)
+                .Returns(mockArray.Object);
+
+            var token = Token.Get.Add();
+
+            // Act
+            var result1 = token.Evaluate(mockQueue1.Object);
+            var result2 = token.Evaluate(mockQueue2.Object);
+
+            // Assert
+            var arrayValue1 = result1.ShouldBeOfType<ArrayValue>();
+            arrayValue1.Value[0].ShouldBe(mockValue1.Object);
+            arrayValue1.Value[1].ShouldBe(mockValue2.Object);
+            arrayValue1.Value[2].ShouldBe(mockValue3.Object);
+
+            var arrayValue2 = result2.ShouldBeOfType<ArrayValue>();
+            arrayValue2.Value[0].ShouldBe(mockValue3.Object);
+            arrayValue2.Value[1].ShouldBe(mockValue1.Object);
+            arrayValue2.Value[2].ShouldBe(mockValue2.Object);
+        }
+
+        [Fact]
+        public void Range_should_return_positive_range_when_positive_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(5);
+            var mockTokenQueue = new Mock<TokenQueue>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(4);
+        }
+
+        [Fact]
+        public void Range_should_return_negative_range_when_negative_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(-5);
+            var mockTokenQueue = new Mock<TokenQueue>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(-4);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(-3);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(-2);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(-1);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Range_should_return_empty_array_when_0_passed()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(0);
+            var mockTokenQueue = new Mock<TokenQueue>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Range_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringValue = new Mock<StringValue>();
+            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
+            var mockStringTokenQueue = new Mock<TokenQueue>();
+            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
+            var mockArrayValue = new Mock<ArrayValue>();
+            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
+            var mockArrayTokenQueue = new Mock<TokenQueue>();
+            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+
+            var token = new TokenImplementations.Range();
+
+            // Act / Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.String} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.Array} not supported");
         }
     }
 }

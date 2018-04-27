@@ -14,9 +14,9 @@ namespace Pangolin.Core
         /// </summary>
         /// <param name="code">The code to tokenise</param>
         /// <returns>The queue of tokens derived from the code</returns>
-        public static Queue<Token> Tokenise(string code, IReadOnlyList<DataValue> arguments)
+        public static TokenQueue Tokenise(string code, IReadOnlyList<DataValue> arguments)
         {
-            var result = new Queue<Token>();
+            var result = new TokenQueue();
 
             // Iterate over characters until all processed
             var index = 0;
@@ -125,6 +125,11 @@ namespace Pangolin.Core
                 {
                     // Add nothing, move on
                     // TODO: Consider adding flag to indicate that token has space preceding it?
+                }
+                // Range
+                else if (current == '\u2192')
+                {
+                    result.Enqueue(Token.Get.Range());
                 }
                 else
                 {

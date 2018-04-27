@@ -8,6 +8,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class StringLiteral : Token
     {
+        public override int Arity => 0;
+
         public string LiteralValue { get; private set; }
 
         public StringLiteral(string literalValue)

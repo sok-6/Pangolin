@@ -9,6 +9,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class Add : Token
     {
+        public override int Arity => 2;
+
         public override DataValue Evaluate(TokenQueue tokenQueue)
         {
             // Get two arguments

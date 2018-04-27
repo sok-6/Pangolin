@@ -6,6 +6,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class UnTruthify : Token
     {
+        public override int Arity => 1;
+
         public override DataValue Evaluate(TokenQueue tokenQueue)
         {
             // Get argument

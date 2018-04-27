@@ -46,6 +46,35 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
+        public void NumericValue_should_be_truthy_if_nonzero()
+        {
+            // Arrange
+            var intValue1 = 1;
+            var intValue2 = -1;
+
+            // Act
+            var numericValue1 = new NumericValue(intValue1);
+            var numericValue2 = new NumericValue(intValue2);
+
+            // Assert
+            numericValue1.IsTruthy.ShouldBe(true);
+            numericValue2.IsTruthy.ShouldBe(true);
+        }
+
+        [Fact]
+        public void NumericValue_should_be_falsey_if_zero()
+        {
+            // Arrange
+            var intValue = 0;
+
+            // Act
+            var numericValue = new NumericValue(intValue);
+
+            // Assert
+            numericValue.IsTruthy.ShouldBe(false);
+        }
+
+        [Fact]
         public void StringValue_should_correctly_store_unicode_string()
         {
             // Arrange
@@ -70,6 +99,32 @@ cd";
 
             // Assert
             stringValue.Value.ShouldBe(s);
+        }
+
+        [Fact]
+        public void StringValue_should_be_truthy_if_not_empty()
+        {
+            // Arrange
+            var s = "abc";
+
+            // Act
+            var stringValue = new StringValue(s);
+
+            // Assert
+            stringValue.IsTruthy.ShouldBe(true);
+        }
+
+        [Fact]
+        public void StringValue_should_be_falsey_if_empty()
+        {
+            // Arrange
+            var s = "";
+
+            // Act
+            var stringValue = new StringValue(s);
+
+            // Assert
+            stringValue.IsTruthy.ShouldBe(false);
         }
 
         [Fact]
@@ -106,6 +161,35 @@ cd";
 
             var a2 = arrayValue.Value[1].ShouldBeOfType<StringValue>();
             a2.Value.ShouldBe("abc");
+        }
+
+        [Fact]
+        public void ArrayValue_should_be_truthy_is_populated()
+        {
+            // Arrange
+            var a = new DataValue[]
+            {
+                new NumericValue(1)
+            };
+
+            // Act
+            var arrayValue = new ArrayValue(a);
+
+            // Assert
+            arrayValue.IsTruthy.ShouldBe(true);
+        }
+
+        [Fact]
+        public void ArrayValue_should_be_falsey_is_not_populated()
+        {
+            // Arrange
+            var a = new DataValue[0];
+
+            // Act
+            var arrayValue = new ArrayValue(a);
+
+            // Assert
+            arrayValue.IsTruthy.ShouldBe(false);
         }
     }
 }

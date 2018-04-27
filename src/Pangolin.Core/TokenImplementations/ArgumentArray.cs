@@ -9,6 +9,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class ArgumentArray : Token
     {
+        public override int Arity => 0;
+
         public ArrayValue ArrayValue { get; private set; }
 
         public ArgumentArray(IReadOnlyList<DataValue> arguments)

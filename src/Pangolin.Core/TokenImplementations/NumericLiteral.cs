@@ -4,6 +4,8 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class NumericLiteral : Token
     {
+        public override int Arity => 0;
+
         public decimal LiteralValue { get; private set; }
 
         public NumericLiteral(decimal literalValue)

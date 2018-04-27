@@ -9,9 +9,14 @@ namespace Pangolin.Core.DataValueImplementations
     public class ArrayValue : DataValue
     {
         private List<DataValue> _inner;
-        public IReadOnlyList<DataValue> Value => _inner;
+        public virtual IReadOnlyList<DataValue> Value => _inner;
 
         public override DataValueType Type => DataValueType.Array;
+
+        public ArrayValue()
+        {
+            _inner = new List<DataValue>();
+        }
 
         public ArrayValue(IEnumerable<DataValue> values)
         {
