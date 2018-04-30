@@ -11,7 +11,7 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override int Arity => 2;
 
-        public override DataValue Evaluate(TokenQueue tokenQueue)
+        public override DataValue Evaluate(ProgramState tokenQueue)
         {
             // Get two arguments
             var arg1 = tokenQueue.DequeueAndEvaluate();

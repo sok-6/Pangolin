@@ -11,7 +11,7 @@ namespace Pangolin.Core
     public abstract class Token
     {
         public abstract int Arity { get; }
-        public abstract DataValue Evaluate(TokenQueue tokenQueue);
+        public abstract DataValue Evaluate(ProgramState programState);
         public abstract override string ToString();
 
         protected Exception GetInvalidArgumentTypeException(DataValueType invalidType)
@@ -30,6 +30,9 @@ namespace Pangolin.Core
             public static Token ArgumentArray(IReadOnlyList<DataValue> arguments) => new ArgumentArray(arguments);
             public static Token Add() => new Add();
             public static Token Range() => new Range();
+            public static Token ReverseRange() => new ReverseRange();
+            public static Token Range1() => new Range1();
+            public static Token ReverseRange1() => new ReverseRange1();
         }
     }
 }

@@ -585,6 +585,48 @@ namespace Pangolin.Core.Test
             result.TokenList.Count.ShouldBe(1);
             result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.Range));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_ReverseRange()
+        {
+            // Arrange
+            var code = "\u2190";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.ReverseRange));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_range1()
+        {
+            // Arrange
+            var code = "\u0411";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.Range1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ReverseRange1()
+        {
+            // Arrange
+            var code = "\u042A";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.ReverseRange1));
+        }
     }
 }
 

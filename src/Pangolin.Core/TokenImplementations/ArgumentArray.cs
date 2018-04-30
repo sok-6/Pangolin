@@ -18,7 +18,7 @@ namespace Pangolin.Core.TokenImplementations
             ArrayValue = new ArrayValue(arguments);
         }
 
-        public override DataValue Evaluate(TokenQueue tokenQueue)
+        public override DataValue Evaluate(ProgramState tokenQueue)
         {
             return ArrayValue;
         }

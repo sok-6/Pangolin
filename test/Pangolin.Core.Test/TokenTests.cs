@@ -47,7 +47,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockValue = new Mock<DataValue>();
             mockValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
             var token = Token.Get.Truthify();
 
@@ -65,7 +65,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockValue = new Mock<DataValue>();
             mockValue.Setup(m => m.IsTruthy).Returns(false);
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
             var token = Token.Get.Truthify();
 
@@ -83,7 +83,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockValue = new Mock<DataValue>();
             mockValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
             var token = Token.Get.UnTruthify();
 
@@ -101,7 +101,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockValue = new Mock<DataValue>();
             mockValue.Setup(m => m.IsTruthy).Returns(false);
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
             var token = Token.Get.UnTruthify();
 
@@ -199,7 +199,7 @@ namespace Pangolin.Core.Test
             mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
             mockNumeric2.Setup(m => m.Value).Returns(2);
 
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockNumeric1.Object)
                 .Returns(mockNumeric2.Object);
@@ -226,7 +226,7 @@ namespace Pangolin.Core.Test
             mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
             mockNumeric2.Setup(m => m.Value).Returns(2.3m);
 
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockNumeric1.Object)
                 .Returns(mockNumeric2.Object);
@@ -255,7 +255,7 @@ namespace Pangolin.Core.Test
             mockString2.Setup(m => m.Value).Returns("cd");
             mockString2.Setup(m => m.ToString()).Returns("cd");
 
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockString1.Object)
                 .Returns(mockString2.Object);
@@ -284,12 +284,12 @@ namespace Pangolin.Core.Test
             mockNumeric.Setup(m => m.Value).Returns(1);
             mockNumeric.Setup(m => m.ToString()).Returns("1");
 
-            var mockQueue1 = new Mock<TokenQueue>();
+            var mockQueue1 = new Mock<ProgramState>();
             mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockString.Object)
                 .Returns(mockNumeric.Object);
 
-            var mockQueue2 = new Mock<TokenQueue>();
+            var mockQueue2 = new Mock<ProgramState>();
             mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockNumeric.Object)
                 .Returns(mockString.Object);
@@ -322,7 +322,7 @@ namespace Pangolin.Core.Test
             mockArray2.Setup(m => m.Value).Returns(new DataValue[] { mockValue3.Object, mockValue4.Object });
             mockArray2.Setup(m => m.Type).Returns(DataValueType.Array);
 
-            var mockQueue = new Mock<TokenQueue>();
+            var mockQueue = new Mock<ProgramState>();
             mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockArray1.Object)
                 .Returns(mockArray2.Object);
@@ -353,12 +353,12 @@ namespace Pangolin.Core.Test
             mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
             mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
 
-            var mockQueue1 = new Mock<TokenQueue>(); // Queue 1 is array -> string
+            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> string
             mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockArray.Object)
                 .Returns(mockValue3.Object);
 
-            var mockQueue2 = new Mock<TokenQueue>(); // Queue 2 is string -> array
+            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is string -> array
             mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockValue3.Object)
                 .Returns(mockArray.Object);
@@ -394,12 +394,12 @@ namespace Pangolin.Core.Test
             mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
             mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
 
-            var mockQueue1 = new Mock<TokenQueue>(); // Queue 1 is array -> numeric
+            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> numeric
             mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockArray.Object)
                 .Returns(mockValue3.Object);
 
-            var mockQueue2 = new Mock<TokenQueue>(); // Queue 2 is numeric -> array
+            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is numeric -> array
             mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
                 .Returns(mockValue3.Object)
                 .Returns(mockArray.Object);
@@ -428,7 +428,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockDataValue = new Mock<NumericValue>();
             mockDataValue.Setup(m => m.Value).Returns(5);
-            var mockTokenQueue = new Mock<TokenQueue>();
+            var mockTokenQueue = new Mock<ProgramState>();
             mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
 
             var token = new TokenImplementations.Range();
@@ -453,7 +453,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockDataValue = new Mock<NumericValue>();
             mockDataValue.Setup(m => m.Value).Returns(-5);
-            var mockTokenQueue = new Mock<TokenQueue>();
+            var mockTokenQueue = new Mock<ProgramState>();
             mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
 
             var token = new TokenImplementations.Range();
@@ -478,7 +478,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockDataValue = new Mock<NumericValue>();
             mockDataValue.Setup(m => m.Value).Returns(0);
-            var mockTokenQueue = new Mock<TokenQueue>();
+            var mockTokenQueue = new Mock<ProgramState>();
             mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
 
             var token = new TokenImplementations.Range();
@@ -497,11 +497,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockStringValue = new Mock<StringValue>();
             mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
-            var mockStringTokenQueue = new Mock<TokenQueue>();
+            var mockStringTokenQueue = new Mock<ProgramState>();
             mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
             var mockArrayValue = new Mock<ArrayValue>();
             mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
-            var mockArrayTokenQueue = new Mock<TokenQueue>();
+            var mockArrayTokenQueue = new Mock<ProgramState>();
             mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
 
             var token = new TokenImplementations.Range();
@@ -509,6 +509,306 @@ namespace Pangolin.Core.Test
             // Act / Assert
             Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.String} not supported");
             Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.Array} not supported");
+        }
+
+        [Fact]
+        public void ReverseRange_should_return_positive_range_when_positive_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(4);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ReverseRange_should_return_negative_range_when_negative_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(-5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(-1);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(-2);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(-3);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(-4);
+        }
+
+        [Fact]
+        public void ReverseRange_should_return_empty_array_when_0_passed()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(0);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ReverseRange_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringValue = new Mock<StringValue>();
+            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
+            var mockStringTokenQueue = new Mock<ProgramState>();
+            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
+            var mockArrayValue = new Mock<ArrayValue>();
+            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
+            var mockArrayTokenQueue = new Mock<ProgramState>();
+            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act / Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2190 command - {DataValueType.String} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2190 command - {DataValueType.Array} not supported");
+        }
+
+        [Fact]
+        public void Range1_should_return_positive_range_when_positive_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(4);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(5);
+        }
+
+        [Fact]
+        public void Range1_should_return_negative_range_when_negative_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(-5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(-5);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(-4);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(-3);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(-2);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(-1);
+        }
+
+        [Fact]
+        public void Range1_should_return_empty_array_when_0_passed()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(0);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.Range1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Range1_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringValue = new Mock<StringValue>();
+            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
+            var mockStringTokenQueue = new Mock<ProgramState>();
+            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
+            var mockArrayValue = new Mock<ArrayValue>();
+            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
+            var mockArrayTokenQueue = new Mock<ProgramState>();
+            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+
+            var token = new TokenImplementations.Range1();
+
+            // Act / Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u0411 command - {DataValueType.String} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u0411 command - {DataValueType.Array} not supported");
+        }
+
+        [Fact]
+        public void ReverseRange1_should_return_positive_range_when_positive_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(5);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(4);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void ReverseRange1_should_return_negative_range_when_negative_numeric_provided()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(-5);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(5);
+
+            arrayValue.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(-1);
+            arrayValue.Value[1].ShouldBeOfType<NumericValue>().Value.ShouldBe(-2);
+            arrayValue.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(-3);
+            arrayValue.Value[3].ShouldBeOfType<NumericValue>().Value.ShouldBe(-4);
+            arrayValue.Value[4].ShouldBeOfType<NumericValue>().Value.ShouldBe(-5);
+        }
+
+        [Fact]
+        public void ReverseRange1_should_return_empty_array_when_0_passed()
+        {
+            // Arrange
+            var mockDataValue = new Mock<NumericValue>();
+            mockDataValue.Setup(m => m.Value).Returns(0);
+            var mockTokenQueue = new Mock<ProgramState>();
+            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.ReverseRange1();
+
+            // Act
+            var result = token.Evaluate(mockTokenQueue.Object);
+
+            // Assert
+            var arrayValue = result.ShouldBeOfType<ArrayValue>();
+            arrayValue.Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ReverseRange1_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringValue = new Mock<StringValue>();
+            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
+            var mockStringTokenQueue = new Mock<ProgramState>();
+            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
+            var mockArrayValue = new Mock<ArrayValue>();
+            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
+            var mockArrayTokenQueue = new Mock<ProgramState>();
+            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+
+            var token = new TokenImplementations.ReverseRange1();
+
+            // Act / Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u042A command - {DataValueType.String} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u042A command - {DataValueType.Array} not supported");
+        }
+
+        [Fact]
+        public void GetVariable_should_return_correct_variable()
+        {
+            // Arrange
+            var mockValue0 = new Mock<DataValue>();
+            var mockValue1 = new Mock<DataValue>();
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.Setup(s => s.GetVariable(0)).Returns(mockValue0.Object);
+            mockProgramState.Setup(s => s.GetVariable(1)).Returns(mockValue1.Object);
+
+            var token0 = new TokenImplementations.GetVariable(0);
+            var token1 = new TokenImplementations.GetVariable(1);
+
+            // Act
+            var result0 = token0.Evaluate(mockProgramState.Object);
+            var result1 = token1.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result0.ShouldBe(mockValue0.Object);
+            result1.ShouldBe(mockValue1.Object);
+        }
+
+        [Fact]
+        public void SetVariable_should_store_correct_variable()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+            0.ShouldBe(1);
         }
     }
 }

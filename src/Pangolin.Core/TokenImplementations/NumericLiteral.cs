@@ -13,7 +13,7 @@ namespace Pangolin.Core.TokenImplementations
             LiteralValue = literalValue;
         }
 
-        public override DataValue Evaluate(TokenQueue tokenQueue)
+        public override DataValue Evaluate(ProgramState tokenQueue)
         {
             return new DataValueImplementations.NumericValue(LiteralValue);
         }

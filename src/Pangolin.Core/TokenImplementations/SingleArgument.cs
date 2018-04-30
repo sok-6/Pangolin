@@ -20,7 +20,7 @@ namespace Pangolin.Core.TokenImplementations
             _argumentIndex = ((char)('\uDFD8' + index)).ToString();
         }
 
-        public override DataValue Evaluate(TokenQueue tokenQueue)
+        public override DataValue Evaluate(ProgramState tokenQueue)
         {
             return Value;
         }
