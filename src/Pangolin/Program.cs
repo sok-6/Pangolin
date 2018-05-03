@@ -6,7 +6,7 @@ namespace Pangolin
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("\uDFD8");
+            Console.WriteLine("derp");
         }
     }
 }

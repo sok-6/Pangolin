@@ -16,6 +16,8 @@ namespace Pangolin.Core
 
         public IReadOnlyList<Token> TokenList => _tokenList;
         public IReadOnlyList<DataValue> ArgumentList => _argumentList;
+        public IReadOnlyList<DataValue> Variables => _variables;
+
         public int CurrentTokenIndex { get; private set; }
 
         public ProgramState()

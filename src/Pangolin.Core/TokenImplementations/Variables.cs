@@ -10,7 +10,7 @@ namespace Pangolin.Core.TokenImplementations
     {
         private int _variableIndex;
 
-        public override int Arity => 1;
+        public override int Arity => 0;
 
         public GetVariable(int variableIndex)
         {
@@ -43,7 +43,9 @@ namespace Pangolin.Core.TokenImplementations
 
         public override DataValue Evaluate(ProgramState programState)
         {
-            return programState.GetVariable(_variableIndex);
+            var argument = programState.DequeueAndEvaluate();
+            programState.SetVariable(_variableIndex, argument);
+            return argument;
         }
 
         public override string ToString()

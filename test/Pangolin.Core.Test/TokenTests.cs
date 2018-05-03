@@ -804,11 +804,18 @@ namespace Pangolin.Core.Test
         public void SetVariable_should_store_correct_variable()
         {
             // Arrange
+            var mockDataValue = new Mock<DataValue>();
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.Setup(s => s.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new TokenImplementations.SetVariable('\uDD38');
 
             // Act
+            var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            0.ShouldBe(1);
+            result.ShouldBe(mockDataValue.Object);
+            mockProgramState.Verify(s => s.SetVariable(0, mockDataValue.Object));
         }
     }
 }

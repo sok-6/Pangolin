@@ -22,4 +22,11 @@ namespace Pangolin.Common
         {
         }
     }
+
+    public class PangolinInvalidArgumentStringException : PangolinException
+    {
+        public PangolinInvalidArgumentStringException(string message) : base(message)
+        {
+        }
+    }
 }
