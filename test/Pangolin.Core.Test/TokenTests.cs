@@ -822,5 +822,31 @@ namespace Pangolin.Core.Test
             result.ShouldBe(mockDataValue.Object);
             mockProgramState.Verify(s => s.SetVariable(0, mockDataValue.Object));
         }
+
+        [Fact]
+        public void Multiply_should_multiply_two_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Value).Returns(-4);
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Value).Returns(2.5m);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(s => s.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var token = new TokenImplementations.Multiply();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(-10);
+        }
+
+        // TODO: String repeat, array repeat, 0, +ve, -ve, fractional, tokeniser
     }
 }

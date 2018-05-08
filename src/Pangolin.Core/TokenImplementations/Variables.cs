@@ -17,6 +17,7 @@ namespace Pangolin.Core.TokenImplementations
         public GetVariable(char tokenCharacter)
         {
             VariableIndex = CHAR_LIST.IndexOf(tokenCharacter);
+            if (VariableIndex < 0) throw new Pangolin.Common.PangolinException($"Unexpected token character {tokenCharacter} passed to GetVariable");
         }
 
         public override DataValue Evaluate(ProgramState programState)
@@ -41,6 +42,7 @@ namespace Pangolin.Core.TokenImplementations
         public SetVariable(char tokenCharacter)
         {
             VariableIndex = CHAR_LIST.IndexOf(tokenCharacter);
+            if (VariableIndex < 0) throw new Pangolin.Common.PangolinException($"Unexpected token character {tokenCharacter} passed to SetVariable");
         }
 
         public override DataValue Evaluate(ProgramState programState)

@@ -154,7 +154,7 @@ namespace Pangolin.Core
                 // Set variable
                 else if ("\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41".Contains(current))
                 {
-                    result.EnqueueToken(Token.Get.GetVariable(current));
+                    result.EnqueueToken(Token.Get.SetVariable(current));
                 }
                 else
                 {

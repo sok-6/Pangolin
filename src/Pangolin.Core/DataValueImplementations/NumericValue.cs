@@ -12,6 +12,7 @@ namespace Pangolin.Core.DataValueImplementations
 
         public virtual decimal Value { get; private set; }
         public int IntValue => (int)Value;
+        public bool IsIntegral => (Value % 1) == 0;
 
         public NumericValue()
         {
