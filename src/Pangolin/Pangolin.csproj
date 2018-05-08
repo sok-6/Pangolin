@@ -5,4 +5,13 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pangolin.Common\Pangolin.Common.csproj" />
+    <ProjectReference Include="..\Pangolin.Core\Pangolin.Core.csproj" />
+  </ItemGroup>
+
 </Project>

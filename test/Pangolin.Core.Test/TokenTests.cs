@@ -117,14 +117,12 @@ namespace Pangolin.Core.Test
         public void SingleArgument_should_default_to_zero_if_unindexed()
         {
             // Arrange
-            var arguments = new DataValue[]
-            {
-
-            };
-            var token = Token.Get.SingleArgument(arguments, 1);
+            var mockState = new Mock<ProgramState>();
+            mockState.SetupGet(s => s.ArgumentList).Returns(new DataValue[0]);
+            var token = Token.Get.SingleArgument(1);
 
             // Act
-            var result = token.Evaluate(null);
+            var result = token.Evaluate(mockState.Object);
 
             // Assert
             var num = result.ShouldBeOfType<NumericValue>();
@@ -146,14 +144,17 @@ namespace Pangolin.Core.Test
                 value3.Object
             };
 
-            var token1 = Token.Get.SingleArgument(arguments, 0);
-            var token2 = Token.Get.SingleArgument(arguments, 1);
-            var token3 = Token.Get.SingleArgument(arguments, 2);
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.SetupGet(s => s.ArgumentList).Returns(arguments);
+
+            var token1 = Token.Get.SingleArgument(0);
+            var token2 = Token.Get.SingleArgument(1);
+            var token3 = Token.Get.SingleArgument(2);
 
             // Act
-            var result1 = token1.Evaluate(null);
-            var result2 = token2.Evaluate(null);
-            var result3 = token3.Evaluate(null);
+            var result1 = token1.Evaluate(mockProgramState.Object);
+            var result2 = token2.Evaluate(mockProgramState.Object);
+            var result3 = token3.Evaluate(mockProgramState.Object);
 
             // Assert
             result1.ShouldBe(value1.Object);
@@ -175,10 +176,14 @@ namespace Pangolin.Core.Test
                 value2.Object,
                 value3.Object
             };
-            var token = Token.Get.ArgumentArray(arguments);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.SetupGet(s => s.ArgumentList).Returns(arguments);
+
+            var token = Token.Get.ArgumentArray();
 
             // Act
-            var result = token.Evaluate(null);
+            var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
             var arrayValue = result.ShouldBeOfType<ArrayValue>();
@@ -788,8 +793,8 @@ namespace Pangolin.Core.Test
             mockProgramState.Setup(s => s.GetVariable(0)).Returns(mockValue0.Object);
             mockProgramState.Setup(s => s.GetVariable(1)).Returns(mockValue1.Object);
 
-            var token0 = new TokenImplementations.GetVariable(0);
-            var token1 = new TokenImplementations.GetVariable(1);
+            var token0 = new TokenImplementations.GetVariable('\uDD52');
+            var token1 = new TokenImplementations.GetVariable('\uDD53');
 
             // Act
             var result0 = token0.Evaluate(mockProgramState.Object);

@@ -8,23 +8,25 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class GetVariable : Token
     {
-        private int _variableIndex;
+        private const string CHAR_LIST = "\uDD52\uDD53\uDD54\uDD55\uDD56\uDD57\uDD58\uDD59\uDD5A\uDD5B";
 
         public override int Arity => 0;
 
-        public GetVariable(int variableIndex)
+        public int VariableIndex { get; private set; }
+
+        public GetVariable(char tokenCharacter)
         {
-            _variableIndex = variableIndex;
+            VariableIndex = CHAR_LIST.IndexOf(tokenCharacter);
         }
 
         public override DataValue Evaluate(ProgramState programState)
         {
-            return programState.GetVariable(_variableIndex);
+            return programState.GetVariable(VariableIndex);
         }
 
         public override string ToString()
         {
-            return ((char)('\uDD52' + _variableIndex)).ToString();
+            return CHAR_LIST.Substring(VariableIndex, 1);
         }
     }
 
@@ -32,25 +34,25 @@ namespace Pangolin.Core.TokenImplementations
     {
         private const string CHAR_LIST = "\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41";
 
-        private int _variableIndex;
+        public int VariableIndex { get; private set; }
 
         public override int Arity => 1;
 
         public SetVariable(char tokenCharacter)
         {
-            _variableIndex = CHAR_LIST.IndexOf(tokenCharacter);
+            VariableIndex = CHAR_LIST.IndexOf(tokenCharacter);
         }
 
         public override DataValue Evaluate(ProgramState programState)
         {
             var argument = programState.DequeueAndEvaluate();
-            programState.SetVariable(_variableIndex, argument);
+            programState.SetVariable(VariableIndex, argument);
             return argument;
         }
 
         public override string ToString()
         {
-            return CHAR_LIST.Substring(_variableIndex, 1);
+            return CHAR_LIST.Substring(VariableIndex, 1);
         }
     }
 }

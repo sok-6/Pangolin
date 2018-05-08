@@ -26,13 +26,15 @@ namespace Pangolin.Core
 
             public static Token Truthify() => new Truthify();
             public static Token UnTruthify() => new UnTruthify();
-            public static Token SingleArgument(IReadOnlyList<DataValue> arguments, int index) => new SingleArgument(arguments, index);
-            public static Token ArgumentArray(IReadOnlyList<DataValue> arguments) => new ArgumentArray(arguments);
+            public static Token SingleArgument(int index) => new SingleArgument(index);
+            public static Token ArgumentArray() => new ArgumentArray();
             public static Token Add() => new Add();
             public static Token Range() => new Range();
             public static Token ReverseRange() => new ReverseRange();
             public static Token Range1() => new Range1();
             public static Token ReverseRange1() => new ReverseRange1();
+            public static Token GetVariable(char tokenCharacter) => new GetVariable(tokenCharacter);
+            public static Token SetVariable(char tokenCharacter) => new SetVariable(tokenCharacter);
         }
     }
 }

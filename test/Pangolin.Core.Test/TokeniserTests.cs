@@ -2,6 +2,7 @@ using Xunit;
 using Shouldly;
 using Pangolin.Core.DataValueImplementations;
 using Pangolin.Common;
+using Moq;
 
 namespace Pangolin.Core.Test
 {
@@ -494,9 +495,9 @@ namespace Pangolin.Core.Test
             var code = "\uDFD8\uDFD9\uDFDA";
             var arguments = new DataValue[]
             {
-                new NumericValue(1),
-                new NumericValue(2),
-                new NumericValue(3)
+                new Mock<DataValue>().Object,
+                new Mock<DataValue>().Object,
+                new Mock<DataValue>().Object
             };
 
             // Act
@@ -504,16 +505,13 @@ namespace Pangolin.Core.Test
 
             // Assert
             var token1 = results.TokenList[0].ShouldBeOfType<TokenImplementations.SingleArgument>();
-            var value1 = token1.Value.ShouldBeOfType<NumericValue>();
-            value1.Value.ShouldBe(1);
+            token1.ArgumentIndex.ShouldBe(0);
 
             var token2 = results.TokenList[1].ShouldBeOfType<TokenImplementations.SingleArgument>();
-            var value2 = token2.Value.ShouldBeOfType<NumericValue>();
-            value2.Value.ShouldBe(2);
+            token2.ArgumentIndex.ShouldBe(1);
 
             var token3 = results.TokenList[2].ShouldBeOfType<TokenImplementations.SingleArgument>();
-            var value3 = token3.Value.ShouldBeOfType<NumericValue>();
-            value3.Value.ShouldBe(3);
+            token3.ArgumentIndex.ShouldBe(2);
         }
 
         [Fact]
@@ -532,11 +530,7 @@ namespace Pangolin.Core.Test
 
             // Assert
             results.TokenList.Count.ShouldBe(1);
-            var token = results.TokenList[0].ShouldBeOfType<TokenImplementations.ArgumentArray>();
-            var value1 = token.ArrayValue.Value[0].ShouldBeOfType<NumericValue>();
-            value1.Value.ShouldBe(1);
-            var value2 = token.ArrayValue.Value[1].ShouldBeOfType<StringValue>();
-            value2.Value.ShouldBe("abc");
+            results.TokenList[0].ShouldBeOfType<TokenImplementations.ArgumentArray>();
         }
 
         [Fact]
@@ -626,6 +620,54 @@ namespace Pangolin.Core.Test
             // Assert
             result.TokenList.Count.ShouldBe(1);
             result.TokenList[0].ShouldBeOfType(typeof(TokenImplementations.ReverseRange1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_GetVariable()
+        {
+            // Arrange
+            var code = "\uDD52\uDD53\uDD54\uDD55\uDD56\uDD57\uDD58\uDD59\uDD5A\uDD5B";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(10);
+
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(0);
+            result.TokenList[1].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(1);
+            result.TokenList[2].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(2);
+            result.TokenList[3].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(3);
+            result.TokenList[4].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(4);
+            result.TokenList[5].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(5);
+            result.TokenList[6].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(6);
+            result.TokenList[7].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(7);
+            result.TokenList[8].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(8);
+            result.TokenList[9].ShouldBeOfType<TokenImplementations.GetVariable>().VariableIndex.ShouldBe(9);
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SetVariable()
+        {
+            // Arrange
+            var code = "\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(10);
+
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(0);
+            result.TokenList[1].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(1);
+            result.TokenList[2].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(2);
+            result.TokenList[3].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(3);
+            result.TokenList[4].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(4);
+            result.TokenList[5].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(5);
+            result.TokenList[6].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(6);
+            result.TokenList[7].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(7);
+            result.TokenList[8].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(8);
+            result.TokenList[9].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(9);
         }
     }
 }

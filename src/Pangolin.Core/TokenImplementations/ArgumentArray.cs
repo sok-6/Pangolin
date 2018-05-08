@@ -11,16 +11,14 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override int Arity => 0;
 
-        public ArrayValue ArrayValue { get; private set; }
-
-        public ArgumentArray(IReadOnlyList<DataValue> arguments)
+        public ArgumentArray()
         {
-            ArrayValue = new ArrayValue(arguments);
+
         }
 
         public override DataValue Evaluate(ProgramState tokenQueue)
         {
-            return ArrayValue;
+            return new ArrayValue(tokenQueue.ArgumentList);
         }
 
         public override string ToString() => "\u00AE";

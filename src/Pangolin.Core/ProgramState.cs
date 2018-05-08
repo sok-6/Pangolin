@@ -15,10 +15,11 @@ namespace Pangolin.Core
         private DataValue[] _variables;
 
         public IReadOnlyList<Token> TokenList => _tokenList;
-        public IReadOnlyList<DataValue> ArgumentList => _argumentList;
+        public virtual IReadOnlyList<DataValue> ArgumentList => _argumentList;
         public IReadOnlyList<DataValue> Variables => _variables;
 
         public int CurrentTokenIndex { get; private set; }
+        public bool ExecutionInProgress => CurrentTokenIndex < _tokenList.Count;
 
         public ProgramState()
         {
@@ -34,7 +35,7 @@ namespace Pangolin.Core
         {
             CurrentTokenIndex = 0;
             _tokenList = new List<Token>(tokens);
-            _argumentList = new List<DataValue>(argumentList);
+            _argumentList = new List<DataValue>(argumentList ?? new DataValue[0]);
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
@@ -50,7 +51,8 @@ namespace Pangolin.Core
             // Check if run out of tokens
             if (CurrentTokenIndex == _tokenList.Count)
             {
-                return DataValueImplementations.NumericValue.Zero;
+                // Return 0th argument, or lit 0
+                return _argumentList.Count > 0 ? _argumentList[0] : DataValueImplementations.NumericValue.Zero;
             }
 
             // 'Dequeue' and evaluate

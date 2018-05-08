@@ -6,7 +6,9 @@ namespace Pangolin
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("derp");
+            Core.Runner.Run("\u2190", "5", new ConsoleRunOptions());
+
+            Console.ReadLine();
         }
     }
 }

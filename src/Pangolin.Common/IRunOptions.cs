@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pangolin.Common.Interfaces
+namespace Pangolin.Common
 {
     public interface IRunOptions
     {

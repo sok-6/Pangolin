@@ -11,20 +11,18 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override int Arity => 0;
 
-        private string _argumentIndex;
-        public DataValue Value { get; private set; }
+        public int ArgumentIndex { get; private set; }
 
-        public SingleArgument(IReadOnlyList<DataValue> arguments, int index)
+        public SingleArgument(int index)
         {
-            Value = index < arguments.Count ? arguments[index] : NumericValue.Zero;
-            _argumentIndex = ((char)('\uDFD8' + index)).ToString();
+            ArgumentIndex = index; 
         }
 
-        public override DataValue Evaluate(ProgramState tokenQueue)
+        public override DataValue Evaluate(ProgramState programState)
         {
-            return Value;
+            return ArgumentIndex < programState.ArgumentList.Count ? programState.ArgumentList[ArgumentIndex] : NumericValue.Zero;
         }
 
-        public override string ToString() => _argumentIndex;
+        public override string ToString() => ((char)('\uDFD8' + ArgumentIndex)).ToString();
     }
 }

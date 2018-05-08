@@ -16,7 +16,7 @@ namespace Pangolin.Core
         /// <returns>The queue of tokens derived from the code</returns>
         public static ProgramState Tokenise(string code, IReadOnlyList<DataValue> arguments)
         {
-            var result = new ProgramState();
+            var result = new ProgramState(arguments);
 
             // Iterate over characters until all processed
             var index = 0;
@@ -91,7 +91,7 @@ namespace Pangolin.Core
 
                     result.EnqueueToken(Token.Get.NumericLiteral(decimal.Parse(fettledString, System.Globalization.NumberStyles.Float)));
 
-                    // Move on appropriate number of characters
+                    // Move on appropriate number of characters - last +1 is at end of loop
                     index += readString.Length - 1;
                 }
                 // Truthify
@@ -108,12 +108,12 @@ namespace Pangolin.Core
                 else if ("\uDFD8\uDFD9\uDFDA\uDFDB\uDFDC\uDFDD\uDFDE\uDFDF\uDFE0\uDFE1".Contains(current))
                 {
                     var argumentIndex = current - 0xDFD8;
-                    result.EnqueueToken(Token.Get.SingleArgument(arguments, argumentIndex));
+                    result.EnqueueToken(Token.Get.SingleArgument(argumentIndex));
                 }
                 // Argument array
                 else if (current == '\u00AE')
                 {
-                    result.EnqueueToken(Token.Get.ArgumentArray(arguments));
+                    result.EnqueueToken(Token.Get.ArgumentArray());
                 }
                 // Add
                 else if (current == '+')
@@ -145,6 +145,16 @@ namespace Pangolin.Core
                 else if (current == '\u042A')
                 {
                     result.EnqueueToken(Token.Get.ReverseRange1());
+                }
+                // Get variable
+                else if ("\uDD52\uDD53\uDD54\uDD55\uDD56\uDD57\uDD58\uDD59\uDD5A\uDD5B".Contains(current))
+                {
+                    result.EnqueueToken(Token.Get.GetVariable(current));
+                }
+                // Set variable
+                else if ("\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41".Contains(current))
+                {
+                    result.EnqueueToken(Token.Get.GetVariable(current));
                 }
                 else
                 {
