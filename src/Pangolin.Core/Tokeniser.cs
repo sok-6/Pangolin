@@ -120,6 +120,11 @@ namespace Pangolin.Core
                 {
                     result.EnqueueToken(Token.Get.Add());
                 }
+                // Multiply
+                else if (current == '*')
+                {
+                    result.EnqueueToken(Token.Get.Multiply());
+                }
                 // Space
                 else if (current == ' ')
                 {

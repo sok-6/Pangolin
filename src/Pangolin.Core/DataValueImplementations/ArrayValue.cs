@@ -23,6 +23,11 @@ namespace Pangolin.Core.DataValueImplementations
             _inner = new List<DataValue>(values);
         }
 
+        public ArrayValue(params DataValue[] values)
+        {
+            _inner = new List<DataValue>(values);
+        }
+
         public override bool IsTruthy => _inner.Count > 0;
 
         public override string ToString()

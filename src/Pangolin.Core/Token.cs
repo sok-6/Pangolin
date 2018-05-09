@@ -29,6 +29,7 @@ namespace Pangolin.Core
             public static Token SingleArgument(int index) => new SingleArgument(index);
             public static Token ArgumentArray() => new ArgumentArray();
             public static Token Add() => new Add();
+            public static Token Multiply() => new Multiply();
             public static Token Range() => new Range();
             public static Token ReverseRange() => new ReverseRange();
             public static Token Range1() => new Range1();

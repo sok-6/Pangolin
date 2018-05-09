@@ -669,6 +669,20 @@ namespace Pangolin.Core.Test
             result.TokenList[8].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(8);
             result.TokenList[9].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(9);
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_multiply()
+        {
+            // Arrange
+            var code = "*";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.Multiply>();
+        }
     }
 }
 
