@@ -1464,5 +1464,242 @@ namespace Pangolin.Core.Test
             a9.Value[0].ShouldBe(mockVal3.Object);
             a9.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("c");
         }
+
+        [Fact]
+        public void Equality_should_return_truthy_for_equal_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void Equality_should_return_falsey_for_different_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.5m);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Equality_should_return_truthy_for_equal_strings()
+        {
+            // Arrange
+            var mockString1 = new Mock<StringValue>();
+            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString1.SetupGet(n => n.Value).Returns("abc");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString2.SetupGet(n => n.Value).Returns("abc");
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockString1.Object)
+                .Returns(mockString2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void Equality_should_return_falsey_for_different_strings()
+        {
+            // Arrange
+            var mockString1 = new Mock<StringValue>();
+            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString1.SetupGet(n => n.Value).Returns("abc");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString2.SetupGet(n => n.Value).Returns("xyz");
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockString1.Object)
+                .Returns(mockString2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Equality_should_return_truthy_for_equal_arrays()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockString1 = new Mock<StringValue>();
+            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString1.SetupGet(n => n.Value).Returns("abc");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString2.SetupGet(n => n.Value).Returns("abc");
+
+            var mockArray1 = new Mock<ArrayValue>();
+            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
+
+            var mockArray2 = new Mock<ArrayValue>();
+            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockArray1.Object)
+                .Returns(mockArray2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void Equality_should_return_falsey_for_equal_arrays_in_different_orders()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockString1 = new Mock<StringValue>();
+            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString1.SetupGet(n => n.Value).Returns("abc");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString2.SetupGet(n => n.Value).Returns("abc");
+
+            var mockArray1 = new Mock<ArrayValue>();
+            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
+
+            var mockArray2 = new Mock<ArrayValue>();
+            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockString2.Object, mockNumeric2.Object });
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockArray1.Object)
+                .Returns(mockArray2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Equality_should_return_falsey_for_unequal_arrays()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.5m);
+
+            var mockString1 = new Mock<StringValue>();
+            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString1.SetupGet(n => n.Value).Returns("abc");
+
+            var mockString2 = new Mock<StringValue>();
+            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString2.SetupGet(n => n.Value).Returns("abc");
+
+            var mockArray1 = new Mock<ArrayValue>();
+            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
+
+            var mockArray2 = new Mock<ArrayValue>();
+            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
+            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockString2.Object, mockNumeric2.Object });
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState
+                .SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockArray1.Object)
+                .Returns(mockArray2.Object);
+
+            var token = new TokenImplementations.Equality();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
     }
 }
