@@ -1685,7 +1685,7 @@ namespace Pangolin.Core.Test
 
             var mockArray2 = new Mock<ArrayValue>();
             mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockString2.Object, mockNumeric2.Object });
+            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
 
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState

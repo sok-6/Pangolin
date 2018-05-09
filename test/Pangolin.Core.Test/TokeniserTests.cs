@@ -683,6 +683,34 @@ namespace Pangolin.Core.Test
             result.TokenList.Count.ShouldBe(1);
             result.TokenList[0].ShouldBeOfType<TokenImplementations.Multiply>();
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_equality()
+        {
+            // Arrange
+            var code = "=";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.Equality>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_inequality()
+        {
+            // Arrange
+            var code = "\u2260";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.Inequality>();
+        }
     }
 }
 

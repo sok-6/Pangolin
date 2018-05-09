@@ -36,6 +36,8 @@ namespace Pangolin.Core
             public static Token ReverseRange1() => new ReverseRange1();
             public static Token GetVariable(char tokenCharacter) => new GetVariable(tokenCharacter);
             public static Token SetVariable(char tokenCharacter) => new SetVariable(tokenCharacter);
+            public static Token Equality() => new Equality();
+            public static Token Inequality() => new Inequality();
         }
     }
 }

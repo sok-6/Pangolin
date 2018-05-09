@@ -21,6 +21,8 @@ namespace Pangolin.Core
         public int CurrentTokenIndex { get; private set; }
         public bool ExecutionInProgress => CurrentTokenIndex < _tokenList.Count;
 
+        public int? WhereIndex { get; private set; }
+
         public ProgramState()
         {
             CurrentTokenIndex = 0;
@@ -69,6 +71,29 @@ namespace Pangolin.Core
         public virtual DataValue GetVariable(int index)
         {
             return _variables[index];
+        }
+
+        public void SetWhereIndex(int whereIndex)
+        {
+            WhereIndex = whereIndex;
+        }
+
+        public void ClearWhereIndex()
+        {
+            WhereIndex = null;
+        }
+
+        public int FindEndOfBlock(int blockStartIndex)
+        {
+            var currentArity = _tokenList[blockStartIndex].Arity;
+            var result = blockStartIndex;
+            
+            for (int i = 0; i < currentArity; i++)
+            {
+                result = FindEndOfBlock(result + 1);
+            }
+
+            return result;
         }
     }
 }

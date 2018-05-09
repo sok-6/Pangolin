@@ -161,6 +161,16 @@ namespace Pangolin.Core
                 {
                     result.EnqueueToken(Token.Get.SetVariable(current));
                 }
+                // Equality
+                else if (current == '=')
+                {
+                    result.EnqueueToken(Token.Get.Equality());
+                }
+                // Inequality
+                else if (current == '\u2260')
+                {
+                    result.EnqueueToken(Token.Get.Inequality());
+                }
                 else
                 {
                     throw new PangolinInvalidTokenException($"Unrecognised character in code: {current}");

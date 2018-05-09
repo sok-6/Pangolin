@@ -73,5 +73,11 @@ namespace Pangolin.Core.Test
                 resultSet[i].ShouldBe(mockValues[i].Object);
             }
         }
+
+        [Fact]
+        public void ProgramState_should_find_end_of_block()
+        {
+
+        }
     }
 }
