@@ -77,7 +77,37 @@ namespace Pangolin.Core.Test
         [Fact]
         public void ProgramState_should_find_end_of_block()
         {
+            // Arrange
+            var mockTokenArity0 = new Mock<Token>();
+            mockTokenArity0.SetupGet(m => m.Arity).Returns(0);
+            var mockTokenArity1 = new Mock<Token>();
+            mockTokenArity1.SetupGet(m => m.Arity).Returns(1);
+            var mockTokenArity2 = new Mock<Token>();
+            mockTokenArity2.SetupGet(m => m.Arity).Returns(2);
 
+            var programState = new ProgramState();
+            programState.EnqueueToken(mockTokenArity1.Object); // 0
+            programState.EnqueueToken(mockTokenArity2.Object); // 1
+            programState.EnqueueToken(mockTokenArity2.Object); // 2
+            programState.EnqueueToken(mockTokenArity0.Object); // 3
+            programState.EnqueueToken(mockTokenArity1.Object); // 4
+            programState.EnqueueToken(mockTokenArity0.Object); // 5
+            programState.EnqueueToken(mockTokenArity1.Object); // 6
+            programState.EnqueueToken(mockTokenArity0.Object); // 7
+            programState.EnqueueToken(mockTokenArity0.Object); // 8
+            programState.EnqueueToken(mockTokenArity1.Object); // 9
+
+            // Act
+            var result1 = programState.FindEndOfBlock(0);
+            var result2 = programState.FindEndOfBlock(2);
+            var result3 = programState.FindEndOfBlock(8);
+            var result4 = programState.FindEndOfBlock(9);
+
+            // Assert
+            result1.ShouldBe(7);
+            result2.ShouldBe(5);
+            result3.ShouldBe(8);
+            result4.ShouldBe(10);
         }
     }
 }

@@ -171,6 +171,16 @@ namespace Pangolin.Core
                 {
                     result.EnqueueToken(Token.Get.Inequality());
                 }
+                // Where
+                else if (current == 'W')
+                {
+                    result.EnqueueToken(Token.Get.Where());
+                }
+                // WhereValue
+                else if (current == 'w')
+                {
+                    result.EnqueueToken(Token.Get.WhereValue());
+                }
                 else
                 {
                     throw new PangolinInvalidTokenException($"Unrecognised character in code: {current}");

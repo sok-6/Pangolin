@@ -38,6 +38,8 @@ namespace Pangolin.Core
             public static Token SetVariable(char tokenCharacter) => new SetVariable(tokenCharacter);
             public static Token Equality() => new Equality();
             public static Token Inequality() => new Inequality();
+            public static Token Where() => new Where();
+            public static Token WhereValue() => new WhereValue();
         }
     }
 }

@@ -21,7 +21,8 @@ namespace Pangolin.Core
         public int CurrentTokenIndex { get; private set; }
         public bool ExecutionInProgress => CurrentTokenIndex < _tokenList.Count;
 
-        public int? WhereIndex { get; private set; }
+        public bool IsWhereBlockExecuting { get; set; }
+        public DataValue WhereValue { get; set; }
 
         public ProgramState()
         {
@@ -73,19 +74,14 @@ namespace Pangolin.Core
             return _variables[index];
         }
 
-        public void SetWhereIndex(int whereIndex)
-        {
-            WhereIndex = whereIndex;
-        }
-
-        public void ClearWhereIndex()
-        {
-            WhereIndex = null;
-        }
-
+        /// <summary>
+        /// Finds the end of a block of execution from a given starting index
+        /// </summary>
+        /// <param name="blockStartIndex">The index of the start of the block</param>
+        /// <returns>The index of the last token in the block - i.e. the start of the next block is return value + 1</returns>
         public int FindEndOfBlock(int blockStartIndex)
         {
-            var currentArity = _tokenList[blockStartIndex].Arity;
+            var currentArity = blockStartIndex < _tokenList.Count ? _tokenList[blockStartIndex].Arity : 0;
             var result = blockStartIndex;
             
             for (int i = 0; i < currentArity; i++)
@@ -94,6 +90,11 @@ namespace Pangolin.Core
             }
 
             return result;
+        }
+
+        public void SetCurrentTokenIndex(int newIndex)
+        {
+            CurrentTokenIndex = newIndex;
         }
     }
 }

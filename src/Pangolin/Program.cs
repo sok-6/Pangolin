@@ -6,7 +6,7 @@ namespace Pangolin
     {
         static void Main(string[] args)
         {
-            Core.Runner.Run("\u2190", "5", new ConsoleRunOptions());
+            Core.Runner.Run("W\u22602w5 10", "", new ConsoleRunOptions());
 
             Console.ReadLine();
         }
