@@ -711,6 +711,34 @@ namespace Pangolin.Core.Test
             result.TokenList.Count.ShouldBe(1);
             result.TokenList[0].ShouldBeOfType<TokenImplementations.Inequality>();
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Where()
+        {
+            // Arrange
+            var code = "W";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.Where>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_WhereValue()
+        {
+            // Arrange
+            var code = "w";
+
+            // Act
+            var result = Tokeniser.Tokenise(code, null);
+
+            // Assert
+            result.TokenList.Count.ShouldBe(1);
+            result.TokenList[0].ShouldBeOfType<TokenImplementations.WhereValue>();
+        }
     }
 }
 
