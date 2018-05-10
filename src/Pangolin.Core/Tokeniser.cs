@@ -181,6 +181,16 @@ namespace Pangolin.Core
                 {
                     result.EnqueueToken(Token.Get.WhereValue());
                 }
+                // Select
+                else if (current == 'S')
+                {
+                    result.EnqueueToken(Token.Get.Select());
+                }
+                // SelectValue
+                else if (current == 's')
+                {
+                    result.EnqueueToken(Token.Get.SelectValue());
+                }
                 else
                 {
                     throw new PangolinInvalidTokenException($"Unrecognised character in code: {current}");

@@ -7,38 +7,64 @@ using System.Text;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Where : Token
+    public abstract class IterationTokenBase : Token
     {
-        public override int Arity => 2;
-
         public override DataValue Evaluate(ProgramState programState)
         {
-            // Check if already in where block
-            if (programState.IsWhereBlockExecuting)
+            // Check if block is already executing
+            if (IsExecuting(programState))
             {
-                throw new PangolinException("Where token encountered in where block");
+                throw new PangolinException($"{GetType().Name} token encountered during execution of same");
             }
 
+            Initialise();
+
             // Make note of current index to return to 
-            var whereIndex = programState.CurrentTokenIndex;
+            var startIndex = programState.CurrentTokenIndex;
 
             // Find index of end of function block
-            var blockEnd = programState.FindEndOfBlock(whereIndex);
+            var blockEnd = programState.FindEndOfBlock(startIndex);
 
             // Set execution index to end of function block and get values to execute where over
             programState.SetCurrentTokenIndex(blockEnd + 1);
-            var whereValues = programState.DequeueAndEvaluate();
+            var iterationCount = GetArguments(programState);
 
-            // Make note of end of 2nd argument end index
+            // Make note of end of arguments index
             var endIndex = programState.CurrentTokenIndex;
 
-            // Interpret whereValues, get individual values where required
+            // Iterative execution
+            SetExecuting(programState, true);
+
+            for (int i = 0; i < iterationCount; i++)
+            {
+                programState.SetCurrentTokenIndex(startIndex);
+                SetIterationVariables(programState, i);
+
+                HandleIterationResult(i, programState.DequeueAndEvaluate());
+            }
+
+            // Finished execution, set execution index to end, finalise
+            SetExecuting(programState, false);
+            programState.SetCurrentTokenIndex(endIndex);
+            return CompleteResult();
+        }
+
+        protected abstract void Initialise();
+        protected abstract bool IsExecuting(ProgramState programState);
+        protected abstract void SetExecuting(ProgramState programState, bool isExecuting);
+        protected abstract int GetArguments(ProgramState programState);
+        protected abstract void SetIterationVariables(ProgramState programState, int iterationCount);
+        protected abstract void HandleIterationResult(int iterationCount, DataValue iterationResult);
+        protected abstract DataValue CompleteResult();
+
+        protected IReadOnlyList<DataValue> ConvertToValueList(DataValue value)
+        {
             var innerValues = new List<DataValue>();
 
-            // Numeric, create range first
-            if (whereValues.Type == DataValueType.Numeric)
+            // Numeric, create range
+            if (value.Type == DataValueType.Numeric)
             {
-                var numValue = whereValues as NumericValue;
+                var numValue = value as NumericValue;
 
                 // Can only do it if integral
                 if (!numValue.IsIntegral)
@@ -52,43 +78,69 @@ namespace Pangolin.Core.TokenImplementations
                         .Select(i => new NumericValue(i)));
             }
             // String, separate into single length strings
-            else if (whereValues.Type == DataValueType.String)
+            else if (value.Type == DataValueType.String)
             {
                 innerValues.AddRange(
-                    ((StringValue)whereValues).Value
+                    ((StringValue)value).Value
                     .Select(c => new StringValue(c.ToString())));
             }
             // Array, just take values
             else
             {
-                innerValues.AddRange(((ArrayValue)whereValues).Value);
+                innerValues.AddRange(((ArrayValue)value).Value);
             }
 
-            // Execute where block for each value in turn
-            var result = new List<DataValue>();
-            programState.IsWhereBlockExecuting = true;
+            return innerValues;
+        }
+    }
 
-            innerValues.ForEach(v =>
-            {
-                programState.SetCurrentTokenIndex(whereIndex);
-                programState.WhereValue = v;
+    public class Where : IterationTokenBase
+    {
+        private IReadOnlyList<DataValue> _iterationValues;
+        private List<DataValue> _filteredValues;
 
-                var r = programState.DequeueAndEvaluate();
+        public override int Arity => 2;
+        
+        public override string ToString() => "W";
 
-                // Only add v to result set if r is truthy
-                if (r.IsTruthy)
-                {
-                    result.Add(v);
-                }
-            });
-
-            // Set token index to end of 2nd argument, wrap filtered results in array value and return
-            programState.IsWhereBlockExecuting = false;
-            programState.SetCurrentTokenIndex(endIndex);
-            return new ArrayValue(result);
+        protected override void Initialise()
+        {
+            _filteredValues = new List<DataValue>();
         }
 
-        public override string ToString() => "W";
+        protected override DataValue CompleteResult()
+        {
+            return new ArrayValue(_filteredValues);
+        }
+
+        protected override int GetArguments(ProgramState programState)
+        {
+            // One argument required
+            _iterationValues = ConvertToValueList(programState.DequeueAndEvaluate());
+
+            return _iterationValues.Count;
+        }
+
+        protected override void HandleIterationResult(int iterationCount, DataValue iterationResult)
+        {
+            // Only add v to result set if r is truthy
+            if (iterationResult.IsTruthy)
+            {
+                _filteredValues.Add(_iterationValues[iterationCount]);
+            }
+        }
+
+        protected override bool IsExecuting(ProgramState programState) => programState.IsWhereBlockExecuting;
+
+        protected override void SetExecuting(ProgramState programState, bool isExecuting)
+        {
+            programState.IsWhereBlockExecuting = isExecuting;
+        }
+
+        protected override void SetIterationVariables(ProgramState programState, int iterationCount)
+        {
+            programState.WhereValue = _iterationValues[iterationCount];
+        }
     }
 
     public class WhereValue : Token
@@ -106,5 +158,65 @@ namespace Pangolin.Core.TokenImplementations
         }
 
         public override string ToString() => "w";
+    }
+
+    public class Select : IterationTokenBase
+    {
+        private IReadOnlyList<DataValue> _iterationValues;
+        private List<DataValue> _mappedValues;
+
+        public override int Arity => 2;
+
+        public override string ToString() => "S";
+
+        protected override void Initialise()
+        {
+            _mappedValues = new List<DataValue>();
+        }
+
+        protected override DataValue CompleteResult()
+        {
+            return new ArrayValue(_mappedValues);
+        }
+
+        protected override int GetArguments(ProgramState programState)
+        {
+            _iterationValues = ConvertToValueList(programState.DequeueAndEvaluate());
+            return _iterationValues.Count;
+        }
+
+        protected override void HandleIterationResult(int iterationCount, DataValue iterationResult)
+        {
+            _mappedValues.Add(iterationResult);
+        }
+
+        protected override bool IsExecuting(ProgramState programState) => programState.IsSelectBlockExecuting;
+
+        protected override void SetExecuting(ProgramState programState, bool isExecuting)
+        {
+            programState.IsSelectBlockExecuting = isExecuting;
+        }
+
+        protected override void SetIterationVariables(ProgramState programState, int iterationCount)
+        {
+            programState.SelectValue = _iterationValues[iterationCount];
+        }
+    }
+
+    public class SelectValue : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            if (programState.SelectValue == null)
+            {
+                throw new PangolinInvalidTokenException("SelectValue token encountered outside of select block");
+            }
+
+            return programState.SelectValue;
+        }
+
+        public override string ToString() => "s";
     }
 }

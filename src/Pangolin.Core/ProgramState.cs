@@ -24,6 +24,9 @@ namespace Pangolin.Core
         public bool IsWhereBlockExecuting { get; set; }
         public DataValue WhereValue { get; set; }
 
+        public bool IsSelectBlockExecuting { get; set; }
+        public DataValue SelectValue { get; set; }
+
         public ProgramState()
         {
             CurrentTokenIndex = 0;

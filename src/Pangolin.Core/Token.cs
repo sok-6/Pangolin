@@ -40,6 +40,8 @@ namespace Pangolin.Core
             public static Token Inequality() => new Inequality();
             public static Token Where() => new Where();
             public static Token WhereValue() => new WhereValue();
+            public static Token Select() => new Select();
+            public static Token SelectValue() => new SelectValue();
         }
     }
 }
