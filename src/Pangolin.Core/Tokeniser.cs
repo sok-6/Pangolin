@@ -71,6 +71,36 @@ namespace Pangolin.Core
                         result.Add(Token.GetStringLiteral(sb.ToString()));
                     }                    
                 }
+                // Compressed string/numeric
+                else if (current == '\u25C1')
+                {
+                    // Check if at end of string
+                    index++;
+                    if (index == code.Length)
+                    {
+                        throw new PangolinInvalidTokenException("Empty compressed constant encountered");
+                    }
+                    else
+                    {
+                        var terminator = current;
+                        var sb = new StringBuilder();
+                        while (index < code.Length)
+                        {
+                            // Check for terminator
+                            if (true)
+                            {
+
+                            }
+                            else
+                            {
+                                sb.Append(code[index]);
+                                index++;
+                            }
+                        }
+
+                        result.Add(Token.GetStringLiteral(sb.ToString()));
+                    }
+                }
                 // Leading 0
                 else if (current == '0')
                 {
@@ -129,5 +159,7 @@ namespace Pangolin.Core
 
             return result;
         }
+
+        private static string 
     }
 }
