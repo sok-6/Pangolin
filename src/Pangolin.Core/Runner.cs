@@ -12,7 +12,8 @@ namespace Pangolin.Core
             var parsedArguments = ArgumentParser.ParseArguments(arguments, runOptions.ArgumentParseLogging);
 
             // Tokenise code
-            var programState = Tokeniser.Tokenise(code, parsedArguments);
+            var tokens = Tokeniser.Tokenise(code);
+            var programState = new ProgramState(parsedArguments, tokens);
 
             // Execute code until program end reached
             while (programState.ExecutionInProgress)

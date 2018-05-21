@@ -19,7 +19,10 @@ namespace Pangolin.Core.Test
             var mockToken = new Mock<Token>();
             mockToken.Setup(t => t.Evaluate(It.IsAny<ProgramState>())).Returns(mockDataValue.Object);
 
-            var programState = new ProgramState(new DataValue[0], mockToken.Object);
+            var tokenList = new List<Token>();
+            tokenList.Add(mockToken.Object);
+
+            var programState = new ProgramState(new DataValue[0], tokenList);
 
             // Act
             var result = programState.DequeueAndEvaluate();
@@ -85,17 +88,20 @@ namespace Pangolin.Core.Test
             var mockTokenArity2 = new Mock<Token>();
             mockTokenArity2.SetupGet(m => m.Arity).Returns(2);
 
-            var programState = new ProgramState();
-            programState.EnqueueToken(mockTokenArity1.Object); // 0
-            programState.EnqueueToken(mockTokenArity2.Object); // 1
-            programState.EnqueueToken(mockTokenArity2.Object); // 2
-            programState.EnqueueToken(mockTokenArity0.Object); // 3
-            programState.EnqueueToken(mockTokenArity1.Object); // 4
-            programState.EnqueueToken(mockTokenArity0.Object); // 5
-            programState.EnqueueToken(mockTokenArity1.Object); // 6
-            programState.EnqueueToken(mockTokenArity0.Object); // 7
-            programState.EnqueueToken(mockTokenArity0.Object); // 8
-            programState.EnqueueToken(mockTokenArity1.Object); // 9
+            var tokenList = new List<Token>();
+
+            tokenList.Add(mockTokenArity1.Object); // 0
+            tokenList.Add(mockTokenArity2.Object); // 1
+            tokenList.Add(mockTokenArity2.Object); // 2
+            tokenList.Add(mockTokenArity0.Object); // 3
+            tokenList.Add(mockTokenArity1.Object); // 4
+            tokenList.Add(mockTokenArity0.Object); // 5
+            tokenList.Add(mockTokenArity1.Object); // 6
+            tokenList.Add(mockTokenArity0.Object); // 7
+            tokenList.Add(mockTokenArity0.Object); // 8
+            tokenList.Add(mockTokenArity1.Object); // 9
+
+            var programState = new ProgramState(null, tokenList);
 
             // Act
             var result1 = programState.FindEndOfBlock(0);

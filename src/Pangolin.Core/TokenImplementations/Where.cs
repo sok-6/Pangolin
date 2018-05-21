@@ -110,7 +110,7 @@ namespace Pangolin.Core.TokenImplementations
 
         protected override DataValue CompleteResult()
         {
-            return new ArrayValue(_filteredValues);
+            return new ArrayValue(_filteredValues);        
         }
 
         protected override int GetArguments(ProgramState programState)
