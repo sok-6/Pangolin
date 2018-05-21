@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Pangolin.Common;
 using Pangolin.Core.DataValueImplementations;
+using Pangolin.Core.TokenImplementations;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Pangolin.Core.Test
         public void NumericLiteral_should_evaluate_to_NumericValue_with_correct_contents()
         {
             // Arrange
-            var token = Token.Get.NumericLiteral(1.5m);
+            var token = new NumericLiteral(1.5m);
 
             // Act
             var result = token.Evaluate(null);
@@ -31,7 +32,7 @@ namespace Pangolin.Core.Test
         public void StringLiteral_should_evaluate_to_StringValue_with_correct_contents()
         {
             // Arrange
-            var token = Token.Get.StringLiteral("abc");
+            var token = new StringLiteral("abc");
 
             // Act
             var result = token.Evaluate(null);
@@ -49,7 +50,7 @@ namespace Pangolin.Core.Test
             mockValue.Setup(m => m.IsTruthy).Returns(true);
             var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
-            var token = Token.Get.Truthify();
+            var token = new Truthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
@@ -67,7 +68,7 @@ namespace Pangolin.Core.Test
             mockValue.Setup(m => m.IsTruthy).Returns(false);
             var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
-            var token = Token.Get.Truthify();
+            var token = new Truthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
@@ -85,7 +86,7 @@ namespace Pangolin.Core.Test
             mockValue.Setup(m => m.IsTruthy).Returns(true);
             var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
-            var token = Token.Get.UnTruthify();
+            var token = new UnTruthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
@@ -103,7 +104,7 @@ namespace Pangolin.Core.Test
             mockValue.Setup(m => m.IsTruthy).Returns(false);
             var mockQueue = new Mock<ProgramState>();
             mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
-            var token = Token.Get.UnTruthify();
+            var token = new UnTruthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
@@ -119,7 +120,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockState = new Mock<ProgramState>();
             mockState.SetupGet(s => s.ArgumentList).Returns(new DataValue[0]);
-            var token = Token.Get.SingleArgument(1);
+            var token = new SingleArgument(1);
 
             // Act
             var result = token.Evaluate(mockState.Object);
@@ -147,9 +148,9 @@ namespace Pangolin.Core.Test
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState.SetupGet(s => s.ArgumentList).Returns(arguments);
 
-            var token1 = Token.Get.SingleArgument(0);
-            var token2 = Token.Get.SingleArgument(1);
-            var token3 = Token.Get.SingleArgument(2);
+            var token1 = new SingleArgument(0);
+            var token2 = new SingleArgument(1);
+            var token3 = new SingleArgument(2);
 
             // Act
             var result1 = token1.Evaluate(mockProgramState.Object);
@@ -180,7 +181,7 @@ namespace Pangolin.Core.Test
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState.SetupGet(s => s.ArgumentList).Returns(arguments);
 
-            var token = Token.Get.ArgumentArray();
+            var token = new ArgumentArray();
 
             // Act
             var result = token.Evaluate(mockProgramState.Object);
@@ -206,7 +207,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockNumeric1.Object)
                 .Returns(mockNumeric2.Object);
 
-            var addToken = Token.Get.Add();
+            var addToken = new Add();
 
             // Act
             var result = addToken.Evaluate(mockQueue.Object);
@@ -233,7 +234,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockNumeric1.Object)
                 .Returns(mockNumeric2.Object);
 
-            var addToken = Token.Get.Add();
+            var addToken = new Add();
 
             // Act
             var result = addToken.Evaluate(mockQueue.Object);
@@ -262,7 +263,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockString1.Object)
                 .Returns(mockString2.Object);
 
-            var addToken = Token.Get.Add();
+            var addToken = new Add();
 
             // Act
             var result = addToken.Evaluate(mockQueue.Object);
@@ -296,7 +297,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockNumeric.Object)
                 .Returns(mockString.Object);
 
-            var addToken = Token.Get.Add();
+            var addToken = new Add();
 
             // Act
             var result1 = addToken.Evaluate(mockQueue1.Object);
@@ -329,7 +330,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockArray1.Object)
                 .Returns(mockArray2.Object);
 
-            var token = Token.Get.Add();
+            var token = new Add();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
@@ -361,7 +362,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockValue3.Object)
                 .Returns(mockArray.Object);
 
-            var token = Token.Get.Add();
+            var token = new Add();
 
             // Act
             var result1 = token.Evaluate(mockQueue1.Object);
@@ -395,7 +396,7 @@ namespace Pangolin.Core.Test
                 .Returns(mockValue3.Object)
                 .Returns(mockArray.Object);
 
-            var token = Token.Get.Add();
+            var token = new Add();
 
             // Act
             var result1 = token.Evaluate(mockQueue1.Object);

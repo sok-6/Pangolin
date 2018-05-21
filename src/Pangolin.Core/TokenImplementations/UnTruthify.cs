@@ -16,6 +16,6 @@ namespace Pangolin.Core.TokenImplementations
             return argument.IsTruthy ? DataValue.Falsey : DataValue.Truthy;
         }
 
-        public override string ToString() => "\u00A1";
+        public override string ToString() => "\u00AC";
     }
 }

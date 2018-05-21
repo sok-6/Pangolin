@@ -8,4 +8,10 @@
     <ProjectReference Include="..\Pangolin.Common\Pangolin.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="dictionary.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
