@@ -24,7 +24,7 @@ namespace Pangolin.Core
 
         public static Token GetStringLiteral(string literalValue) => new StringLiteral(literalValue);
         public static Token GetNumericLiteral(decimal literalValue) => new NumericLiteral(literalValue);
-        public static Token GetSingleArgument(int index) => new SingleArgument(index);
+        public static Token GetSingleArgument(char tokenCharacter) => new SingleArgument(tokenCharacter);
         public static Token GetGetVariable(char tokenCharacter) => new GetVariable(tokenCharacter);
         public static Token GetSetVariable(char tokenCharacter) => new SetVariable(tokenCharacter);
 
@@ -41,14 +41,17 @@ namespace Pangolin.Core
                     .Where(t => typeof(Token).IsAssignableFrom(t) && t.GetConstructor(Type.EmptyTypes) != null)
                     // Instantiate each
                     .Select(t => (Token)Activator.CreateInstance(t))
-                    // Get those which only have single token associated with it
+                    // Only those with single character tokens
                     .Where(t => t.ToString().Length == 1);
 
                 _tokenMappings = new Dictionary<char, Token>();
 
                 foreach (var t in allTokenInstances)
                 {
-                    _tokenMappings.Add(t.ToString()[0], t);
+                    foreach (var c in t.ToString())
+                    {
+                        _tokenMappings.Add(c, t);
+                    }
                 }
             }
 

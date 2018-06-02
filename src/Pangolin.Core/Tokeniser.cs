@@ -14,26 +14,33 @@ namespace Pangolin.Core
         /// </summary>
         /// <param name="code">The code to tokenise</param>
         /// <returns>The queue of tokens derived from the code</returns>
-        public static IReadOnlyList<Token> Tokenise(string code)
+        public static IReadOnlyList<Token> Tokenise(string code, Action<string> log)
         {
             var result = new List<Token>();
-
-            //var result = new ProgramState(arguments);
-
+            
             // Iterate over characters until all processed
             var index = 0;
             while (index < code.Length)
             {
-                var current = code[index];
+                log($"Remaining tokens = {code.Substring(index)}");
 
-                if (current == ' ')
+                var current = code[index];
+                if (!CodePage.CharacterExistsInCodePage(current))
+                {
+                    log($"Character {current} U+{Convert.ToString(current, 16)} not found in code page, ignoring");
+                }
+                else if (current == ' ')
                 {
                     // Do nothing, move on
                     // TODO: set flag?
+
+                    log("Space, no token enqueued");
                 }
                 // Single char string
                 else if (current == '\\')
                 {
+                    log("Single character string constant");
+
                     // If at end of string, error
                     index++;
                     if (index == code.Length) throw new PangolinInvalidTokenException("\\ token encountered at end of string");
@@ -43,10 +50,13 @@ namespace Pangolin.Core
                 // Arbitrary length string
                 else if(current == '"' || current == '\'')
                 {
+                    log($"Plain string constant, terminator = {current}");
+
                     // Check if at end of string
                     index++;
                     if (index == code.Length)
                     {
+                        log("0 length string");
                         result.Add(Token.GetStringLiteral(""));
                     }
                     else
@@ -68,12 +78,15 @@ namespace Pangolin.Core
                             }
                         }
 
+                        log($"Tokenised string = {sb.ToString()}");
                         result.Add(Token.GetStringLiteral(sb.ToString()));
                     }                    
                 }
                 // Compressed string/numeric
-                else if (current == '\u25C1')
+                else if (current == '\u00AB')
                 {
+                    log("Compressed string/numeric constant");
+
                     // Check if at end of string
                     index++;
                     if (index == code.Length)
@@ -82,14 +95,21 @@ namespace Pangolin.Core
                     }
                     else
                     {
-                        var terminator = current;
+                        // Assume compressed string unless 
+                        var isString = true;
+
                         var sb = new StringBuilder();
                         while (index < code.Length)
                         {
-                            // Check for terminator
-                            if (true)
+                            // Check for string terminator
+                            if ('\u00BB' == code[index])
                             {
-
+                                break;
+                            }
+                            // Numeric terminator
+                            else if ('\u00AB' == code[index])
+                            {
+                                isString = false;
                             }
                             else
                             {
@@ -98,17 +118,28 @@ namespace Pangolin.Core
                             }
                         }
 
-                        result.Add(Token.GetStringLiteral(sb.ToString()));
+                        log($"Characters = {sb.ToString()}");
+
+                        if (isString)
+                        {
+                            result.Add(Token.GetStringLiteral(DecodeCompressedString(sb.ToString(), log)));
+                        }
+                        else
+                        {
+                            result.Add(Token.GetNumericLiteral(DecodeCompressedNumeric(sb.ToString(), log)));
+                        }
                     }
                 }
                 // Leading 0
                 else if (current == '0')
                 {
+                    log("Numeric constant 0");
                     result.Add(Token.GetNumericLiteral(0));
                 }
                 // Other single digit 
                 else if ("\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089".Contains(current))
                 {
+                    log("Single digit numeric constant");
                     result.Add(Token.GetNumericLiteral((int)current - 0x2080));
                 }
                 // Other numerics - \u23E8 is subscript 10
@@ -126,28 +157,29 @@ namespace Pangolin.Core
                     // If ends with e, append 1
                     if (fettledString.EndsWith('e')) fettledString = $"{fettledString}1";
 
-                    result.Add(Token.GetNumericLiteral(decimal.Parse(fettledString, System.Globalization.NumberStyles.Float)));
+                    var literalValue = decimal.Parse(fettledString, System.Globalization.NumberStyles.Float);
+                    log($"Plain numeric constant, match = {readString},  value = {literalValue}");
+                    result.Add(Token.GetNumericLiteral(literalValue));
 
                     // Move on appropriate number of characters - last +1 is at end of loop
                     index += readString.Length - 1;
                 }
                 // Single argument
-                else if ("\uDFD8\uDFD9\uDFDA\uDFDB\uDFDC\uDFDD\uDFDE\uDFDF\uDFE0\uDFE1".Contains(current))
+                else if (TokenImplementations.SingleArgument.CHAR_LIST.Contains(current))
                 {
-                    var argumentIndex = current - 0xDFD8;
-                    result.Add(Token.GetSingleArgument(argumentIndex));
+                    result.Add(Token.GetSingleArgument(current));
                 }
                 // Get variable
-                else if ("\uDD52\uDD53\uDD54\uDD55\uDD56\uDD57\uDD58\uDD59\uDD5A\uDD5B".Contains(current))
+                else if (TokenImplementations.GetVariable.CHAR_LIST.Contains(current))
                 {
                     result.Add(Token.GetGetVariable(current));
                 }
                 // Set variable
-                else if ("\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41".Contains(current))
+                else if (TokenImplementations.SetVariable.CHAR_LIST.Contains(current))
                 {
                     result.Add(Token.GetSetVariable(current));
                 }
-                // Single character token
+                // Other single character token
                 else
                 {
                     result.Add(Token.Get(current));
@@ -160,6 +192,26 @@ namespace Pangolin.Core
             return result;
         }
 
-        private static string 
+        public static string DecodeCompressedString(string compressedString, Action<string> log)
+        {
+            throw new NotImplementedException();
+
+            //var sb = new StringBuilder();
+            
+            //var x = new System.Globalization.StringInfo(compressedString)
+
+            //while (index < compressedString.Length)
+            //{
+            //    // Convert character to code point
+            //    var codePoint = CodePage.GetIndexFromCharacter()
+
+            //    index++;
+            //}
+        }
+
+        public static decimal DecodeCompressedNumeric(string compressedNumeric, Action<string> log)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

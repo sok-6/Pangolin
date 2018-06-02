@@ -13,23 +13,27 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
-
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+            
             // Assert
             result.Count.ShouldBe(0);
         }
 
         [Fact]
-        public void Tokeniser_should_throw_excpetion_when_invalid_character_in_code()
+        public void Tokeniser_should_return_ignore_characters_not_on_code_page()
         {
             // Arrange
             var code = "\u263A"; // Smiley, definitly not going to be used!
+            var mockLog = new Mock<System.Action<string>>();
 
-            // Act/Assert
-            var exception = Should.Throw(() => { Tokeniser.Tokenise(code); }, typeof(PangolinInvalidTokenException));
-            exception.Message.ShouldBe($"Unrecognised character in code: {code}");
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            //Assert
+            result.Count.ShouldBe(0);
         }
 
         [Fact]
@@ -37,9 +41,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\\a";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -53,9 +58,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\\";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act/Assert
-            var exception = Should.Throw(() => { Tokeniser.Tokenise(code); }, typeof(PangolinInvalidTokenException));
+            var exception = Should.Throw(() => { Tokeniser.Tokenise(code, mockLog.Object); }, typeof(PangolinInvalidTokenException));
             exception.Message.ShouldBe("\\ token encountered at end of string");
         }
 
@@ -64,9 +70,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "'abc'";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -80,9 +87,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\"abc\"";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -96,9 +104,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "'abc";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -112,9 +121,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "'ab\\'c'";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -128,9 +138,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "'ab\"c'";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -144,9 +155,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\"ab'c\"";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -160,9 +172,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "0";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -176,9 +189,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "00";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(2);
@@ -195,9 +209,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(10);
@@ -238,9 +253,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "123";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -254,9 +270,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "120";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -270,9 +287,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "0123";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(2);
@@ -289,9 +307,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "1.5";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -305,9 +324,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = ".5";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -321,9 +341,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "10\u23E83";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -337,9 +358,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "1.5\u23E83";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -353,9 +375,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = ".5\u23E83";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -369,9 +392,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "10\u23E8-3";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -385,9 +409,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "1.5\u23E8-3";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -401,9 +426,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = ".5\u23E8-3";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -417,9 +443,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u23E83";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -433,9 +460,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "5\u23E8";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -449,9 +477,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u23E8";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -465,9 +494,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u00A1";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -478,10 +508,11 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_untruthify()
         {
             // Arrange
-            var code = "\u00AC";
+            var code = "!";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -492,10 +523,11 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_single_arguments()
         {
             // Arrange
-            var code = "\uDFD8\uDFD9\uDFDA";
+            var code = "\u24EA\u2460\u2461";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var results = Tokeniser.Tokenise(code);
+            var results = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             var token1 = results[0].ShouldBeOfType<TokenImplementations.SingleArgument>();
@@ -512,9 +544,10 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_argument_array()
         {
             // Arrange
-            var code = "\u00AE";
+            var code = "\u00A5";
+            var mockLog = new Mock<System.Action<string>>();
             // Act
-            var results = Tokeniser.Tokenise(code);
+            var results = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             results.Count.ShouldBe(1);
@@ -526,9 +559,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "+";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -540,9 +574,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "1 2";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(2);
@@ -559,9 +594,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u2192";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -573,9 +609,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u2190";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -587,9 +624,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u0411";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -601,9 +639,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u042A";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -614,10 +653,11 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_GetVariable()
         {
             // Arrange
-            var code = "\uDD52\uDD53\uDD54\uDD55\uDD56\uDD57\uDD58\uDD59\uDD5A\uDD5B";
+            var code = "\u2825\u2845\u28A1\u2885\u2861\u28E1\u28C5\u28A5\u2865\u28E5";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(10);
@@ -638,10 +678,11 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_SetVariable()
         {
             // Arrange
-            var code = "\uDD38\uDD39\u2102\uDD3B\uDD3C\uDD3D\uDD3E\u210D\uDD40\uDD41";
+            var code = "\u2849\u2843\u2858\u2851\u284A\u285A\u2853\u2859\u284B\u285B";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(10);
@@ -663,9 +704,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "*";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -677,9 +719,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "=";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -691,9 +734,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "\u2260";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -705,9 +749,10 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "W";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
@@ -719,13 +764,44 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = "w";
+            var mockLog = new Mock<System.Action<string>>();
 
             // Act
-            var result = Tokeniser.Tokenise(code);
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
 
             // Assert
             result.Count.ShouldBe(1);
             result[0].ShouldBeOfType<TokenImplementations.WhereValue>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Select()
+        {
+            // Arrange
+            var code = "S";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.Select>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectValue()
+        {
+            // Arrange
+            var code = "s";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.SelectValue>();
         }
     }
 }

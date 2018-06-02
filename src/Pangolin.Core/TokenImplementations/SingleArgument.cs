@@ -9,13 +9,16 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class SingleArgument : Token
     {
+        public const string CHAR_LIST = "\u24EA\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468";
+
         public override int Arity => 0;
 
         public int ArgumentIndex { get; private set; }
 
-        public SingleArgument(int index)
+        public SingleArgument(char tokenCharacter)
         {
-            ArgumentIndex = index; 
+            ArgumentIndex = CHAR_LIST.IndexOf(tokenCharacter);
+            if (ArgumentIndex < 0) throw new Pangolin.Common.PangolinException($"Unexpected token character {tokenCharacter} passed to SingleArgument");
         }
 
         public override DataValue Evaluate(ProgramState programState)
@@ -23,6 +26,6 @@ namespace Pangolin.Core.TokenImplementations
             return ArgumentIndex < programState.ArgumentList.Count ? programState.ArgumentList[ArgumentIndex] : NumericValue.Zero;
         }
 
-        public override string ToString() => ((char)('\uDFD8' + ArgumentIndex)).ToString();
+        public override string ToString() => CHAR_LIST[ArgumentIndex].ToString();
     }
 }

@@ -21,6 +21,6 @@ namespace Pangolin.Core.TokenImplementations
             return new ArrayValue(tokenQueue.ArgumentList);
         }
 
-        public override string ToString() => "\u00AE";
+        public override string ToString() => "\u00A5";
     }
 }

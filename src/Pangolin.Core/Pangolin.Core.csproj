@@ -5,10 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Pangolin.Common\Pangolin.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="codePage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="codepage.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="dictionary.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

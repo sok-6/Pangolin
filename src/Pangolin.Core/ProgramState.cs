@@ -45,12 +45,7 @@ namespace Pangolin.Core
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
         }
-
-        //public void EnqueueToken(Token item)
-        //{
-        //    TokenList.Add(item);
-        //}
-
+        
         public virtual DataValue DequeueAndEvaluate()
         {
             // Check if run out of tokens

@@ -120,7 +120,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockState = new Mock<ProgramState>();
             mockState.SetupGet(s => s.ArgumentList).Returns(new DataValue[0]);
-            var token = new SingleArgument(1);
+            var token = new SingleArgument(SingleArgument.CHAR_LIST[0]);
 
             // Act
             var result = token.Evaluate(mockState.Object);
@@ -148,9 +148,9 @@ namespace Pangolin.Core.Test
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState.SetupGet(s => s.ArgumentList).Returns(arguments);
 
-            var token1 = new SingleArgument(0);
-            var token2 = new SingleArgument(1);
-            var token3 = new SingleArgument(2);
+            var token1 = new SingleArgument(SingleArgument.CHAR_LIST[0]);
+            var token2 = new SingleArgument(SingleArgument.CHAR_LIST[1]);
+            var token3 = new SingleArgument(SingleArgument.CHAR_LIST[2]);
 
             // Act
             var result1 = token1.Evaluate(mockProgramState.Object);
@@ -713,8 +713,8 @@ namespace Pangolin.Core.Test
             mockProgramState.Setup(s => s.GetVariable(0)).Returns(mockValue0.Object);
             mockProgramState.Setup(s => s.GetVariable(1)).Returns(mockValue1.Object);
 
-            var token0 = new TokenImplementations.GetVariable('\uDD52');
-            var token1 = new TokenImplementations.GetVariable('\uDD53');
+            var token0 = new TokenImplementations.GetVariable(GetVariable.CHAR_LIST[0]);
+            var token1 = new TokenImplementations.GetVariable(GetVariable.CHAR_LIST[1]);
 
             // Act
             var result0 = token0.Evaluate(mockProgramState.Object);
@@ -733,7 +733,7 @@ namespace Pangolin.Core.Test
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState.Setup(s => s.DequeueAndEvaluate()).Returns(mockDataValue.Object);
 
-            var token = new TokenImplementations.SetVariable('\uDD38');
+            var token = new TokenImplementations.SetVariable(SetVariable.CHAR_LIST[0]);
 
             // Act
             var result = token.Evaluate(mockProgramState.Object);

@@ -15,7 +15,7 @@ namespace Pangolin.Core
         private const string REGEX_QUOTED_STRING = @"^((""(?<contents>.*?)"")|('(?<contents>.*?)'))(?=( |]|$))";
         private const string REGEX_UNQUOTED_STRING = @"^\S*";
 
-        public static IReadOnlyList<DataValue> ParseArguments(string arguments, bool argumentParseLogging)
+        public static IReadOnlyList<DataValue> ParseArguments(string arguments, Action<string> log)
         {
             var valueListStack = new Stack<List<DataValue>>();
             valueListStack.Push(new List<DataValue>());
@@ -24,11 +24,14 @@ namespace Pangolin.Core
 
             while (arguments.Length > 0)
             {
+                log($"Remaining argument string = {arguments}");
+
                 // New array
                 if (arguments[0] == '[')
                 {
                     valueListStack.Push(new List<DataValue>());
                     arguments = arguments.Substring(1).Trim();
+                    log($"Opening new array, array depth = {valueListStack.Count - 1}");
                 }
                 // Close previous array
                 else if (arguments[0] == ']')
@@ -43,11 +46,14 @@ namespace Pangolin.Core
                     var x = new ArrayValue(a);
                     valueListStack.Peek().Add(x);
                     arguments = arguments.Substring(1).Trim();
+
+                    log($"Closed array, array depth = {valueListStack.Count - 1}");
                 }
                 // String surrounded by quotes
                 else if (Regex.IsMatch(arguments, REGEX_QUOTED_STRING))
                 {
                     var match = Regex.Match(arguments, REGEX_QUOTED_STRING);
+                    log($"Quoted string, match = {match.Value}, contents = {match.Groups["contents"].Value}");
 
                     // Add contents to current list
                     valueListStack.Peek().Add(new StringValue(match.Groups["contents"].Value));
@@ -61,7 +67,9 @@ namespace Pangolin.Core
                     var match = Regex.Match(arguments, REGEX_NUMERIC);
 
                     // Add contents to current list
-                    valueListStack.Peek().Add(new NumericValue(decimal.Parse(match.Value, System.Globalization.NumberStyles.Float)));
+                    decimal parsedValue = decimal.Parse(match.Value, System.Globalization.NumberStyles.Float);
+                    log($"Numeric, match = {match.Value}, value = {parsedValue}");
+                    valueListStack.Peek().Add(new NumericValue(parsedValue));
 
                     // Remove matched string from argument string
                     arguments = arguments.Substring(match.Length).Trim();
@@ -70,6 +78,7 @@ namespace Pangolin.Core
                 else
                 {
                     var match = Regex.Match(arguments, REGEX_UNQUOTED_STRING);
+                    log($"Unquoted string, match = {match.Value}, contents = {match.Groups["contents"].Value}");
 
                     // Add contents to current list
                     valueListStack.Peek().Add(new StringValue(match.Value));
@@ -85,7 +94,11 @@ namespace Pangolin.Core
                 throw new PangolinInvalidArgumentStringException("Unmatched [ found - no matching ] before end of input");
             }
 
-            return valueListStack.Pop();
+            var result = valueListStack.Pop();
+
+            log($"Parse complete, result: {(result.Count == 0 ? "<none>" : "\n" + String.Join("\n", result.Select((r,i) => String.Format("\t{0}: {1}", i, r.ToString()))))}");
+
+            return result;
         }
     }
 }

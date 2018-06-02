@@ -18,7 +18,7 @@ namespace Pangolin.Core.Test
             var argumentString = "";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(0);
@@ -31,7 +31,7 @@ namespace Pangolin.Core.Test
             var argumentString = " \t";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(0);
@@ -58,7 +58,7 @@ namespace Pangolin.Core.Test
             };
 
             // Act
-            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, false) });
+            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, (s) => { }) });
 
             // Assert
             foreach (var r in results)
@@ -80,7 +80,7 @@ namespace Pangolin.Core.Test
             };
 
             // Act
-            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, false) });
+            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, (s) => { }) });
 
             // Assert
             foreach (var r in results)
@@ -110,7 +110,7 @@ namespace Pangolin.Core.Test
             };
 
             // Act
-            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, false) });
+            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, (s) => { }) });
 
             // Assert
             foreach (var r in results)
@@ -130,7 +130,7 @@ namespace Pangolin.Core.Test
             };
 
             // Act
-            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, false) });
+            var results = argumentStrings.Select(a => new { Code = a.Key, Expected = a.Value, ParsedArguments = ArgumentParser.ParseArguments(a.Key, (s) => { }) });
 
             // Assert
             foreach (var r in results)
@@ -151,7 +151,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[]";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(1);
@@ -166,7 +166,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[ \t]";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(1);
@@ -182,8 +182,8 @@ namespace Pangolin.Core.Test
             var argumentString1 = "['abc']";
 
             // Act
-            var result0 = ArgumentParser.ParseArguments(argumentString0, false);
-            var result1 = ArgumentParser.ParseArguments(argumentString1, false);
+            var result0 = ArgumentParser.ParseArguments(argumentString0, (s) => { });
+            var result1 = ArgumentParser.ParseArguments(argumentString1, (s) => { });
 
             // Assert
             result0.Count.ShouldBe(1);
@@ -205,7 +205,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[123 'abc' 456]";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(1);
@@ -224,7 +224,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[] [\"abc\"] [123 456]";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(3);
@@ -246,7 +246,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[1 [[2  [3]] 4] 5]";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(1);
@@ -276,7 +276,7 @@ namespace Pangolin.Core.Test
             var argumentString = "ab se 2[ a'a    \t2ee";
 
             // Act
-            var result = ArgumentParser.ParseArguments(argumentString, false);
+            var result = ArgumentParser.ParseArguments(argumentString, (s) => { });
 
             // Assert
             result.Count.ShouldBe(5);
@@ -294,7 +294,7 @@ namespace Pangolin.Core.Test
             var argumentString = "[";
 
             // Act / Assert
-            var exception = Should.Throw(() => ArgumentParser.ParseArguments(argumentString, false), typeof(Pangolin.Common.PangolinInvalidArgumentStringException));
+            var exception = Should.Throw(() => ArgumentParser.ParseArguments(argumentString, (s) => { }), typeof(Pangolin.Common.PangolinInvalidArgumentStringException));
             exception.Message.ShouldBe("Unmatched [ found - no matching ] before end of input");
         }
 
@@ -305,7 +305,7 @@ namespace Pangolin.Core.Test
             var argumentString = "]";
 
             // Act / Assert
-            var exception = Should.Throw(() => ArgumentParser.ParseArguments(argumentString, false), typeof(Pangolin.Common.PangolinInvalidArgumentStringException));
+            var exception = Should.Throw(() => ArgumentParser.ParseArguments(argumentString, (s) => { }), typeof(Pangolin.Common.PangolinInvalidArgumentStringException));
             exception.Message.ShouldBe("Found ] without matching [");
         }
     }
