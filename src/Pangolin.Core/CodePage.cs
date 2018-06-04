@@ -13,6 +13,7 @@ namespace Pangolin.Core
 
         public static IReadOnlyList<CodePoint> CodePoints { get; private set; } = null;
         private static IReadOnlyDictionary<char, int> _codePointIndexByToken = null;
+        private static IReadOnlyDictionary<string, int> _codePointIndexByCombination = null;
 
         public static bool CharacterExistsInCodePage(char c)
         {
@@ -29,7 +30,6 @@ namespace Pangolin.Core
             {
                 return index;
             }
-
             else
             {
                 throw new PangolinInvalidTokenException($"Unrecognised token {c}");
@@ -46,6 +46,20 @@ namespace Pangolin.Core
             }
 
             return CodePoints[i].HexValue;
+        }
+
+        public static char GetCharacterFromCombination(string s)
+        {
+            CreateCodePoints();
+
+            if (_codePointIndexByCombination.TryGetValue(s, out var index))
+            {
+                return CodePoints[index].HexValue;
+            }
+            else
+            {
+                throw new PangolinInvalidTokenException($"Unrecognised combination {s}");
+            }
         }
 
         private static void CreateCodePoints()
@@ -96,6 +110,9 @@ namespace Pangolin.Core
 
             CodePoints = codePoints;
             _codePointIndexByToken = codePointIndexByToken;
+            _codePointIndexByCombination = CodePoints
+                .Where(c => c.Combination != "")
+                .ToDictionary(c => c.Combination, c => c.Id.Value);
         }
 
         public class CodePoint

@@ -194,19 +194,62 @@ namespace Pangolin.Core
 
         public static string DecodeCompressedString(string compressedString, Action<string> log)
         {
-            throw new NotImplementedException();
+            const int DICTIONARY_ISDICTIONARY_MASK = 0x80;
+            const int DICTIONARY_CASE_MASK = 0x60;
+            const int DICTIONARY_CASE_LOWER = 0x00;
+            const int DICTIONARY_CASE_UPPER = 0x20;
+            const int DICTIONARY_CASE_TITLE = 0x40;
+            const int DICTIONARY_SPACE_MASK = 0x10;
+            const int DICTIONARY_NUMBER_BITS = 0x0F;
 
-            //var sb = new StringBuilder();
-            
-            //var x = new System.Globalization.StringInfo(compressedString)
+            var sb = new StringBuilder();
 
-            //while (index < compressedString.Length)
-            //{
-            //    // Convert character to code point
-            //    var codePoint = CodePage.GetIndexFromCharacter()
+            var codePointQueue = new Queue<int>(compressedString.Select(c => CodePage.GetIndexFromCharacter(c)));
 
-            //    index++;
-            //}
+            while (codePointQueue.Count > 0)
+            {
+                var current = codePointQueue.Dequeue();
+
+                // if < 128, get code page char
+                if ((current & DICTIONARY_ISDICTIONARY_MASK) == 0)
+                {
+                    sb.Append(CodePage.GetCharacterFromIndex(current));
+                }
+                else
+                {
+                    // Try to dequeue next char, error if none left
+                    if (!codePointQueue.TryDequeue(out int next))
+                    {
+                        throw new PangolinException($"In compressed string, dictionary pair missing second element at end of string");
+                    }
+
+                    // Get case and space info
+                    var caseInfo = (current & DICTIONARY_CASE_MASK);
+                    var trailingSpace = (current & DICTIONARY_SPACE_MASK) != 0;
+
+                    // Get dictionary entry
+                    var dictionaryIndex = ((current & DICTIONARY_NUMBER_BITS) << 8) + next;
+                    var dictionaryEntry = Dictionary.GetDictionaryEntryByIndex(dictionaryIndex);
+
+                    // Format case
+                    if (caseInfo == DICTIONARY_CASE_LOWER) dictionaryEntry = dictionaryEntry.ToLower();
+                    else if (caseInfo == DICTIONARY_CASE_UPPER) dictionaryEntry = dictionaryEntry.ToUpper();
+                    else if (caseInfo == DICTIONARY_CASE_TITLE)
+                    {
+                        dictionaryEntry = dictionaryEntry.Substring(0, 1).ToUpper() + dictionaryEntry.Substring(1).ToLower();
+                    }
+
+                    // Append space if required
+                    if (trailingSpace)
+                    {
+                        dictionaryEntry = dictionaryEntry + " ";
+                    }
+
+                    sb.Append(dictionaryEntry);
+                }
+            }
+
+            return sb.ToString();
         }
 
         public static decimal DecodeCompressedNumeric(string compressedNumeric, Action<string> log)

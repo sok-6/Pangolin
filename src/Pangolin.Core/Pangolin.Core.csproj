@@ -16,9 +16,6 @@
     <None Update="codePage.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="codepage.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="dictionary.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
