@@ -110,6 +110,7 @@ namespace Pangolin.Core
                             else if ('\u00AB' == code[index])
                             {
                                 isString = false;
+                                break;
                             }
                             else
                             {
@@ -126,7 +127,7 @@ namespace Pangolin.Core
                         }
                         else
                         {
-                            result.Add(Token.GetNumericLiteral(DecodeCompressedNumeric(sb.ToString(), log)));
+                            result.Add(Token.GetNumericLiteral(DecodeCompressedNumeric(sb.ToString(), true, log)));
                         }
                     }
                 }
@@ -210,18 +211,24 @@ namespace Pangolin.Core
             {
                 var current = codePointQueue.Dequeue();
 
+                log($"Processing {current}");
+
                 // if < 128, get code page char
                 if ((current & DICTIONARY_ISDICTIONARY_MASK) == 0)
                 {
+                    log($"Plain character, appending");
                     sb.Append(CodePage.GetCharacterFromIndex(current));
                 }
                 else
                 {
+                    log($"Dictionary entry");
                     // Try to dequeue next char, error if none left
                     if (!codePointQueue.TryDequeue(out int next))
                     {
                         throw new PangolinException($"In compressed string, dictionary pair missing second element at end of string");
                     }
+
+                    log($"Pair is {current}, {next}");
 
                     // Get case and space info
                     var caseInfo = (current & DICTIONARY_CASE_MASK);
@@ -230,18 +237,28 @@ namespace Pangolin.Core
                     // Get dictionary entry
                     var dictionaryIndex = ((current & DICTIONARY_NUMBER_BITS) << 8) + next;
                     var dictionaryEntry = Dictionary.GetDictionaryEntryByIndex(dictionaryIndex);
+                    log($"Index is {dictionaryIndex}, entry is {dictionaryEntry}");
 
                     // Format case
-                    if (caseInfo == DICTIONARY_CASE_LOWER) dictionaryEntry = dictionaryEntry.ToLower();
-                    else if (caseInfo == DICTIONARY_CASE_UPPER) dictionaryEntry = dictionaryEntry.ToUpper();
+                    if (caseInfo == DICTIONARY_CASE_LOWER)
+                    {
+                        dictionaryEntry = dictionaryEntry.ToLower();
+                    }
+                    else if (caseInfo == DICTIONARY_CASE_UPPER)
+                    {
+                        dictionaryEntry = dictionaryEntry.ToUpper();
+                    }
                     else if (caseInfo == DICTIONARY_CASE_TITLE)
                     {
                         dictionaryEntry = dictionaryEntry.Substring(0, 1).ToUpper() + dictionaryEntry.Substring(1).ToLower();
                     }
 
+                    log($"Formatting applied, entry now {dictionaryEntry}");
+
                     // Append space if required
                     if (trailingSpace)
                     {
+                        log($"Appending space");
                         dictionaryEntry = dictionaryEntry + " ";
                     }
 
@@ -252,9 +269,22 @@ namespace Pangolin.Core
             return sb.ToString();
         }
 
-        public static decimal DecodeCompressedNumeric(string compressedNumeric, Action<string> log)
+        public static decimal DecodeCompressedNumeric(string compressedNumeric, bool base254, Action<string> log)
         {
-            throw new NotImplementedException();
+            var codePoints = new Queue<int>(compressedNumeric.Select(c => CodePage.GetIndexFromCharacter(c)));
+
+            log($"Code points are {String.Join(",", codePoints)}");
+
+            decimal result = 0;
+            while (codePoints.Count > 0)
+            {
+                result *= base254 ? 254 : 256;
+                result += codePoints.Dequeue();
+            }
+
+            log($"Numeric resoved as {result}");
+
+            return result;
         }
     }
 }

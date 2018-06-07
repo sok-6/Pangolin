@@ -803,6 +803,81 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
             result[0].ShouldBeOfType<TokenImplementations.SelectValue>();
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_LogicAnd()
+        {
+            // Arrange
+            var code = "&";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.LogicAnd>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_LogicOr()
+        {
+            // Arrange
+            var code = "|";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.LogicOr>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_LogicXor()
+        {
+            // Arrange
+            var code = "X";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.LogicXor>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_LogicXnor()
+        {
+            // Arrange
+            var code = "~";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.LogicXnor>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Length()
+        {
+            // Arrange
+            var code = "L";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.Length>();
+        }
     }
 }
 

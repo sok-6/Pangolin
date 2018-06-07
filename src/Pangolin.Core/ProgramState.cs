@@ -93,5 +93,10 @@ namespace Pangolin.Core
         {
             CurrentTokenIndex = newIndex;
         }
+
+        public virtual void StepOverNextTokenBlock()
+        {
+            SetCurrentTokenIndex(FindEndOfBlock(CurrentTokenIndex));
+        }
     }
 }

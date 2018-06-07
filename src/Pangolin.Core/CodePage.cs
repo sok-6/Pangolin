@@ -11,10 +11,10 @@ namespace Pangolin.Core
     {
         private const string CODE_PAGE_SOURCE_DEFAULT = "codepage.json";
 
-        public static IReadOnlyList<CodePoint> CodePoints { get; private set; } = null;
+        private static IReadOnlyList<CodePoint> _codePoints = null;
         private static IReadOnlyDictionary<char, int> _codePointIndexByToken = null;
         private static IReadOnlyDictionary<string, int> _codePointIndexByCombination = null;
-
+        
         public static bool CharacterExistsInCodePage(char c)
         {
             CreateCodePoints();
@@ -38,14 +38,7 @@ namespace Pangolin.Core
 
         public static char GetCharacterFromIndex(int i)
         {
-            CreateCodePoints();
-
-            if (i >= CodePoints.Count)
-            {
-                throw new PangolinException($"Invalid code point index {i}");
-            }
-
-            return CodePoints[i].HexValue;
+            return GetCodePointFromIndex(i).HexValue;
         }
 
         public static char GetCharacterFromCombination(string s)
@@ -54,7 +47,7 @@ namespace Pangolin.Core
 
             if (_codePointIndexByCombination.TryGetValue(s, out var index))
             {
-                return CodePoints[index].HexValue;
+                return _codePoints[index].HexValue;
             }
             else
             {
@@ -62,9 +55,21 @@ namespace Pangolin.Core
             }
         }
 
+        public static CodePoint GetCodePointFromIndex(int index)
+        {
+            CreateCodePoints();
+
+            if (index >= _codePoints.Count)
+            {
+                throw new PangolinException($"Invalid code point index {index}");
+            }
+
+            return _codePoints[index];
+        }
+
         private static void CreateCodePoints()
         {
-            if (CodePoints == null)
+            if (_codePoints == null)
             {
                 var codePointsJson = System.IO.File.ReadAllText(CODE_PAGE_SOURCE_DEFAULT);
                 var deserialised = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(codePointsJson, new { characters = new CodePoint[0] });
@@ -108,11 +113,23 @@ namespace Pangolin.Core
                 }
             }
 
-            CodePoints = codePoints;
+            _codePoints = codePoints;
             _codePointIndexByToken = codePointIndexByToken;
-            _codePointIndexByCombination = CodePoints
+            _codePointIndexByCombination = _codePoints
                 .Where(c => c.Combination != "")
                 .ToDictionary(c => c.Combination, c => c.Id.Value);
+        }
+
+        public static CodePoint GetCodePointFromHex(string hex)
+        {
+            var result = _codePoints.FirstOrDefault(c => c.Hex == hex);
+
+            if (result == null)
+            {
+                throw new PangolinException($"Could not find code point with hex {hex}");
+            }
+
+            return result;
         }
 
         public class CodePoint
@@ -125,6 +142,8 @@ namespace Pangolin.Core
             public char HexValue { get; private set; }
             public char DisplayHexValue { get; private set; }
 
+            public string SimpleCombination { get; private set; }
+
             public CodePoint(string hex, string combination, int? id, string displayHex)
             {
                 Hex = hex;
@@ -134,6 +153,8 @@ namespace Pangolin.Core
 
                 HexValue = Convert.ToChar(Convert.ToInt32(hex, 16));
                 DisplayHexValue = displayHex == null ? HexValue : Convert.ToChar(Convert.ToInt32(displayHex, 16));
+
+                SimpleCombination = combination == "" ? HexValue.ToString() : $"`{combination}";
             }
         }
     }

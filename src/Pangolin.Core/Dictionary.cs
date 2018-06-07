@@ -25,6 +25,11 @@ namespace Pangolin.Core
             return _dictionaryEntries[index];
         }
 
+        public static string CompressString(string plainString)
+        {
+            throw new NotImplementedException();
+        }
+
         private static void CreateDictionary()
         {
             ProvideDictionary(System.IO.File.ReadAllLines(DICTIONARY_FILE_PATH));

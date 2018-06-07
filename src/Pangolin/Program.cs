@@ -8,26 +8,33 @@ namespace Pangolin
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            var (success, code) = CommandLineUtilities.ParseSimpleCode("x029", true);
+            foreach (var s in Core.Runner.GetAlternateIntegralRepresentations(20))
+            {
+                Console.WriteLine(s);
+            }
 
-            if (!success)
-            {
-                Console.WriteLine(code);
-            }
-            else
-            {
-                Core.Runner.Run(
-                    code,
-                    "",
-                    new ConsoleRunOptions
-                    {
-                        ArgumentParseLogging = false,
-                        TokenisationLogging = false,
-                        ShowExecutionPlan = true,
-                        VerboseExecutionLogging = true
-                    },
-                    new ConsoleEnvironmentHandles());
-            }
+            //var simpleCode = "`109";
+
+            //var (success, code) = CommandLineUtilities.ParseSimpleCode(simpleCode, true);
+
+            //if (!success)
+            //{
+            //    Console.WriteLine(code);
+            //}
+            //else
+            //{
+            //    Core.Runner.Run(
+            //        code,
+            //        "",
+            //        new ConsoleRunOptions
+            //        {
+            //            ArgumentParseLogging = false,
+            //            TokenisationLogging = true,
+            //            ShowExecutionPlan = true,
+            //            VerboseExecutionLogging = true
+            //        },
+            //        new ConsoleEnvironmentHandles());
+            //}
 
             Console.ReadLine();
         }

@@ -116,16 +116,16 @@
     { "hex": "28A5", "combination": "7g", "id": null, "displayHex": null },
     { "hex": "2865", "combination": "8g", "id": null, "displayHex": null },
     { "hex": "28E5", "combination": "9g", "id": null, "displayHex": null }, // Braille end
-    { "hex": "24EA", "combination": "0O", "id": null, "displayHex": null }, // Circled numerics start
-    { "hex": "2460", "combination": "1O", "id": null, "displayHex": null },
-    { "hex": "2461", "combination": "2O", "id": null, "displayHex": null },
-    { "hex": "2462", "combination": "3O", "id": null, "displayHex": null },
-    { "hex": "2463", "combination": "4O", "id": null, "displayHex": null },
-    { "hex": "2464", "combination": "5O", "id": null, "displayHex": null },
-    { "hex": "2465", "combination": "6O", "id": null, "displayHex": null },
-    { "hex": "2466", "combination": "7O", "id": null, "displayHex": null },
-    { "hex": "2467", "combination": "8O", "id": null, "displayHex": null },
-    { "hex": "2468", "combination": "9O", "id": null, "displayHex": null }, // Circled numerics end
+    { "hex": "24EA", "combination": "0O", "id": 0, "displayHex": null }, // Circled numerics start
+    { "hex": "2460", "combination": "1O", "id": 1, "displayHex": null },
+    { "hex": "2461", "combination": "2O", "id": 2, "displayHex": null },
+    { "hex": "2462", "combination": "3O", "id": 3, "displayHex": null },
+    { "hex": "2463", "combination": "4O", "id": 4, "displayHex": null },
+    { "hex": "2464", "combination": "5O", "id": 5, "displayHex": null },
+    { "hex": "2465", "combination": "6O", "id": 6, "displayHex": null },
+    { "hex": "2466", "combination": "7O", "id": 7, "displayHex": null },
+    { "hex": "2467", "combination": "8O", "id": 8, "displayHex": null },
+    { "hex": "2468", "combination": "9O", "id": 9, "displayHex": null }, // Circled numerics end
     { "hex": "25AE", "combination": "##", "id": null, "displayHex": null }, // Solid rectangle
     { "hex": "25AF", "combination": "[]", "id": null, "displayHex": null }, // Outlined rectangle
     { "hex": "2BC5", "combination": "#^", "id": null, "displayHex": null }, // Triangle up
@@ -159,7 +159,7 @@
     { "hex": "1E89", "combination": "w.", "id": null, "displayHex": null },
     { "hex": "1E92", "combination": "Z.", "id": null, "displayHex": null }, 
     { "hex": "1E93", "combination": "z.", "id": null, "displayHex": null }, // Dotted alphas end
-    { "hex": "00B6", "combination": "q|", "id": null, "displayHex": null }, // Pilcrow
+    { "hex": "00B6", "combination": "q|", "id": 11, "displayHex": null }, // Pilcrow
     { "hex": "2070", "combination": "0^", "id": null, "displayHex": null }, // Superscript numerics start
     { "hex": "00B9", "combination": "1^", "id": null, "displayHex": null },
     { "hex": "00B2", "combination": "2^", "id": null, "displayHex": null },
@@ -183,10 +183,10 @@
     { "hex": "23E8", "combination": "10", "id": null, "displayHex": null }, // Subscript numerics end
     { "hex": "00AB", "combination": "<<", "id": 254, "displayHex": null }, // Left guillemet
     { "hex": "00BB", "combination": ">>", "id": 255, "displayHex": null }, // Right guillemet
-    { "hex": "2190", "combination": "<-", "id": 0, "displayHex": null }, // Left pointing arrow
-    { "hex": "2191", "combination": "^|", "id": 1, "displayHex": null }, // Up pointing arrow
-    { "hex": "2192", "combination": "->", "id": 2, "displayHex": null }, // Right pointing arrow
-    { "hex": "2193", "combination": "v|", "id": 3, "displayHex": null }, // Down pointing arrow
+    { "hex": "2190", "combination": "<-", "id": 12, "displayHex": null }, // Left pointing arrow
+    { "hex": "2191", "combination": "^|", "id": 13, "displayHex": null }, // Up pointing arrow
+    { "hex": "2192", "combination": "->", "id": 14, "displayHex": null }, // Right pointing arrow
+    { "hex": "2193", "combination": "v|", "id": 15, "displayHex": null }, // Down pointing arrow
     { "hex": "2295", "combination": "+O", "id": null, "displayHex": null }, // Circled operators start
     { "hex": "2296", "combination": "-O", "id": null, "displayHex": null },
     { "hex": "2297", "combination": "xO", "id": null, "displayHex": null },
@@ -206,15 +206,15 @@
     { "hex": "22BD", "combination": "!v", "id": null, "displayHex": null }, // NOR
     { "hex": "2229", "combination": "c^", "id": null, "displayHex": null }, // Intersection
     { "hex": "222A", "combination": "cv", "id": null, "displayHex": null }, // Union
-    { "hex": "00C6", "combination": "AE", "id": null, "displayHex": null }, // Extended latin start
-    { "hex": "00E6", "combination": "ae", "id": null, "displayHex": null }, 
-    { "hex": "0152", "combination": "OE", "id": null, "displayHex": null },
-    { "hex": "0153", "combination": "oe", "id": null, "displayHex": null },
-    { "hex": "00D0", "combination": "-D", "id": null, "displayHex": null },
-    { "hex": "00F0", "combination": "d-", "id": null, "displayHex": null },
-    { "hex": "00D1", "combination": "N~", "id": null, "displayHex": null },
-    { "hex": "00F1", "combination": "n~", "id": null, "displayHex": null },
-    { "hex": "00DE", "combination": "|D", "id": null, "displayHex": null }, // Extended latin end
+    { "hex": "00C6", "combination": "AE", "id": 16, "displayHex": null }, // Extended latin start
+    { "hex": "00E6", "combination": "ae", "id": 17, "displayHex": null }, 
+    { "hex": "0152", "combination": "OE", "id": 18, "displayHex": null },
+    { "hex": "0153", "combination": "oe", "id": 19, "displayHex": null },
+    { "hex": "00D0", "combination": "-D", "id": 20, "displayHex": null },
+    { "hex": "00F0", "combination": "d-", "id": 21, "displayHex": null },
+    { "hex": "00D1", "combination": "N~", "id": 22, "displayHex": null },
+    { "hex": "00F1", "combination": "n~", "id": 23, "displayHex": null },
+    { "hex": "00DE", "combination": "|D", "id": 24, "displayHex": null }, // Extended latin end
     { "hex": "0393", "combination": "L^", "id": null, "displayHex": null }, // Greek start
     { "hex": "0394", "combination": "^-", "id": null, "displayHex": null },
     { "hex": "039B", "combination": "/\\", "id": null, "displayHex": null },
@@ -242,13 +242,13 @@
     { "hex": "042D", "combination": "E@", "id": null, "displayHex": null },
     { "hex": "042E", "combination": "HO", "id": null, "displayHex": null },
     { "hex": "042F", "combination": "R<", "id": null, "displayHex": null }, // Cyrillic end
-    { "hex": "00A2", "combination": "c/", "id": null, "displayHex": null }, // Cent
-    { "hex": "00A3", "combination": "L-", "id": null, "displayHex": null }, // Pound
-    { "hex": "00A5", "combination": "Y=", "id": null, "displayHex": null }, // Yen
-    { "hex": "00A1", "combination": "!@", "id": null, "displayHex": null }, // Inverted exclaimation
-    { "hex": "00BF", "combination": "?@", "id": null, "displayHex": null }, // Inverted question
-    { "hex": "2020", "combination": "|-", "id": null, "displayHex": null }, // Dagger
-    { "hex": "2021", "combination": "|=", "id": null, "displayHex": null }, // Double dagger
+    { "hex": "00A2", "combination": "c/", "id": 25, "displayHex": null }, // Cent
+    { "hex": "00A3", "combination": "L-", "id": 26, "displayHex": null }, // Pound
+    { "hex": "00A5", "combination": "Y=", "id": 27, "displayHex": null }, // Yen
+    { "hex": "00A1", "combination": "!!", "id": 28, "displayHex": null }, // Inverted exclaimation
+    { "hex": "00BF", "combination": "??", "id": 29, "displayHex": null }, // Inverted question
+    { "hex": "2020", "combination": "|-", "id": 30, "displayHex": null }, // Dagger
+    { "hex": "2021", "combination": "|=", "id": 31, "displayHex": null }, // Double dagger
     { "hex": "00AF", "combination": "_^", "id": null, "displayHex": null }, // High underscore
     { "hex": "2208", "combination": "C-", "id": null, "displayHex": null }, // Set membership
     { "hex": "2660", "combination": "sp", "id": null, "displayHex": null }, // Spades

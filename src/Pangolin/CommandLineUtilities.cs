@@ -56,12 +56,12 @@ namespace Pangolin
                             sb.Append(token);
                         }
                         // Token index - b=binary, d=decimal, h=hex
-                        else if ("bdx".Contains(current))
+                        else if ("%d#".Contains(current))
                         {
                             int index;
-                            if (current == 'b')
+                            if (current == '%')
                             {
-                                log("b - binary index");
+                                log("% - binary index");
 
                                 // 8 chars required
                                 var binaryString = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
@@ -70,7 +70,7 @@ namespace Pangolin
 
                                 if (!Regex.IsMatch(binaryString, REGEX_BINARY_STRING))
                                 {
-                                    return (false, $"Simple encoding parse failed - 8 characters following 'b' must be in [01] - ");
+                                    return (false, $"Simple encoding parse failed - 8 characters following '%' must be in [01] - ");
                                 }
 
                                 index = Convert.ToInt32(binaryString, 2);
@@ -93,7 +93,7 @@ namespace Pangolin
                             }
                             else // Must be hex
                             {
-                                log("x - hex index");
+                                log("# - hex index");
 
                                 // 2 chars required
                                 var hexString = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
@@ -102,7 +102,7 @@ namespace Pangolin
 
                                 if (!Regex.IsMatch(hexString, REGEX_HEXADECIMAL_STRING))
                                 {
-                                    return (false, $"Simple encoding parse failed - 2 characters following 'x' must be in [0-9A-Fa-f]");
+                                    return (false, $"Simple encoding parse failed - 2 characters following '#' must be in [0-9A-Fa-f]");
                                 }
 
                                 index = Convert.ToInt32(hexString, 16);
