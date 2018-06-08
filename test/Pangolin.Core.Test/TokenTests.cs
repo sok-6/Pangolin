@@ -2046,5 +2046,65 @@ namespace Pangolin.Core.Test
             result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
             result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
         }
+
+        [Fact]
+        public void Modulo_should_calculate_mod_between_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(7);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(18);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var token = new Modulo();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(4);
+        }
+
+        [Fact]
+        public void Modulo_should_error_if_non_numerics_passed()
+        {
+            // Arrange
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+
+            var mockString = new Mock<StringValue>();
+            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
+
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
+
+            var mockProgramState3 = new Mock<ProgramState>();
+            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
+
+            var mockProgramState4 = new Mock<ProgramState>();
+            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+
+            var token = new Modulo();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+        }
     }
 }
