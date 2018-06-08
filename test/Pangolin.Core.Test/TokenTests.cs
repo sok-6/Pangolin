@@ -2209,5 +2209,50 @@ namespace Pangolin.Core.Test
             arrayResult.Value.Count.ShouldBe(1);
             arrayResult.Value[0].ShouldBe(mockDataValue.Object);
         }
+
+        [Fact]
+        public void ConstantNewline_should_evaluate_to_newline_string()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantNewline();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("\n");
+        }
+
+        [Fact]
+        public void ConstantEmptyArray_should_evaluate_to_empty_array()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantEmptyArray();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ConstantEmptyString_should_evaluate_to_empty_string()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantEmptyString();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("");
+        }
     }
 }

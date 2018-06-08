@@ -923,6 +923,51 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
             result[0].ShouldBeOfType<TokenImplementations.Arrayify>();
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantNewline()
+        {
+            // Arrange
+            var code = "\u00B6";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.ConstantNewline>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantEmptyArray()
+        {
+            // Arrange
+            var code = "a";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.ConstantEmptyArray>();
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantEmptyString()
+        {
+            // Arrange
+            var code = "e";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.ConstantEmptyString>();
+        }
     }
 }
 
