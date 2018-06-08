@@ -2338,5 +2338,20 @@ namespace Pangolin.Core.Test
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
         }
+
+        [Fact]
+        public void Interpolation_should_insert_correctly_indexed_array_values()
+        {
+            // Arrange
+            
+
+            var token = new Interpolation();
+
+            // Act
+
+
+            // Assert
+            Assert.True(false);
+        }
     }
 }

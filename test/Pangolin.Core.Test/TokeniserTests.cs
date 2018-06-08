@@ -751,6 +751,12 @@ namespace Pangolin.Core.Test
         {
             ']'.ShouldBeParsedAs(typeof(TokenImplementations.ArrayPair));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Interpolation()
+        {
+            '$'.ShouldBeParsedAs(typeof(TokenImplementations.Interpolation));
+        }
     }
 }
 
