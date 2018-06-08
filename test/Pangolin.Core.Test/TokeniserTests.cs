@@ -3,6 +3,7 @@ using Shouldly;
 using Pangolin.Core.DataValueImplementations;
 using Pangolin.Common;
 using Moq;
+using System;
 
 namespace Pangolin.Core.Test
 {
@@ -492,31 +493,13 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_truthify()
         {
-            // Arrange
-            var code = "\u00A1";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.Truthify));
+            '\u00A1'.ShouldBeParsedAs(typeof(TokenImplementations.Truthify));
         }
 
         [Fact]
         public void Tokeniser_should_parse_untruthify()
         {
-            // Arrange
-            var code = "!";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.UnTruthify));
+            '!'.ShouldBeParsedAs(typeof(TokenImplementations.UnTruthify));
         }
 
         [Fact]
@@ -543,30 +526,13 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_argument_array()
         {
-            // Arrange
-            var code = "\u00A5";
-            var mockLog = new Mock<System.Action<string>>();
-            // Act
-            var results = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            results.Count.ShouldBe(1);
-            results[0].ShouldBeOfType<TokenImplementations.ArgumentArray>();
+            '\u00A5'.ShouldBeParsedAs(typeof(TokenImplementations.ArgumentArray));
         }
 
         [Fact]
         public void Tokeniser_should_parse_add()
         {
-            // Arrange
-            var code = "+";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.Add));
+            '+'.ShouldBeParsedAs(typeof(TokenImplementations.Add));
         }
 
         [Fact]
@@ -592,61 +558,25 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_range()
         {
-            // Arrange
-            var code = "\u2192";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.Range));
+            '\u2192'.ShouldBeParsedAs(typeof(TokenImplementations.Range));
         }
 
         [Fact]
         public void Tokeniser_should_parse_ReverseRange()
         {
-            // Arrange
-            var code = "\u2190";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.ReverseRange));
+            '\u2190'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange));
         }
 
         [Fact]
         public void Tokeniser_should_parse_range1()
         {
-            // Arrange
-            var code = "\u0411";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.Range1));
+            '\u0411'.ShouldBeParsedAs(typeof(TokenImplementations.Range1));
         }
 
         [Fact]
         public void Tokeniser_should_parse_ReverseRange1()
         {
-            // Arrange
-            var code = "\u042A";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType(typeof(TokenImplementations.ReverseRange1));
+            '\u042A'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange1));
         }
 
         [Fact]
@@ -702,16 +632,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_multiply()
         {
-            // Arrange
-            var code = "*";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Multiply>();
+            '*'.ShouldBeParsedAs(typeof(TokenImplementations.Multiply));
         }
 
         [Fact]
@@ -732,241 +653,103 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_inequality()
         {
-            // Arrange
-            var code = "\u2260";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Inequality>();
+            '\u2260'.ShouldBeParsedAs(typeof(TokenImplementations.Inequality));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Where()
         {
-            // Arrange
-            var code = "W";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Where>();
+            'W'.ShouldBeParsedAs(typeof(TokenImplementations.Where));
         }
 
         [Fact]
         public void Tokeniser_should_parse_WhereValue()
         {
-            // Arrange
-            var code = "w";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.WhereValue>();
+            'w'.ShouldBeParsedAs(typeof(TokenImplementations.WhereValue));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Select()
         {
-            // Arrange
-            var code = "S";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Select>();
+            'S'.ShouldBeParsedAs(typeof(TokenImplementations.Select));
         }
 
         [Fact]
         public void Tokeniser_should_parse_SelectValue()
         {
-            // Arrange
-            var code = "s";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.SelectValue>();
+            's'.ShouldBeParsedAs(typeof(TokenImplementations.SelectValue));
         }
 
         [Fact]
         public void Tokeniser_should_parse_LogicAnd()
         {
-            // Arrange
-            var code = "&";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.LogicAnd>();
+            '&'.ShouldBeParsedAs(typeof(TokenImplementations.LogicAnd));
         }
 
         [Fact]
         public void Tokeniser_should_parse_LogicOr()
         {
-            // Arrange
-            var code = "|";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.LogicOr>();
+            '|'.ShouldBeParsedAs(typeof(TokenImplementations.LogicOr));
         }
 
         [Fact]
         public void Tokeniser_should_parse_LogicXor()
         {
-            // Arrange
-            var code = "X";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.LogicXor>();
+            'X'.ShouldBeParsedAs(typeof(TokenImplementations.LogicXor));
         }
 
         [Fact]
         public void Tokeniser_should_parse_LogicXnor()
         {
-            // Arrange
-            var code = "~";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.LogicXnor>();
+            '~'.ShouldBeParsedAs(typeof(TokenImplementations.LogicXnor));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Length()
         {
-            // Arrange
-            var code = "L";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Length>();
+            'L'.ShouldBeParsedAs(typeof(TokenImplementations.Length));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Modulo()
         {
-            // Arrange
-            var code = "%";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Modulo>();
+            '%'.ShouldBeParsedAs(typeof(TokenImplementations.Modulo));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Division()
         {
-            // Arrange
-            var code = "/";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Division>();
+            '/'.ShouldBeParsedAs(typeof(TokenImplementations.Division));
         }
 
         [Fact]
         public void Tokeniser_should_parse_Arrayify()
         {
-            // Arrange
-            var code = "A";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Arrayify>();
+            'A'.ShouldBeParsedAs(typeof(TokenImplementations.Arrayify));
         }
 
         [Fact]
         public void Tokeniser_should_parse_ConstantNewline()
         {
-            // Arrange
-            var code = "\u00B6";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.ConstantNewline>();
+            '\u00B6'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantNewline));
         }
 
         [Fact]
         public void Tokeniser_should_parse_ConstantEmptyArray()
         {
-            // Arrange
-            var code = "a";
-            var mockLog = new Mock<System.Action<string>>();
-
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.ConstantEmptyArray>();
+            'a'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyArray));
         }
 
         [Fact]
         public void Tokeniser_should_parse_ConstantEmptyString()
         {
-            // Arrange
-            var code = "e";
-            var mockLog = new Mock<System.Action<string>>();
+            'e'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyString));
+        }
 
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
-
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.ConstantEmptyString>();
+        [Fact]
+        public void Tokeniser_should_parse_ArrayPair()
+        {
+            ']'.ShouldBeParsedAs(typeof(TokenImplementations.ArrayPair));
         }
     }
 }

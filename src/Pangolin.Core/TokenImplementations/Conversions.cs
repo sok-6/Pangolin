@@ -17,4 +17,20 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "A";
     }
+
+    public class ArrayPair : Token
+    {
+        public override int Arity => 2;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            // Get 2 arguments, return them wrapped in an array
+            var arg1 = programState.DequeueAndEvaluate();
+            var arg2 = programState.DequeueAndEvaluate();
+
+            return new ArrayValue(arg1, arg2);
+        }
+
+        public override string ToString() => "]";
+    }
 }

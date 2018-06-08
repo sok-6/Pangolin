@@ -8,7 +8,7 @@ namespace Pangolin
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            foreach (var s in Core.Runner.GetAlternateIntegralRepresentations(20))
+            foreach (var s in Core.Runner.GetAlternateIntegralRepresentations(540))
             {
                 Console.WriteLine(s);
             }

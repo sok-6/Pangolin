@@ -1,4 +1,5 @@
-﻿using Pangolin.Core.DataValueImplementations;
+﻿using Moq;
+using Pangolin.Core.DataValueImplementations;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,20 @@ namespace Pangolin.Core.Test
             {
                 arrayValue.Value[i].ShouldBeOfType<StringValue>().Value.ShouldBe(comparison[i]);
             }
+        }
+
+        public static void ShouldBeParsedAs(this char token, Type tokenType)
+        {
+            // Arrange
+            var code = token.ToString();
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType(tokenType);
         }
     }
 }
