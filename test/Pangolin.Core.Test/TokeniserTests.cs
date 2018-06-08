@@ -908,6 +908,21 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
             result[0].ShouldBeOfType<TokenImplementations.Division>();
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Arrayify()
+        {
+            // Arrange
+            var code = "A";
+            var mockLog = new Mock<System.Action<string>>();
+
+            // Act
+            var result = Tokeniser.Tokenise(code, mockLog.Object);
+
+            // Assert
+            result.Count.ShouldBe(1);
+            result[0].ShouldBeOfType<TokenImplementations.Arrayify>();
+        }
     }
 }
 

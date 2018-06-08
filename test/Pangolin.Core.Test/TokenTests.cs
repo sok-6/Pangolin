@@ -2189,5 +2189,25 @@ namespace Pangolin.Core.Test
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
         }
+
+        [Fact]
+        public void Arrayify_should_wrap_any_value_in_an_array()
+        {
+            // Arrange
+            var mockDataValue = new Mock<DataValue>();
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+
+            var token = new Arrayify();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            var arrayResult = result.ShouldBeOfType<ArrayValue>();
+            arrayResult.Value.Count.ShouldBe(1);
+            arrayResult.Value[0].ShouldBe(mockDataValue.Object);
+        }
     }
 }
