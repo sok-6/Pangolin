@@ -2443,5 +2443,139 @@ namespace Pangolin.Core.Test
             numericResult.Value.ShouldBeGreaterThanOrEqualTo(0);
             numericResult.Value.ShouldBeLessThan(1);
         }
+
+        [Fact]
+        public void LessThan_should_evaluate_inequality_between_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(7);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(18);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric2.Object)
+                .Returns(mockNumeric1.Object);
+
+            var token = new LessThan();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+            result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void LessThan_should_error_if_non_numerics_passed()
+        {
+            // Arrange
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+
+            var mockString = new Mock<StringValue>();
+            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
+
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
+
+            var mockProgramState3 = new Mock<ProgramState>();
+            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
+
+            var mockProgramState4 = new Mock<ProgramState>();
+            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+
+            var token = new LessThan();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+        }
+
+        [Fact]
+        public void GreaterThan_should_evaluate_inequality_between_numerics()
+        {
+            // Arrange
+            var mockNumeric1 = new Mock<NumericValue>();
+            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric1.SetupGet(n => n.Value).Returns(7);
+
+            var mockNumeric2 = new Mock<NumericValue>();
+            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric2.SetupGet(n => n.Value).Returns(18);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric1.Object)
+                .Returns(mockNumeric2.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate())
+                .Returns(mockNumeric2.Object)
+                .Returns(mockNumeric1.Object);
+
+            var token = new GreaterThan();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+            result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void GreaterThan_should_error_if_non_numerics_passed()
+        {
+            // Arrange
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+
+            var mockString = new Mock<StringValue>();
+            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
+
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
+
+            var mockProgramState3 = new Mock<ProgramState>();
+            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
+
+            var mockProgramState4 = new Mock<ProgramState>();
+            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+
+            var token = new GreaterThan();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
+        }
     }
 }

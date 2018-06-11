@@ -763,6 +763,18 @@ namespace Pangolin.Core.Test
         {
             'r'.ShouldBeParsedAs(typeof(TokenImplementations.GetRandomDecimal));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_LessThan()
+        {
+            '<'.ShouldBeParsedAs(typeof(TokenImplementations.LessThan));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_GreaterThan()
+        {
+            '>'.ShouldBeParsedAs(typeof(TokenImplementations.GreaterThan));
+        }
     }
 }
 
