@@ -51,4 +51,16 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "R";
     }
+
+    public class GetRandomDecimal : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            return new NumericValue(RandomSource.RandomDecimal());
+        }
+
+        public override string ToString() => "r";
+    }
 }

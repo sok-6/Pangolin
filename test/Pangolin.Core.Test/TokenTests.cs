@@ -2426,5 +2426,22 @@ namespace Pangolin.Core.Test
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Interpolation not defined in case where 1st argument is not a string - arg1.Type=Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Interpolation not defined in case where 1st argument is not a string - arg1.Type=Array");
         }
+
+        [Fact]
+        public void GetRandomDecimal_should_return_numeric_less_than_1()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new GetRandomDecimal();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            var numericResult = result.ShouldBeOfType<NumericValue>();
+            numericResult.Value.ShouldBeGreaterThanOrEqualTo(0);
+            numericResult.Value.ShouldBeLessThan(1);
+        }
     }
 }

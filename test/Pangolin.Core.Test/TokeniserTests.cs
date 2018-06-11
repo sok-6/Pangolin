@@ -757,6 +757,12 @@ namespace Pangolin.Core.Test
         {
             '$'.ShouldBeParsedAs(typeof(TokenImplementations.Interpolation));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_GetRandomDecimal()
+        {
+            'r'.ShouldBeParsedAs(typeof(TokenImplementations.GetRandomDecimal));
+        }
     }
 }
 
