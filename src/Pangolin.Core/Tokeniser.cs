@@ -235,7 +235,7 @@ namespace Pangolin.Core
                     var trailingSpace = (current & DICTIONARY_SPACE_MASK) != 0;
 
                     // Get dictionary entry
-                    var dictionaryIndex = ((current & DICTIONARY_NUMBER_BITS) << 8) + next;
+                    var dictionaryIndex = ((current & DICTIONARY_NUMBER_BITS) * 254) + next;
                     var dictionaryEntry = Dictionary.GetDictionaryEntryByIndex(dictionaryIndex);
                     log($"Index is {dictionaryIndex}, entry is {dictionaryEntry}");
 
