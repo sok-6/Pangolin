@@ -1,21 +1,17 @@
 ﻿using Pangolin.Core.DataValueImplementations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class UnTruthify : Token
+    public class UnTruthify : ArityOneIterableToken
     {
-        public override int Arity => 1;
-
-        public override DataValue Evaluate(ProgramState tokenQueue)
-        {
-            // Get argument
-            var argument = tokenQueue.DequeueAndEvaluate();
-
-            return argument.IsTruthy ? DataValue.Falsey : DataValue.Truthy;
-        }
-
         public override string ToString() => "!";
+
+        protected override DataValue EvaluateInner(DataValue value)
+        {
+            return value.IsTruthy ? DataValue.Falsey : DataValue.Truthy;
+        }
     }
 }

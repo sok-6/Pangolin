@@ -7,40 +7,34 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Range : Token
+    public class Range : ArityOneIterableToken
     {
-        public override int Arity => 1;
-
-        public override DataValue Evaluate(ProgramState tokenQueue)
-        {
-            var argument = tokenQueue.DequeueAndEvaluate();
-
-            if (argument.Type == DataValueType.Numeric)
-            {
-                var a = ((NumericValue)argument).IntValue;
-
-                return new ArrayValue(
-                    Enumerable
-                        .Range(Math.Min(0, a + 1), Math.Abs(a))
-                        .Select(i => new NumericValue(i)));
-            }
-            else
-            {
-                throw GetInvalidArgumentTypeException(argument.Type);
-            }
-        }
-
         public override string ToString() => "\u2192";
+
+        protected override DataValue EvaluateInner(DataValue argument)
+        {
+            if (argument.Type == DataValueType.Numeric)
+            {
+                var a = ((NumericValue)argument).IntValue;
+
+                return new ArrayValue(
+                    Enumerable
+                        .Range(Math.Min(0, a + 1), Math.Abs(a))
+                        .Select(i => new NumericValue(i)));
+            }
+            else
+            {
+                throw GetInvalidArgumentTypeException(argument.Type);
+            }
+        }
     }
 
-    public class ReverseRange : Token
+    public class ReverseRange : ArityOneIterableToken
     {
-        public override int Arity => 1;
+        public override string ToString() => "\u2190";
 
-        public override DataValue Evaluate(ProgramState tokenQueue)
+        protected override DataValue EvaluateInner(DataValue argument)
         {
-            var argument = tokenQueue.DequeueAndEvaluate();
-
             if (argument.Type == DataValueType.Numeric)
             {
                 var a = ((NumericValue)argument).IntValue;
@@ -56,18 +50,14 @@ namespace Pangolin.Core.TokenImplementations
                 throw GetInvalidArgumentTypeException(argument.Type);
             }
         }
-
-        public override string ToString() => "\u2190";
     }
 
-    public class Range1 : Token
+    public class Range1 : ArityOneIterableToken
     {
-        public override int Arity => 1;
+        public override string ToString() => "\u0411";
 
-        public override DataValue Evaluate(ProgramState tokenQueue)
+        protected override DataValue EvaluateInner(DataValue argument)
         {
-            var argument = tokenQueue.DequeueAndEvaluate();
-
             if (argument.Type == DataValueType.Numeric)
             {
                 var a = ((NumericValue)argument).IntValue;
@@ -82,18 +72,14 @@ namespace Pangolin.Core.TokenImplementations
                 throw GetInvalidArgumentTypeException(argument.Type);
             }
         }
-
-        public override string ToString() => "\u0411";
     }
 
-    public class ReverseRange1 : Token
+    public class ReverseRange1 : ArityOneIterableToken
     {
-        public override int Arity => 1;
+        public override string ToString() => "\u042A";
 
-        public override DataValue Evaluate(ProgramState tokenQueue)
+        protected override DataValue EvaluateInner(DataValue argument)
         {
-            var argument = tokenQueue.DequeueAndEvaluate();
-
             if (argument.Type == DataValueType.Numeric)
             {
                 var a = ((NumericValue)argument).IntValue;
@@ -109,7 +95,5 @@ namespace Pangolin.Core.TokenImplementations
                 throw GetInvalidArgumentTypeException(argument.Type);
             }
         }
-
-        public override string ToString() => "\u042A";
     }
 }

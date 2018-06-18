@@ -775,6 +775,12 @@ namespace Pangolin.Core.Test
         {
             '>'.ShouldBeParsedAs(typeof(TokenImplementations.GreaterThan));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Iterate()
+        {
+            'I'.ShouldBeParsedAs(typeof(TokenImplementations.Iterate));
+        }
     }
 }
 

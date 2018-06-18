@@ -15,11 +15,11 @@ namespace Pangolin.Core
         public abstract DataValue Evaluate(ProgramState programState);
         public abstract override string ToString();
 
-        protected Exception GetInvalidArgumentTypeException(DataValueType invalidType)
+        protected Exception GetInvalidArgumentTypeException(params DataValueType[] invalidTypes)
         {
-            return new PangolinInvalidArgumentTypeException($"Invalid argument passed to {ToString()} command - {invalidType} not supported");
+            return new PangolinInvalidArgumentTypeException($"Invalid argument type{(invalidTypes.Length > 1 ? "s" : "")} passed to {ToString()} command - {String.Join(",", invalidTypes)}");
         }
-
+        
         #region Public factory methods
 
         public static Token GetStringLiteral(string literalValue) => new StringLiteral(literalValue);
@@ -65,5 +65,65 @@ namespace Pangolin.Core
         }
 
         #endregion
+    }
+
+    public abstract class ArityOneIterableToken : Token
+    {
+        public override int Arity => 1;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            // Get argument
+            var arg = programState.DequeueAndEvaluate();
+
+            if (arg.IterationRequired)
+            {
+                return new DataValueImplementations.ArrayValue(arg.IterationValues.Select(a => EvaluateInner(a)));
+            }
+            else
+            {
+                return EvaluateInner(arg);
+            }
+        }
+
+        protected abstract DataValue EvaluateInner(DataValue value);
+    }
+
+    public abstract class ArityTwoIterableToken : Token
+    {
+        public override int Arity => 2;
+
+        public override DataValue Evaluate(ProgramState tokenQueue)
+        {
+            // Get two arguments
+            var arg1 = tokenQueue.DequeueAndEvaluate();
+            var arg2 = tokenQueue.DequeueAndEvaluate();
+
+            if (arg1.IterationRequired)
+            {
+                if (arg2.IterationRequired)
+                {
+                    // Zip them
+                    return new DataValueImplementations.ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1,a2) => EvaluateInner(a1, a2)));
+                }
+                else
+                {
+                    return new DataValueImplementations.ArrayValue(arg1.IterationValues.Select(a1 => EvaluateInner(a1, arg2)));
+                }
+            }
+            else
+            {
+                if (arg2.IterationRequired)
+                {
+                    return new DataValueImplementations.ArrayValue(arg2.IterationValues.Select(a2 => EvaluateInner(arg1, a2)));
+                }
+                else
+                {
+                    return EvaluateInner(arg1, arg2);
+                }
+            }
+        }
+
+        protected abstract DataValue EvaluateInner(DataValue arg1, DataValue arg2);
     }
 }

@@ -8,15 +8,12 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class ChooseRandom : Token
+    public class ChooseRandom : ArityOneIterableToken
     {
-        public override int Arity => 1;
+        public override string ToString() => "R";
 
-        public override DataValue Evaluate(ProgramState programState)
+        protected override DataValue EvaluateInner(DataValue arg)
         {
-            // Get argument
-            var arg = programState.DequeueAndEvaluate();
-
             // Numeric, random number
             if (arg.Type == DataValueType.Numeric)
             {
@@ -48,8 +45,6 @@ namespace Pangolin.Core.TokenImplementations
                 return RandomSource.Choose(arrayArg.Value);
             }
         }
-
-        public override string ToString() => "R";
     }
 
     public class GetRandomDecimal : Token

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pangolin.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,15 @@ namespace Pangolin.Core
         {
             return new DataValueImplementations.NumericValue(this.IsTruthy ? 1 : 0);
         }
+
+        public virtual bool IterationRequired { get; protected set; } = false;
+
+        public virtual void SetIterationRequired(bool iterationRequired)
+        {
+            throw new PangolinException($"Iteration not implemented on data type {Type}");
+        }
+
+        public virtual IReadOnlyList<DataValue> IterationValues { get { throw new PangolinException($"Iteration not implemented on data type {Type}"); } }
 
         public static DataValue Truthy => new DataValueImplementations.NumericValue(1);
         public static DataValue Falsey => new DataValueImplementations.NumericValue(0);

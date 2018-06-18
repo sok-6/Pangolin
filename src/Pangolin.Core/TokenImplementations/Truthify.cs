@@ -7,18 +7,13 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Truthify : Token
+    public class Truthify : ArityOneIterableToken
     {
-        public override int Arity => 1;
-
-        public override DataValue Evaluate(ProgramState tokenQueue)
-        {
-            // Get argument
-            var argument = tokenQueue.DequeueAndEvaluate();
-
-            return argument.Truthify();
-        }
-
         public override string ToString() => "\u00A1";
+        
+        protected override DataValue EvaluateInner(DataValue value)
+        {
+            return value.Truthify();
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace Pangolin.Core.TokenImplementations
             else
             {
                 // Interpolation not defined for other data types yet
-                throw new PangolinException($"Interpolation not defined in case where 1st argument is not a string - arg1.Type={arg1.Type}");
+                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
             }
         }
 

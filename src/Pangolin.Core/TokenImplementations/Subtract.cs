@@ -2,20 +2,16 @@
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Subtract : Token
+    public class Subtract : ArityTwoIterableToken
     {
-        public override int Arity => 2;
+        public override string ToString() => "-";
 
-        public override DataValue Evaluate(ProgramState programState)
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            // Get both arguments
-            var arg1 = programState.DequeueAndEvaluate();
-            var arg2 = programState.DequeueAndEvaluate();
-
             // Only defined at present between two numerics
             if (arg1.Type != DataValueType.Numeric || arg2.Type != DataValueType.Numeric)
             {
-                throw new Common.PangolinException($"Subtract token only defined for numerics - arg1.Type={arg1.Type}, arg2.Type={arg2.Type}");
+                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
             }
 
             var numericArg1 = (NumericValue)arg1;
@@ -23,7 +19,5 @@ namespace Pangolin.Core.TokenImplementations
 
             return new NumericValue(numericArg2.Value - numericArg1.Value);
         }
-
-        public override string ToString() => "-";
     }
 }

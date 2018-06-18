@@ -13,7 +13,7 @@ namespace Pangolin.Core.DataValueImplementations
 
         public override DataValueType Type => DataValueType.Array;
 
-        public ArrayValue()
+        public ArrayValue(object select)
         {
             _inner = new List<DataValue>();
         }
@@ -29,6 +29,13 @@ namespace Pangolin.Core.DataValueImplementations
         }
 
         public override bool IsTruthy => _inner.Count > 0;
+
+        public override void SetIterationRequired(bool iterationRequired)
+        {
+            IterationRequired = iterationRequired;
+        }
+
+        public override IReadOnlyList<DataValue> IterationValues => _inner;
 
         public override string ToString()
         {

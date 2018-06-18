@@ -7,16 +7,10 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Add : Token
+    public class Add : ArityTwoIterableToken
     {
-        public override int Arity => 2;
-
-        public override DataValue Evaluate(ProgramState tokenQueue)
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            // Get two arguments
-            var arg1 = tokenQueue.DequeueAndEvaluate();
-            var arg2 = tokenQueue.DequeueAndEvaluate();
-
             if (arg1.Type == DataValueType.Array) // Array concatenate
             {
                 var newArrayContents = new List<DataValue>(((ArrayValue)arg1).Value);

@@ -191,5 +191,55 @@ cd";
             // Assert
             arrayValue.IsTruthy.ShouldBe(false);
         }
+
+        [Fact]
+        public void StringValue_should_not_have_iteration_set_as_default()
+        {
+            // Arrange
+            var s = new StringValue();
+
+            // Act
+
+            // Assert
+            s.IterationRequired.ShouldBe(false);
+        }
+
+        [Fact]
+        public void StringValue_iteration_required_should_be_mutable()
+        {
+            // Arrange
+            var s = new StringValue();
+
+            // Act
+            s.SetIterationRequired(true);
+
+            // Assert
+            s.IterationRequired.ShouldBe(true);
+        }
+
+        [Fact]
+        public void ArrayValue_should_not_have_iteration_set_as_default()
+        {
+            // Arrange
+            var a = new ArrayValue();
+
+            // Act
+
+            // Assert
+            a.IterationRequired.ShouldBe(false);
+        }
+
+        [Fact]
+        public void ArrayValue_iteration_required_should_be_mutable()
+        {
+            // Arrange
+            var a = new ArrayValue();
+
+            // Act
+            a.SetIterationRequired(true);
+
+            // Assert
+            a.IterationRequired.ShouldBe(true);
+        }
     }
 }

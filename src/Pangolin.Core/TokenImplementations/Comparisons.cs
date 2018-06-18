@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public abstract class EqualityBase : Token
+    public abstract class EqualityBase : ArityTwoIterableToken
     {
         protected static bool AreEqual(DataValue a, DataValue b)
         {
@@ -51,43 +51,30 @@ namespace Pangolin.Core.TokenImplementations
 
     public class Equality : EqualityBase
     {
-        public override int Arity => 2;
-
-        public override DataValue Evaluate(ProgramState programState)
-        {
-            var a = programState.DequeueAndEvaluate();
-            var b = programState.DequeueAndEvaluate();
-
-            return AreEqual(a, b) ? DataValue.Truthy : DataValue.Falsey;
-        }
-
         public override string ToString() => "=";
+
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        {
+            return AreEqual(arg1, arg2) ? DataValue.Truthy : DataValue.Falsey;
+        }
     }
 
     public class Inequality : EqualityBase
     {
-        public override int Arity => 2;
-
-        public override DataValue Evaluate(ProgramState programState)
-        {
-            var a = programState.DequeueAndEvaluate();
-            var b = programState.DequeueAndEvaluate();
-
-            return AreEqual(a, b) ? DataValue.Falsey : DataValue.Truthy;
-        }
-
         public override string ToString() => "\u2260";
+
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        {
+            return AreEqual(arg1, arg2) ? DataValue.Falsey : DataValue.Truthy;
+        }
     }
 
-    public class LessThan : Token
+    public class LessThan : ArityTwoIterableToken
     {
-        public override int Arity => 2;
+        public override string ToString() => "<";
 
-        public override DataValue Evaluate(ProgramState programState)
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            var arg1 = programState.DequeueAndEvaluate();
-            var arg2 = programState.DequeueAndEvaluate();
-
             // Numeric comparison
             if (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric)
             {
@@ -98,22 +85,17 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw new PangolinException($"LessThan only defined for numerics - arg1.Type={arg1.Type}, arg2.Type={arg2.Type}");
+                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
             }
         }
-
-        public override string ToString() => "<";
     }
 
-    public class GreaterThan : Token
+    public class GreaterThan : ArityTwoIterableToken
     {
-        public override int Arity => 2;
+        public override string ToString() => ">";
 
-        public override DataValue Evaluate(ProgramState programState)
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            var arg1 = programState.DequeueAndEvaluate();
-            var arg2 = programState.DequeueAndEvaluate();
-
             // Numeric comparison
             if (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric)
             {
@@ -124,10 +106,8 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw new PangolinException($"GreaterThan only defined for numerics - arg1.Type={arg1.Type}, arg2.Type={arg2.Type}");
+                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
             }
         }
-
-        public override string ToString() => ">";
     }
 }

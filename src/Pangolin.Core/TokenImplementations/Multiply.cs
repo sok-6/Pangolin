@@ -6,15 +6,12 @@ using Pangolin.Core.DataValueImplementations;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Multiply : Token
+    public class Multiply : ArityTwoIterableToken
     {
-        public override int Arity => 2;
+        public override string ToString() => "*";
 
-        public override DataValue Evaluate(ProgramState programState)
+        protected override DataValue EvaluateInner(DataValue a, DataValue b)
         {
-            var a = programState.DequeueAndEvaluate();
-            var b = programState.DequeueAndEvaluate();
-
             // Both numeric, regular multiplication
             if (a.Type == DataValueType.Numeric && b.Type == DataValueType.Numeric)
             {
@@ -31,7 +28,7 @@ namespace Pangolin.Core.TokenImplementations
                 {
                     return returnString ? (DataValue)(new StringValue("")) : (DataValue)(new ArrayValue());
                 }
-                
+
                 // Get values to repeat
                 var repeatValues = new List<object>(
                     a.Type == DataValueType.Numeric
@@ -111,7 +108,5 @@ namespace Pangolin.Core.TokenImplementations
                 return new ArrayValue(result);
             }
         }
-
-        public override string ToString() => "*";
     }
 }

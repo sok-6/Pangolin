@@ -14,6 +14,122 @@ namespace Pangolin.Core.Test
 {
     public class TokenTests
     {
+        private static class MockFactory
+        {
+            private static Lazy<Mock<NumericValue>> _mockTruthy = new Lazy<Mock<NumericValue>>(() =>
+            {
+                var mockTruthy = new Mock<NumericValue>();
+                mockTruthy.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
+                mockTruthy.SetupGet(x => x.Value).Returns(1);
+                mockTruthy.SetupGet(x => x.IntValue).Returns(1);
+                mockTruthy.SetupGet(x => x.IsIntegral).Returns(true);
+                mockTruthy.SetupGet(x => x.IterationRequired).Returns(false);
+                mockTruthy.SetupGet(x => x.IsTruthy).Returns(true);
+                mockTruthy.Setup(x => x.Truthify()).Returns(mockTruthy.Object);
+                return mockTruthy;
+            });
+
+            private static Lazy<Mock<NumericValue>> _mockFalsey = new Lazy<Mock<NumericValue>>(() =>
+            {
+                var mockFalsey = new Mock<NumericValue>();
+                mockFalsey.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
+                mockFalsey.SetupGet(x => x.Value).Returns(0);
+                mockFalsey.SetupGet(x => x.IntValue).Returns(0);
+                mockFalsey.SetupGet(x => x.IsIntegral).Returns(false);
+                mockFalsey.SetupGet(x => x.IterationRequired).Returns(false);
+                mockFalsey.SetupGet(x => x.IsTruthy).Returns(false);
+                mockFalsey.Setup(x => x.Truthify()).Returns(mockFalsey.Object);
+                return mockFalsey;
+            });
+
+            public static Mock<DataValue> MockDataValue(bool isTruthy = false)
+            {
+                var mockDataValue = new Mock<DataValue>();
+                mockDataValue.SetupGet(x => x.IsTruthy).Returns(isTruthy);
+                return mockDataValue;
+            }
+
+            public static Mock<NumericValue> MockNumericValue(decimal value)
+            {
+                var mockNumericValue = new Mock<NumericValue>();
+                mockNumericValue.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
+                mockNumericValue.SetupGet(x => x.Value).Returns(value);
+                mockNumericValue.SetupGet(x => x.IntValue).Returns((int)value);
+                mockNumericValue.SetupGet(x => x.IsIntegral).Returns((int)value == value);
+                mockNumericValue.SetupGet(x => x.IterationRequired).Returns(false);
+                mockNumericValue.SetupGet(x => x.IsTruthy).Returns(value != 0);
+                mockNumericValue.Setup(x => x.Truthify()).Returns(value != 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                return mockNumericValue;
+            }
+
+            public static Mock<StringValue> MockStringValue(string value)
+            {
+                var mockStringValue = new Mock<StringValue>();
+                mockStringValue.SetupGet(x => x.Type).Returns(DataValueType.String);
+                mockStringValue.SetupGet(x => x.Value).Returns(value);
+                mockStringValue.SetupGet(x => x.IterationRequired).Returns(false);
+                mockStringValue.SetupGet(x => x.IsTruthy).Returns(value != "");
+                mockStringValue.Setup(x => x.Truthify()).Returns(value != "" ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                return mockStringValue;
+            }
+
+            public static Mock<StringValue> MockStringValueWithIteration(string value)
+            {
+                var mockStringValue = new Mock<StringValue>();
+                mockStringValue.SetupGet(x => x.Type).Returns(DataValueType.String);
+                mockStringValue.SetupGet(x => x.Value).Returns(value);
+                mockStringValue.SetupGet(x => x.IterationRequired).Returns(true);
+                mockStringValue.SetupGet(x => x.IterationValues).Returns(value.Select(c => MockStringValue(c.ToString()).Object).ToList());
+                mockStringValue.SetupGet(x => x.IsTruthy).Returns(value != "");
+                mockStringValue.Setup(x => x.Truthify()).Returns(value != "" ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                return mockStringValue;
+            }
+
+            public static Mock<ArrayValue> MockArrayValue(params DataValue[] arrayContents)
+            {
+                var mockArrayValue = new Mock<ArrayValue>();
+                mockArrayValue.SetupGet(x => x.Type).Returns(DataValueType.Array);
+                mockArrayValue.SetupGet(x => x.Value).Returns(arrayContents);
+                mockArrayValue.SetupGet(x => x.IterationRequired).Returns(false);
+                mockArrayValue.SetupGet(x => x.IsTruthy).Returns(arrayContents.Length > 0);
+                mockArrayValue.Setup(x => x.Truthify()).Returns(arrayContents.Length > 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                return mockArrayValue;
+            }
+
+            public static Mock<ArrayValue> MockArrayValueWithIteration(params DataValue[] arrayContents)
+            {
+                var mockArrayValue = new Mock<ArrayValue>();
+                mockArrayValue.SetupGet(x => x.Type).Returns(DataValueType.Array);
+                mockArrayValue.SetupGet(x => x.Value).Returns(arrayContents);
+                mockArrayValue.SetupGet(x => x.IterationRequired).Returns(true);
+                mockArrayValue.SetupGet(x => x.IterationValues).Returns(arrayContents);
+                mockArrayValue.SetupGet(x => x.IsTruthy).Returns(arrayContents.Length > 0);
+                mockArrayValue.Setup(x => x.Truthify()).Returns(arrayContents.Length > 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                return mockArrayValue;
+            }
+
+            public static Mock<ProgramState> MockProgramState(params DataValue[] dequeueSequence)
+            {
+                var mockProgramState = new Mock<ProgramState>();
+
+                if (dequeueSequence.Length == 1)
+                {
+                    mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(dequeueSequence[0]);
+                }
+                else
+                {
+                    var returnSet = mockProgramState.SetupSequence(p => p.DequeueAndEvaluate());
+
+                    foreach (var v in dequeueSequence)
+                    {
+                        returnSet.Returns(v);
+                    }
+                }
+
+                return mockProgramState;
+            }
+        }
+
         [Fact]
         public void NumericLiteral_should_evaluate_to_NumericValue_with_correct_contents()
         {
@@ -46,36 +162,55 @@ namespace Pangolin.Core.Test
         public void Truthify_should_evaluate_truthy_value_as_truthy()
         {
             // Arrange
-            var mockValue = new Mock<DataValue>();
-            mockValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockDataValue(true).Object);
+
             var token = new Truthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(1);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
         }
 
         [Fact]
         public void Truthify_should_evaluate_falsey_value_as_falsey()
         {
             // Arrange
-            var mockValue = new Mock<DataValue>();
-            mockValue.Setup(m => m.IsTruthy).Returns(false);
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockDataValue(false).Object);
+
             var token = new Truthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(0);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Truthify_should_evaluate_over_iterable()
+        {
+            // Arrange
+            var mockTruthyValue = new Mock<DataValue>();
+            mockTruthyValue.Setup(m => m.IsTruthy).Returns(true);
+            var mockFalseyValue = new Mock<DataValue>();
+            mockFalseyValue.Setup(m => m.IsTruthy).Returns(false);
+
+            var mockIteratableArray = new Mock<ArrayValue>();
+            mockIteratableArray.SetupGet(x => x.IterationRequired).Returns(true);
+            mockIteratableArray.SetupGet(x => x.IterationValues).Returns(new DataValue[] { mockTruthyValue.Object, mockFalseyValue.Object });
+
+            var mockQueue = new Mock<ProgramState>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockIteratableArray.Object);
+
+            var token = new Truthify();
+
+            // Act
+            var result = token.Evaluate(mockQueue.Object);
+
+            // Assert
+            result.ShouldBeOfType<ArrayValue>().CompareTo(1, 0);
         }
 
         [Fact]
@@ -112,6 +247,31 @@ namespace Pangolin.Core.Test
             // Assert
             var numericResult = result.ShouldBeOfType<NumericValue>();
             numericResult.Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void Untruthify_should_evaluate_over_iterable()
+        {
+            // Arrange
+            var mockTruthyValue = new Mock<DataValue>();
+            mockTruthyValue.Setup(m => m.IsTruthy).Returns(true);
+            var mockFalseyValue = new Mock<DataValue>();
+            mockFalseyValue.Setup(m => m.IsTruthy).Returns(false);
+
+            var mockIteratableArray = new Mock<ArrayValue>();
+            mockIteratableArray.SetupGet(x => x.IterationRequired).Returns(true);
+            mockIteratableArray.SetupGet(x => x.IterationValues).Returns(new DataValue[] { mockTruthyValue.Object, mockFalseyValue.Object });
+
+            var mockQueue = new Mock<ProgramState>();
+            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockIteratableArray.Object);
+
+            var token = new UnTruthify();
+
+            // Act
+            var result = token.Evaluate(mockQueue.Object);
+
+            // Assert
+            result.ShouldBeOfType<ArrayValue>().CompareTo(0, 1);
         }
 
         [Fact]
@@ -405,6 +565,58 @@ namespace Pangolin.Core.Test
             // Assert
             result1.ShouldBeOfType<ArrayValue>().CompareTo(mockValue1.Object, mockValue2.Object, mockValue3.Object);
             result2.ShouldBeOfType<ArrayValue>().CompareTo(mockValue3.Object, mockValue1.Object, mockValue2.Object);
+        }
+
+        [Fact]
+        public void Add_should_concatenate_iteratable_array_elements_and_numeric()
+        {
+            // Arrange
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
+            mockNumeric.SetupGet(n => n.Value).Returns(5);
+
+            var mockString = new Mock<StringValue>();
+            mockString.SetupGet(n => n.Type).Returns(DataValueType.String);
+            mockString.SetupGet(n => n.Value).Returns("abc");
+
+            var mockInnerArray = new Mock<ArrayValue>();
+            mockInnerArray.Setup(m => m.Type).Returns(DataValueType.Array);
+            mockInnerArray.Setup(m => m.Value).Returns(new DataValue[] { mockNumeric.Object, mockString.Object });
+
+            var mockIterableArray = new Mock<ArrayValue>();
+            mockIterableArray.SetupGet(a => a.IterationRequired).Returns(true);
+            mockIterableArray.SetupGet(m => m.IterationValues).Returns(new DataValue[] { mockNumeric.Object, mockString.Object, mockInnerArray.Object });
+            mockIterableArray.SetupGet(m => m.Value).Returns(new DataValue[] { mockNumeric.Object, mockString.Object, mockInnerArray.Object });
+            mockIterableArray.SetupGet(m => m.Type).Returns(DataValueType.Array);
+
+            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> numeric
+            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockIterableArray.Object)
+                .Returns(mockNumeric.Object);
+
+            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is numeric -> array
+            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
+                .Returns(mockNumeric.Object)
+                .Returns(mockIterableArray.Object);
+
+            var token = new Add();
+
+            // Act
+            var result1 = token.Evaluate(mockQueue1.Object);
+            var result2 = token.Evaluate(mockQueue2.Object);
+
+            // Assert
+            var resultArray1 = result1.ShouldBeOfType<ArrayValue>();
+            resultArray1.Value.Count.ShouldBe(3);
+            resultArray1.ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            resultArray1.ShouldBeOfType<StringValue>().Value.ShouldBe("abc5");
+            resultArray1.ShouldBeOfType<ArrayValue>().CompareTo(mockNumeric.Object, mockString.Object, mockNumeric.Object);
+
+            var resultArray2 = result1.ShouldBeOfType<ArrayValue>();
+            resultArray2.Value.Count.ShouldBe(3);
+            resultArray2.ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            resultArray2.ShouldBeOfType<StringValue>().Value.ShouldBe("5abc");
+            resultArray2.ShouldBeOfType<ArrayValue>().CompareTo(mockNumeric.Object, mockNumeric.Object, mockString.Object);
         }
 
         [Fact]
@@ -2576,6 +2788,52 @@ namespace Pangolin.Core.Test
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
+        }
+
+        [Fact]
+        public void Iterate_should_error_if_numeric_passed()
+        {
+            // Arrange
+            var mockNumeric = new Mock<NumericValue>();
+            mockNumeric.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
+
+            var mockProgramState = new Mock<ProgramState>();
+            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object);
+
+            var token = new Iterate();
+
+            // Act / Assert
+            Should.Throw<PangolinException>(() => { token.Evaluate(mockProgramState.Object); }).Message.ShouldBe("Iterate is not defined for Numeric");
+        }
+
+        [Fact]
+        public void Iterate_should_set_iteration_required_flag_on_iterable()
+        {
+            // Arrange
+            var mockString = new Mock<StringValue>();
+            mockString.SetupGet(x => x.Type).Returns(DataValueType.String);
+
+            var mockArray = new Mock<ArrayValue>();
+            mockArray.SetupGet(x => x.Type).Returns(DataValueType.Array);
+
+            var mockProgramState1 = new Mock<ProgramState>();
+            mockProgramState1.Setup(p => p.DequeueAndEvaluate()).Returns(mockString.Object);
+
+            var mockProgramState2 = new Mock<ProgramState>();
+            mockProgramState2.Setup(p => p.DequeueAndEvaluate()).Returns(mockArray.Object);
+
+            var token = new Iterate();
+
+            // Act 
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBe(mockString.Object);
+            mockString.Verify(s => s.SetIterationRequired(true));
+
+            result2.ShouldBe(mockArray.Object);
+            mockArray.Verify(a => a.SetIterationRequired(true));
         }
     }
 }
