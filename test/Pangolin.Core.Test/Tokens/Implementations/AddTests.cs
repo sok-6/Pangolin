@@ -193,5 +193,45 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             // Act/Assert
             Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState.Object)).Message.ShouldBe("Invalid argument types passed to \u2295 command - Numeric,Numeric");
         }
+
+        [Fact]
+        public void IteratedAdd_should_add_over_an_array()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(10, 20, 30).WithStrings("abc").Complete(),
+                MockFactory.MockNumericValue(5).Object);
+
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(5).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(10, 20, 30).WithStrings("abc").Complete());
+
+            var token = new IteratedAdd();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(15, 25, 35).ThenShouldContinueWith("abc5");
+            result2.ShouldBeArrayWhichStartsWith(15, 25, 35).ThenShouldContinueWith("5abc");
+        }
+
+        [Fact]
+        public void IteratedAdd_should_zip_add_two_iterable_values()
+        {
+            // Arrange
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete(),
+                MockFactory.MockStringValue("abcd").Object);
+
+            var token = new IteratedAdd();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeArrayWhichStartsWith("1a", "2b", "3c");
+        }
     }
 }

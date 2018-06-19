@@ -18,19 +18,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_truthy_for_equal_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1.4).Object,
+                MockFactory.MockNumericValue(1.4).Object);
 
             var token = new Equality();
 
@@ -45,19 +35,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_falsey_for_different_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1.4).Object,
+                MockFactory.MockNumericValue(1.5).Object);
 
             var token = new Equality();
 
@@ -72,19 +52,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_truthy_for_equal_strings()
         {
             // Arrange
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockString1.Object)
-                .Returns(mockString2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockStringValue("abc").Object);
 
             var token = new Equality();
 
@@ -99,19 +69,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_falsey_for_different_strings()
         {
             // Arrange
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("xyz");
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockString1.Object)
-                .Returns(mockString2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockStringValue("xyz").Object);
 
             var token = new Equality();
 
@@ -126,35 +86,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_truthy_for_equal_arrays()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete());
 
             var token = new Equality();
 
@@ -169,35 +103,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_falsey_for_equal_arrays_in_different_orders()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockString2.Object, mockNumeric2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingStrings("abc").WithNumerics(1.4).Complete());
 
             var token = new Equality();
 
@@ -212,35 +120,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Equality_should_return_falsey_for_unequal_arrays()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1.5).WithStrings("abc").Complete());
 
             var token = new Equality();
 
@@ -255,19 +137,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_falsey_for_equal_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1.4).Object,
+                MockFactory.MockNumericValue(1.4).Object);
 
             var token = new Inequality();
 
@@ -282,19 +154,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_truthy_for_different_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1.4).Object,
+                MockFactory.MockNumericValue(1.5).Object);
 
             var token = new Inequality();
 
@@ -309,19 +171,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_falsey_for_equal_strings()
         {
             // Arrange
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockString1.Object)
-                .Returns(mockString2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockStringValue("abc").Object);
 
             var token = new Inequality();
 
@@ -336,19 +188,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_truthy_for_different_strings()
         {
             // Arrange
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("xyz");
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockString1.Object)
-                .Returns(mockString2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockStringValue("xyz").Object);
 
             var token = new Inequality();
 
@@ -363,35 +205,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_falsey_for_equal_arrays()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete());
 
             var token = new Inequality();
 
@@ -406,35 +222,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_truthy_for_equal_arrays_in_different_orders()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockString2.Object, mockNumeric2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingStrings("abc").WithNumerics(1.4).Complete());
 
             var token = new Inequality();
 
@@ -449,35 +239,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Inequality_should_return_truthy_for_unequal_arrays()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
-
-            var mockString1 = new Mock<StringValue>();
-            mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString1.SetupGet(n => n.Value).Returns("abc");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString2.SetupGet(n => n.Value).Returns("abc");
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray1.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric1.Object, mockString1.Object });
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.SetupGet(n => n.Type).Returns(DataValueType.Array);
-            mockArray2.SetupGet(n => n.Value).Returns(new DataValue[] { mockNumeric2.Object, mockString2.Object });
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState
-                .SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.4).WithStrings("abc").Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1.5).WithStrings("abc").Complete());
 
             var token = new Inequality();
 
@@ -492,23 +256,13 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void LessThan_should_evaluate_inequality_between_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(7);
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(7).Object,
+                MockFactory.MockNumericValue(18).Object);
 
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(18);
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric2.Object)
-                .Returns(mockNumeric1.Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(18).Object,
+                MockFactory.MockNumericValue(7).Object);
 
             var token = new LessThan();
 
@@ -559,23 +313,13 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void GreaterThan_should_evaluate_inequality_between_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(7);
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(7).Object,
+                MockFactory.MockNumericValue(18).Object);
 
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(18);
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric2.Object)
-                .Returns(mockNumeric1.Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(18).Object,
+                MockFactory.MockNumericValue(7).Object);
 
             var token = new GreaterThan();
 
