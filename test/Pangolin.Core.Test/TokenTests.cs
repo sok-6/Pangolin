@@ -21,11 +21,9 @@ namespace Pangolin.Core.Test
                 var mockTruthy = new Mock<NumericValue>();
                 mockTruthy.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
                 mockTruthy.SetupGet(x => x.Value).Returns(1);
-                mockTruthy.SetupGet(x => x.IntValue).Returns(1);
-                mockTruthy.SetupGet(x => x.IsIntegral).Returns(true);
                 mockTruthy.SetupGet(x => x.IterationRequired).Returns(false);
                 mockTruthy.SetupGet(x => x.IsTruthy).Returns(true);
-                mockTruthy.Setup(x => x.Truthify()).Returns(mockTruthy.Object);
+                mockTruthy.Setup(x => x.ToString()).Returns("1");
                 return mockTruthy;
             });
 
@@ -34,11 +32,9 @@ namespace Pangolin.Core.Test
                 var mockFalsey = new Mock<NumericValue>();
                 mockFalsey.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
                 mockFalsey.SetupGet(x => x.Value).Returns(0);
-                mockFalsey.SetupGet(x => x.IntValue).Returns(0);
-                mockFalsey.SetupGet(x => x.IsIntegral).Returns(false);
                 mockFalsey.SetupGet(x => x.IterationRequired).Returns(false);
                 mockFalsey.SetupGet(x => x.IsTruthy).Returns(false);
-                mockFalsey.Setup(x => x.Truthify()).Returns(mockFalsey.Object);
+                mockFalsey.Setup(x => x.ToString()).Returns("0");
                 return mockFalsey;
             });
 
@@ -54,11 +50,9 @@ namespace Pangolin.Core.Test
                 var mockNumericValue = new Mock<NumericValue>();
                 mockNumericValue.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
                 mockNumericValue.SetupGet(x => x.Value).Returns(value);
-                mockNumericValue.SetupGet(x => x.IntValue).Returns((int)value);
-                mockNumericValue.SetupGet(x => x.IsIntegral).Returns((int)value == value);
                 mockNumericValue.SetupGet(x => x.IterationRequired).Returns(false);
                 mockNumericValue.SetupGet(x => x.IsTruthy).Returns(value != 0);
-                mockNumericValue.Setup(x => x.Truthify()).Returns(value != 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                mockNumericValue.Setup(x => x.ToString()).Returns(value.ToString());
                 return mockNumericValue;
             }
 
@@ -69,7 +63,7 @@ namespace Pangolin.Core.Test
                 mockStringValue.SetupGet(x => x.Value).Returns(value);
                 mockStringValue.SetupGet(x => x.IterationRequired).Returns(false);
                 mockStringValue.SetupGet(x => x.IsTruthy).Returns(value != "");
-                mockStringValue.Setup(x => x.Truthify()).Returns(value != "" ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                mockStringValue.Setup(x => x.ToString()).Returns(value);
                 return mockStringValue;
             }
 
@@ -81,7 +75,7 @@ namespace Pangolin.Core.Test
                 mockStringValue.SetupGet(x => x.IterationRequired).Returns(true);
                 mockStringValue.SetupGet(x => x.IterationValues).Returns(value.Select(c => MockStringValue(c.ToString()).Object).ToList());
                 mockStringValue.SetupGet(x => x.IsTruthy).Returns(value != "");
-                mockStringValue.Setup(x => x.Truthify()).Returns(value != "" ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                mockStringValue.Setup(x => x.ToString()).Returns(value);
                 return mockStringValue;
             }
 
@@ -92,7 +86,7 @@ namespace Pangolin.Core.Test
                 mockArrayValue.SetupGet(x => x.Value).Returns(arrayContents);
                 mockArrayValue.SetupGet(x => x.IterationRequired).Returns(false);
                 mockArrayValue.SetupGet(x => x.IsTruthy).Returns(arrayContents.Length > 0);
-                mockArrayValue.Setup(x => x.Truthify()).Returns(arrayContents.Length > 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                mockArrayValue.Setup(x => x.ToString()).Returns($"[{String.Join(",", arrayContents.Select(a => a.ToString()))}]");
                 return mockArrayValue;
             }
 
@@ -104,7 +98,7 @@ namespace Pangolin.Core.Test
                 mockArrayValue.SetupGet(x => x.IterationRequired).Returns(true);
                 mockArrayValue.SetupGet(x => x.IterationValues).Returns(arrayContents);
                 mockArrayValue.SetupGet(x => x.IsTruthy).Returns(arrayContents.Length > 0);
-                mockArrayValue.Setup(x => x.Truthify()).Returns(arrayContents.Length > 0 ? _mockTruthy.Value.Object : _mockFalsey.Value.Object);
+                mockArrayValue.Setup(x => x.ToString()).Returns($"[{String.Join(",", arrayContents.Select(a => a.ToString()))}]");
                 return mockArrayValue;
             }
 
@@ -568,36 +562,22 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void Add_should_concatenate_iteratable_array_elements_and_numeric()
+        public void Add_should_evaluate_over_iteratable_array_elements_and_numeric()
         {
             // Arrange
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric.SetupGet(n => n.Value).Returns(5);
+            var mockQueue1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayValueWithIteration(
+                    MockFactory.MockNumericValue(5).Object,
+                    MockFactory.MockStringValue("abc").Object,
+                    MockFactory.MockNumericValue(5).Object).Object,
+                MockFactory.MockNumericValue(5).Object);
 
-            var mockString = new Mock<StringValue>();
-            mockString.SetupGet(n => n.Type).Returns(DataValueType.String);
-            mockString.SetupGet(n => n.Value).Returns("abc");
-
-            var mockInnerArray = new Mock<ArrayValue>();
-            mockInnerArray.Setup(m => m.Type).Returns(DataValueType.Array);
-            mockInnerArray.Setup(m => m.Value).Returns(new DataValue[] { mockNumeric.Object, mockString.Object });
-
-            var mockIterableArray = new Mock<ArrayValue>();
-            mockIterableArray.SetupGet(a => a.IterationRequired).Returns(true);
-            mockIterableArray.SetupGet(m => m.IterationValues).Returns(new DataValue[] { mockNumeric.Object, mockString.Object, mockInnerArray.Object });
-            mockIterableArray.SetupGet(m => m.Value).Returns(new DataValue[] { mockNumeric.Object, mockString.Object, mockInnerArray.Object });
-            mockIterableArray.SetupGet(m => m.Type).Returns(DataValueType.Array);
-
-            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> numeric
-            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockIterableArray.Object)
-                .Returns(mockNumeric.Object);
-
-            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is numeric -> array
-            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockNumeric.Object)
-                .Returns(mockIterableArray.Object);
+            var mockQueue2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(5).Object,
+                MockFactory.MockArrayValueWithIteration(
+                    MockFactory.MockNumericValue(5).Object,
+                    MockFactory.MockStringValue("abc").Object,
+                    MockFactory.MockNumericValue(5).Object).Object);
 
             var token = new Add();
 
@@ -608,15 +588,15 @@ namespace Pangolin.Core.Test
             // Assert
             var resultArray1 = result1.ShouldBeOfType<ArrayValue>();
             resultArray1.Value.Count.ShouldBe(3);
-            resultArray1.ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
-            resultArray1.ShouldBeOfType<StringValue>().Value.ShouldBe("abc5");
-            resultArray1.ShouldBeOfType<ArrayValue>().CompareTo(mockNumeric.Object, mockString.Object, mockNumeric.Object);
+            resultArray1.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            resultArray1.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("abc5");
+            resultArray1.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
 
-            var resultArray2 = result1.ShouldBeOfType<ArrayValue>();
+            var resultArray2 = result2.ShouldBeOfType<ArrayValue>();
             resultArray2.Value.Count.ShouldBe(3);
-            resultArray2.ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
-            resultArray2.ShouldBeOfType<StringValue>().Value.ShouldBe("5abc");
-            resultArray2.ShouldBeOfType<ArrayValue>().CompareTo(mockNumeric.Object, mockNumeric.Object, mockString.Object);
+            resultArray2.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            resultArray2.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("5abc");
+            resultArray2.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
         }
 
         [Fact]
@@ -689,8 +669,8 @@ namespace Pangolin.Core.Test
             var token = new TokenImplementations.Range();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.String} not supported");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2192 command - {DataValueType.Array} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2192 command - String");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2192 command - Array");
         }
 
         [Fact]
@@ -763,8 +743,8 @@ namespace Pangolin.Core.Test
             var token = new TokenImplementations.ReverseRange();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2190 command - {DataValueType.String} not supported");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u2190 command - {DataValueType.Array} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2190 command - String");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2190 command - Array");
         }
 
         [Fact]
@@ -837,8 +817,8 @@ namespace Pangolin.Core.Test
             var token = new TokenImplementations.Range1();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u0411 command - {DataValueType.String} not supported");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u0411 command - {DataValueType.Array} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u0411 command - String");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u0411 command - Array");
         }
 
         [Fact]
@@ -911,8 +891,8 @@ namespace Pangolin.Core.Test
             var token = new TokenImplementations.ReverseRange1();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u042A command - {DataValueType.String} not supported");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe($"Invalid argument passed to \u042A command - {DataValueType.Array} not supported");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u042A command - String");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u042A command - Array");
         }
 
         [Fact]
@@ -2313,10 +2293,10 @@ namespace Pangolin.Core.Test
             var token = new Modulo();
 
             // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Modulo token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to % command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to % command - Numeric,Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to % command - String,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to % command - Array,Numeric");
         }
 
         [Fact]
@@ -2396,10 +2376,10 @@ namespace Pangolin.Core.Test
             var token = new Division();
 
             // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Division token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to / command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to / command - Numeric,Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to / command - String,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to / command - Array,Numeric");
         }
 
         [Fact]
@@ -2545,10 +2525,10 @@ namespace Pangolin.Core.Test
             var token = new Subtract();
 
             // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Subtract token only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to - command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to - command - Numeric,Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to - command - String,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to - command - Array,Numeric");
         }
 
         [Fact]
@@ -2635,8 +2615,8 @@ namespace Pangolin.Core.Test
             var token = new Interpolation();
 
             // Act / Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Interpolation not defined in case where 1st argument is not a string - arg1.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Interpolation not defined in case where 1st argument is not a string - arg1.Type=Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to $ command - Numeric,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to $ command - Array,Numeric");
         }
 
         [Fact]
@@ -2717,10 +2697,10 @@ namespace Pangolin.Core.Test
             var token = new LessThan();
 
             // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("LessThan only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to < command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to < command - Numeric,Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to < command - String,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to < command - Array,Numeric");
         }
 
         [Fact]
@@ -2784,10 +2764,11 @@ namespace Pangolin.Core.Test
             var token = new GreaterThan();
 
             // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Numeric, arg2.Type=Array");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=String, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Array, arg2.Type=Numeric");
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("GreaterThan only defined for numerics - arg1.Type=Numeric, arg2.Type=String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to > command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to > command - Numeric,Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to > command - String,Numeric");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to > command - Array,Numeric");
+            
         }
 
         [Fact]
