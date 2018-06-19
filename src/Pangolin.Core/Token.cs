@@ -23,7 +23,7 @@ namespace Pangolin.Core
         #region Public factory methods
 
         public static Token GetStringLiteral(string literalValue) => new StringLiteral(literalValue);
-        public static Token GetNumericLiteral(decimal literalValue) => new NumericLiteral(literalValue);
+        public static Token GetNumericLiteral(double literalValue) => new NumericLiteral(literalValue);
         public static Token GetSingleArgument(char tokenCharacter) => new SingleArgument(tokenCharacter);
         public static Token GetGetVariable(char tokenCharacter) => new GetVariable(tokenCharacter);
         public static Token GetSetVariable(char tokenCharacter) => new SetVariable(tokenCharacter);

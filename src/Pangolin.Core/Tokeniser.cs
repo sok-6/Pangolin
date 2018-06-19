@@ -158,7 +158,7 @@ namespace Pangolin.Core
                     // If ends with e, append 1
                     if (fettledString.EndsWith('e')) fettledString = $"{fettledString}1";
 
-                    var literalValue = decimal.Parse(fettledString, System.Globalization.NumberStyles.Float);
+                    var literalValue = double.Parse(fettledString, System.Globalization.NumberStyles.Float);
                     log($"Plain numeric constant, match = {readString},  value = {literalValue}");
                     result.Add(Token.GetNumericLiteral(literalValue));
 
@@ -269,13 +269,13 @@ namespace Pangolin.Core
             return sb.ToString();
         }
 
-        public static decimal DecodeCompressedNumeric(string compressedNumeric, bool base254, Action<string> log)
+        public static double DecodeCompressedNumeric(string compressedNumeric, bool base254, Action<string> log)
         {
             var codePoints = new Queue<int>(compressedNumeric.Select(c => CodePage.GetIndexFromCharacter(c)));
 
             log($"Code points are {String.Join(",", codePoints)}");
 
-            decimal result = 0;
+            double result = 0;
             while (codePoints.Count > 0)
             {
                 result *= base254 ? 254 : 256;

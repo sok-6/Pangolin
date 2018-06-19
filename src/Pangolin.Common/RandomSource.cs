@@ -22,9 +22,9 @@ namespace Pangolin.Common
             }
         }
 
-        public static decimal RandomDecimal()
+        public static double RandomDouble()
         {
-            return (decimal)_rnd.NextDouble();
+            return _rnd.NextDouble();
         }
 
         public static T Choose<T>(IEnumerable<T> collection)

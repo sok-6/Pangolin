@@ -6,9 +6,9 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override int Arity => 0;
 
-        public decimal LiteralValue { get; private set; }
+        public double LiteralValue { get; private set; }
 
-        public NumericLiteral(decimal literalValue)
+        public NumericLiteral(double literalValue)
         {
             LiteralValue = literalValue;
         }

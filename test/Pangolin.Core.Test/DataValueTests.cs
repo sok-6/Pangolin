@@ -31,8 +31,8 @@ namespace Pangolin.Core.Test
         public void NumericValue_should_correctly_store_floating_point_numbers()
         {
             // Arrange
-            var floatValue1 = 1.5m;
-            var floatValue2 = -6.7m;
+            var floatValue1 = 1.5;
+            var floatValue2 = -6.7;
 
             // Act
             var numericValue1 = new NumericValue(floatValue1);

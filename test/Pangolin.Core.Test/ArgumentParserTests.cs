@@ -41,20 +41,20 @@ namespace Pangolin.Core.Test
         public void ArgumentParser_should_correctly_parse_numerics()
         {
             // Arrange
-            var argumentStrings = new Dictionary<string, decimal>()
+            var argumentStrings = new Dictionary<string, double>()
             {
                 { "123", 123 },
                 { "-123", -123 },
-                { "12.3", 12.3m },
-                { "-12.3", -12.3m },
-                { "1e3", 1000m },
-                { "-1e3", -1000m },
-                { "1.2e3", 1200m },
-                { "-1.2e3", -1200m },
-                { "1e-3", 0.001m },
-                { "-1e-3", -0.001m },
-                { "1.2e-3", 0.0012m },
-                { "-1.2e-3", -0.0012m }
+                { "12.3", 12.3 },
+                { "-12.3", -12.3 },
+                { "1e3", 1000 },
+                { "-1e3", -1000 },
+                { "1.2e3", 1200 },
+                { "-1.2e3", -1200 },
+                { "1e-3", 0.001 },
+                { "-1e-3", -0.001 },
+                { "1.2e-3", 0.0012 },
+                { "-1.2e-3", -0.0012 }
             };
 
             // Act
@@ -72,11 +72,11 @@ namespace Pangolin.Core.Test
         public void ArgumentParser_should_correctly_parse_numerics_separated_by_spaces()
         {
             // Arrange
-            var argumentStrings = new Dictionary<string, decimal[]>()
+            var argumentStrings = new Dictionary<string, double[]>()
             {
-                { "123 456", new decimal[] { 123, 456 } },
-                { "123 1e3", new decimal[] { 123, 1000 } },
-                { "1.23 1e3 1.2e-3", new decimal[] { 1.23m, 1000, 0.0012m } }
+                { "123 456", new double[] { 123, 456 } },
+                { "123 1e3", new double[] { 123, 1000 } },
+                { "1.23 1e3 1.2e-3", new double[] { 1.23, 1000, 0.0012 } }
             };
 
             // Act

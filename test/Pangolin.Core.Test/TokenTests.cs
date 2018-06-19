@@ -45,7 +45,7 @@ namespace Pangolin.Core.Test
                 return mockDataValue;
             }
 
-            public static Mock<NumericValue> MockNumericValue(decimal value)
+            public static Mock<NumericValue> MockNumericValue(double value)
             {
                 var mockNumericValue = new Mock<NumericValue>();
                 mockNumericValue.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
@@ -128,7 +128,7 @@ namespace Pangolin.Core.Test
         public void NumericLiteral_should_evaluate_to_NumericValue_with_correct_contents()
         {
             // Arrange
-            var token = new NumericLiteral(1.5m);
+            var token = new NumericLiteral(1.5);
 
             // Act
             var result = token.Evaluate(null);
@@ -377,11 +377,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.Setup(m => m.Value).Returns(1.5m);
+            mockNumeric1.Setup(m => m.Value).Returns(1.5);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.Setup(m => m.Value).Returns(2.3m);
+            mockNumeric2.Setup(m => m.Value).Returns(2.3);
 
             var mockQueue = new Mock<ProgramState>();
             mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
@@ -395,7 +395,7 @@ namespace Pangolin.Core.Test
 
             // Assert
             var numResult = result.ShouldBeOfType<NumericValue>();
-            numResult.Value.ShouldBe(3.8m);
+            numResult.Value.ShouldBe(3.8);
         }
 
         [Fact]
@@ -944,7 +944,7 @@ namespace Pangolin.Core.Test
             mockNumeric1.SetupGet(n => n.Value).Returns(-4);
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(2.5m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(2.5);
 
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState
@@ -1069,7 +1069,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric = new Mock<NumericValue>();
             mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric.SetupGet(n => n.Value).Returns(2.2m);
+            mockNumeric.SetupGet(n => n.Value).Returns(2.2);
             var mockString = new Mock<StringValue>();
             mockString.SetupGet(n => n.Type).Returns(DataValueType.String);
             mockString.SetupGet(n => n.Value).Returns("abc");
@@ -1137,7 +1137,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric = new Mock<NumericValue>();
             mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric.SetupGet(n => n.Value).Returns(-1.2m);
+            mockNumeric.SetupGet(n => n.Value).Returns(-1.2);
             var mockString = new Mock<StringValue>();
             mockString.SetupGet(n => n.Type).Returns(DataValueType.String);
             mockString.SetupGet(n => n.Value).Returns("abc");
@@ -1292,7 +1292,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric = new Mock<NumericValue>();
             mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric.SetupGet(n => n.Value).Returns(2.2m);
+            mockNumeric.SetupGet(n => n.Value).Returns(2.2);
 
             var mockVal1 = new Mock<DataValue>();
             var mockVal2 = new Mock<DataValue>();
@@ -1392,7 +1392,7 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric = new Mock<NumericValue>();
             mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric.SetupGet(n => n.Value).Returns(-1.2m);
+            mockNumeric.SetupGet(n => n.Value).Returns(-1.2);
 
             var mockVal1 = new Mock<DataValue>();
             var mockVal2 = new Mock<DataValue>();
@@ -1664,11 +1664,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
 
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState
@@ -1691,11 +1691,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
 
             var mockProgramState = new Mock<ProgramState>();
             mockProgramState
@@ -1772,11 +1772,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
 
             var mockString1 = new Mock<StringValue>();
             mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
@@ -1815,11 +1815,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.4);
 
             var mockString1 = new Mock<StringValue>();
             mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
@@ -1858,11 +1858,11 @@ namespace Pangolin.Core.Test
             // Arrange
             var mockNumeric1 = new Mock<NumericValue>();
             mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(1.4m);
+            mockNumeric1.SetupGet(n => n.Value).Returns(1.4);
 
             var mockNumeric2 = new Mock<NumericValue>();
             mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(1.5m);
+            mockNumeric2.SetupGet(n => n.Value).Returns(1.5);
 
             var mockString1 = new Mock<StringValue>();
             mockString1.SetupGet(n => n.Type).Returns(DataValueType.String);
@@ -2132,11 +2132,11 @@ namespace Pangolin.Core.Test
 
             var mockPositiveFloat = new Mock<NumericValue>();
             mockPositiveFloat.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockPositiveFloat.SetupGet(x => x.Value).Returns(1.23m);
+            mockPositiveFloat.SetupGet(x => x.Value).Returns(1.23);
 
             var mockNegativeFloat = new Mock<NumericValue>();
             mockNegativeFloat.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockNegativeFloat.SetupGet(x => x.Value).Returns(-10.5m);
+            mockNegativeFloat.SetupGet(x => x.Value).Returns(-10.5);
 
             var mockZero = new Mock<NumericValue>();
             mockZero.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
@@ -2169,8 +2169,8 @@ namespace Pangolin.Core.Test
             // Assert
             result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(5);
             result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
-            result3.ShouldBeOfType<NumericValue>().Value.ShouldBe(1.23m);
-            result4.ShouldBeOfType<NumericValue>().Value.ShouldBe(10.5m);
+            result3.ShouldBeOfType<NumericValue>().Value.ShouldBe(1.23);
+            result4.ShouldBeOfType<NumericValue>().Value.ShouldBe(10.5);
             result5.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
         }
 
@@ -2322,7 +2322,7 @@ namespace Pangolin.Core.Test
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(7.5m);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(7.5);
         }
 
         [Fact]

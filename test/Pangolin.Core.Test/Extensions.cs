@@ -21,7 +21,7 @@ namespace Pangolin.Core.Test
             }
         }
 
-        public static void CompareTo(this ArrayValue arrayValue, params decimal[] comparison)
+        public static void CompareTo(this ArrayValue arrayValue, params double[] comparison)
         {
             arrayValue.Value.Count.ShouldBe(comparison.Length);
 

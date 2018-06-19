@@ -67,7 +67,7 @@ namespace Pangolin.Core
                     var match = Regex.Match(arguments, REGEX_NUMERIC);
 
                     // Add contents to current list
-                    decimal parsedValue = decimal.Parse(match.Value, System.Globalization.NumberStyles.Float);
+                    var parsedValue = double.Parse(match.Value, System.Globalization.NumberStyles.Float);
                     log($"Numeric, match = {match.Value}, value = {parsedValue}");
                     valueListStack.Peek().Add(new NumericValue(parsedValue));
 

@@ -25,7 +25,7 @@ namespace Pangolin.Core.TokenImplementations
                 }
                 else
                 {
-                    return new NumericValue(numericArg.Value * RandomSource.RandomDecimal());
+                    return new NumericValue(numericArg.Value * RandomSource.RandomDouble());
                 }
             }
             // String, random character
@@ -53,7 +53,7 @@ namespace Pangolin.Core.TokenImplementations
 
         public override DataValue Evaluate(ProgramState programState)
         {
-            return new NumericValue(RandomSource.RandomDecimal());
+            return new NumericValue(RandomSource.RandomDouble());
         }
 
         public override string ToString() => "r";

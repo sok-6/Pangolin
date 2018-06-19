@@ -10,7 +10,7 @@ namespace Pangolin.Core.DataValueImplementations
     {
         public override DataValueType Type => DataValueType.Numeric;
 
-        public virtual decimal Value { get; private set; }
+        public virtual double Value { get; private set; }
         public int IntValue => (int)Value;
         public bool IsIntegral => (Value % 1) == 0;
 
@@ -19,7 +19,7 @@ namespace Pangolin.Core.DataValueImplementations
             Value = 0;
         }
 
-        public NumericValue(decimal value)
+        public NumericValue(double value)
         {
             Value = value;
         }

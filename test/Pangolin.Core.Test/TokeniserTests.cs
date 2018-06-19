@@ -317,7 +317,7 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
 
             var token0 = result[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
-            token0.LiteralValue.ShouldBe(1.5m);
+            token0.LiteralValue.ShouldBe(1.5);
         }
 
         [Fact]
@@ -334,7 +334,7 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
 
             var token0 = result[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
-            token0.LiteralValue.ShouldBe(0.5m);
+            token0.LiteralValue.ShouldBe(0.5);
         }
 
         [Fact]
@@ -402,7 +402,7 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
 
             var token0 = result[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
-            token0.LiteralValue.ShouldBe(0.01m);
+            token0.LiteralValue.ShouldBe(0.01);
         }
 
         [Fact]
@@ -419,7 +419,7 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
 
             var token0 = result[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
-            token0.LiteralValue.ShouldBe(0.0015m);
+            token0.LiteralValue.ShouldBe(0.0015);
         }
 
         [Fact]
@@ -436,7 +436,7 @@ namespace Pangolin.Core.Test
             result.Count.ShouldBe(1);
 
             var token0 = result[0].ShouldBeOfType<TokenImplementations.NumericLiteral>();
-            token0.LiteralValue.ShouldBe(0.0005m);
+            token0.LiteralValue.ShouldBe(0.0005);
         }
 
         [Fact]
