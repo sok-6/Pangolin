@@ -48,4 +48,40 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "+";
     }
+
+    public class IteratedAdd : Add
+    {
+        public override DataValue Evaluate(ProgramState tokenQueue)
+        {
+            // Get two arguments
+            var arg1 = tokenQueue.DequeueAndEvaluate();
+            var arg2 = tokenQueue.DequeueAndEvaluate();
+            
+            if (arg1.Type != DataValueType.Numeric)
+            {
+                if (arg2.Type != DataValueType.Numeric)
+                {
+                    // Zip them
+                    return new ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1, a2) => EvaluateInner(a1, a2)));
+                }
+                else
+                {
+                    return new ArrayValue(arg1.IterationValues.Select(a1 => EvaluateInner(a1, arg2)));
+                }
+            }
+            else
+            {
+                if (arg2.Type != DataValueType.Numeric)
+                {
+                    return new ArrayValue(arg2.IterationValues.Select(a2 => EvaluateInner(arg1, a2)));
+                }
+                else
+                {
+                    throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
+                }
+            }
+        }
+
+        public override string ToString() => "\u2295";
+    }
 }

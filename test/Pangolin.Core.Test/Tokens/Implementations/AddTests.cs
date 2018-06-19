@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿//using Moq;
+using Pangolin.Common;
 using Pangolin.Core.DataValueImplementations;
 using Pangolin.Core.TokenImplementations;
 using Shouldly;
@@ -17,18 +18,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Add_should_add_two_integers()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.Setup(m => m.Value).Returns(1);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.Setup(m => m.Value).Returns(2);
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockQueue = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1).Object,
+                MockFactory.MockNumericValue(2).Object);
 
             var addToken = new Add();
 
@@ -36,26 +28,16 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
-            var numResult = result.ShouldBeOfType<NumericValue>();
-            numResult.Value.ShouldBe(3);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(3);
         }
 
         [Fact]
         public void Add_should_add_two_floats()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.Setup(m => m.Value).Returns(1.5);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.Setup(m => m.Value).Returns(2.3);
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockQueue = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1.5).Object,
+                MockFactory.MockNumericValue(2.3).Object);
 
             var addToken = new Add();
 
@@ -63,28 +45,16 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
-            var numResult = result.ShouldBeOfType<NumericValue>();
-            numResult.Value.ShouldBe(3.8);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(3.8);
         }
 
         [Fact]
         public void Add_should_concatenate_two_strings()
         {
             // Arrange
-            var mockString1 = new Mock<StringValue>();
-            mockString1.Setup(m => m.Type).Returns(DataValueType.String);
-            mockString1.Setup(m => m.Value).Returns("ab");
-            mockString1.Setup(m => m.ToString()).Returns("ab");
-
-            var mockString2 = new Mock<StringValue>();
-            mockString2.Setup(m => m.Type).Returns(DataValueType.String);
-            mockString2.Setup(m => m.Value).Returns("cd");
-            mockString2.Setup(m => m.ToString()).Returns("cd");
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockString1.Object)
-                .Returns(mockString2.Object);
+            var mockQueue = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("ab").Object,
+                MockFactory.MockStringValue("cd").Object);
 
             var addToken = new Add();
 
@@ -92,33 +62,20 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result = addToken.Evaluate(mockQueue.Object);
 
             // Assert
-            var stringResult = result.ShouldBeOfType<StringValue>();
-            stringResult.Value.ShouldBe("abcd");
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("abcd");
         }
 
         [Fact]
         public void Add_should_concatenate_string_and_numeric()
         {
             // Arrange
-            var mockString = new Mock<StringValue>();
-            mockString.Setup(m => m.Type).Returns(DataValueType.String);
-            mockString.Setup(m => m.Value).Returns("ab");
-            mockString.Setup(m => m.ToString()).Returns("ab");
+            var mockQueue1 = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("ab").Object,
+                MockFactory.MockNumericValue(1).Object);
 
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.Setup(m => m.Type).Returns(DataValueType.Numeric);
-            mockNumeric.Setup(m => m.Value).Returns(1);
-            mockNumeric.Setup(m => m.ToString()).Returns("1");
-
-            var mockQueue1 = new Mock<ProgramState>();
-            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockString.Object)
-                .Returns(mockNumeric.Object);
-
-            var mockQueue2 = new Mock<ProgramState>();
-            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockNumeric.Object)
-                .Returns(mockString.Object);
+            var mockQueue2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1).Object,
+                MockFactory.MockStringValue("ab").Object);
 
             var addToken = new Add();
 
@@ -135,23 +92,9 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         public void Add_should_concatenate_two_arrays()
         {
             // Arrange
-            var mockValue1 = new Mock<NumericValue>();
-            var mockValue2 = new Mock<NumericValue>();
-            var mockValue3 = new Mock<NumericValue>();
-            var mockValue4 = new Mock<NumericValue>();
-
-            var mockArray1 = new Mock<ArrayValue>();
-            mockArray1.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
-            mockArray1.Setup(m => m.Type).Returns(DataValueType.Array);
-
-            var mockArray2 = new Mock<ArrayValue>();
-            mockArray2.Setup(m => m.Value).Returns(new DataValue[] { mockValue3.Object, mockValue4.Object });
-            mockArray2.Setup(m => m.Type).Returns(DataValueType.Array);
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockArray1.Object)
-                .Returns(mockArray2.Object);
+            var mockQueue = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2).Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(3, 4).Complete());
 
             var token = new Add();
 
@@ -159,31 +102,20 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(mockValue1.Object, mockValue2.Object, mockValue3.Object, mockValue4.Object);
+            result.ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
         }
 
         [Fact]
         public void Add_should_concatenate_array_and_string()
         {
             // Arrange
-            var mockValue1 = new Mock<NumericValue>();
-            var mockValue2 = new Mock<NumericValue>();
-            var mockValue3 = new Mock<StringValue>();
-            mockValue3.Setup(m => m.Type).Returns(DataValueType.String);
+            var mockQueue1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2).Complete(),
+                MockFactory.MockStringValue("abc").Object);
 
-            var mockArray = new Mock<ArrayValue>();
-            mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
-            mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
-
-            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> string
-            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockArray.Object)
-                .Returns(mockValue3.Object);
-
-            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is string -> array
-            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockValue3.Object)
-                .Returns(mockArray.Object);
+            var mockQueue2 = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2).Complete());
 
             var token = new Add();
 
@@ -192,32 +124,21 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result2 = token.Evaluate(mockQueue2.Object);
 
             // Assert
-            result1.ShouldBeOfType<ArrayValue>().CompareTo(mockValue1.Object, mockValue2.Object, mockValue3.Object);
-            result2.ShouldBeOfType<ArrayValue>().CompareTo(mockValue3.Object, mockValue1.Object, mockValue2.Object);
+            result1.ShouldBeArrayWhichStartsWith(1, 2).ThenShouldContinueWith("abc");
+            result2.ShouldBeArrayWhichStartsWith("abc").ThenShouldContinueWith(1, 2);
         }
 
         [Fact]
         public void Add_should_concatenate_array_and_numeric()
         {
             // Arrange
-            var mockValue1 = new Mock<NumericValue>();
-            var mockValue2 = new Mock<NumericValue>();
-            var mockValue3 = new Mock<NumericValue>();
-            mockValue3.Setup(m => m.Type).Returns(DataValueType.Numeric);
+            var mockQueue1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2).Complete(),
+                MockFactory.MockNumericValue(3).Object);
 
-            var mockArray = new Mock<ArrayValue>();
-            mockArray.Setup(m => m.Value).Returns(new DataValue[] { mockValue1.Object, mockValue2.Object });
-            mockArray.Setup(m => m.Type).Returns(DataValueType.Array);
-
-            var mockQueue1 = new Mock<ProgramState>(); // Queue 1 is array -> numeric
-            mockQueue1.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockArray.Object)
-                .Returns(mockValue3.Object);
-
-            var mockQueue2 = new Mock<ProgramState>(); // Queue 2 is numeric -> array
-            mockQueue2.SetupSequence(m => m.DequeueAndEvaluate())
-                .Returns(mockValue3.Object)
-                .Returns(mockArray.Object);
+            var mockQueue2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2).Complete());
 
             var token = new Add();
 
@@ -226,8 +147,8 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result2 = token.Evaluate(mockQueue2.Object);
 
             // Assert
-            result1.ShouldBeOfType<ArrayValue>().CompareTo(mockValue1.Object, mockValue2.Object, mockValue3.Object);
-            result2.ShouldBeOfType<ArrayValue>().CompareTo(mockValue3.Object, mockValue1.Object, mockValue2.Object);
+            result1.ShouldBeArrayWhichStartsWith(1, 2, 3);
+            result2.ShouldBeArrayWhichStartsWith(3, 1, 2);
         }
 
         [Fact]
@@ -235,18 +156,18 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         {
             // Arrange
             var mockQueue1 = MockFactory.MockProgramState(
-                MockFactory.MockArrayValueWithIteration(
-                    MockFactory.MockNumericValue(5).Object,
-                    MockFactory.MockStringValue("abc").Object,
-                    MockFactory.MockNumericValue(5).Object).Object,
+                MockFactory.MockArrayBuilder
+                    .StartingNumerics(5)
+                    .WithStrings("abc")
+                    .WithNumerics(5).CompleteIterationRequired(),
                 MockFactory.MockNumericValue(5).Object);
 
             var mockQueue2 = MockFactory.MockProgramState(
                 MockFactory.MockNumericValue(5).Object,
-                MockFactory.MockArrayValueWithIteration(
-                    MockFactory.MockNumericValue(5).Object,
-                    MockFactory.MockStringValue("abc").Object,
-                    MockFactory.MockNumericValue(5).Object).Object);
+                MockFactory.MockArrayBuilder
+                    .StartingNumerics(5)
+                    .WithStrings("abc")
+                    .WithNumerics(5).CompleteIterationRequired());
 
             var token = new Add();
 
@@ -255,17 +176,22 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             var result2 = token.Evaluate(mockQueue2.Object);
 
             // Assert
-            var resultArray1 = result1.ShouldBeOfType<ArrayValue>();
-            resultArray1.Value.Count.ShouldBe(3);
-            resultArray1.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
-            resultArray1.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("abc5");
-            resultArray1.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            result1.ShouldBeArrayWhichStartsWith(10).ThenShouldContinueWith("abc5").ThenShouldContinueWith(10);
+            result2.ShouldBeArrayWhichStartsWith(10).ThenShouldContinueWith("5abc").ThenShouldContinueWith(10);
+        }
 
-            var resultArray2 = result2.ShouldBeOfType<ArrayValue>();
-            resultArray2.Value.Count.ShouldBe(3);
-            resultArray2.Value[0].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
-            resultArray2.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("5abc");
-            resultArray2.Value[2].ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+        [Fact]
+        public void IteratedAdd_should_throw_argument_exception_if_two_numerics_passed()
+        {
+            // Arrange
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1).Object,
+                MockFactory.MockNumericValue(2).Object);
+
+            var token = new IteratedAdd();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState.Object)).Message.ShouldBe("Invalid argument types passed to \u2295 command - Numeric,Numeric");
         }
     }
 }

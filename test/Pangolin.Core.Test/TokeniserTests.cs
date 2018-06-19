@@ -781,6 +781,12 @@ namespace Pangolin.Core.Test
         {
             'I'.ShouldBeParsedAs(typeof(TokenImplementations.Iterate));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_IteratedAdd()
+        {
+            '\u2295'.ShouldBeParsedAs(typeof(TokenImplementations.IteratedAdd));
+        }
     }
 }
 

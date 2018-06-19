@@ -27,7 +27,7 @@ namespace Pangolin.Core.Test
 
             for (int i = 0; i < arrayValue.Value.Count; i++)
             {
-                arrayValue.Value[i].ShouldBeOfType<NumericValue>().Value.ShouldBe(comparison[i]);
+                arrayValue.Value[i].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(comparison[i]);
             }
         }
 
@@ -37,7 +37,7 @@ namespace Pangolin.Core.Test
 
             for (int i = 0; i < arrayValue.Value.Count; i++)
             {
-                arrayValue.Value[i].ShouldBeOfType<StringValue>().Value.ShouldBe(comparison[i]);
+                arrayValue.Value[i].ShouldBeAssignableTo<StringValue>().Value.ShouldBe(comparison[i]);
             }
         }
 
@@ -53,6 +53,50 @@ namespace Pangolin.Core.Test
             // Assert
             result.Count.ShouldBe(1);
             result[0].ShouldBeOfType(tokenType);
+        }
+
+        public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params double[] numerics)
+        {
+            var values = dataValue.ShouldBeOfType<ArrayValue>().Value;
+
+            for (int i = 0; i < numerics.Length; i++)
+            {
+                values[i].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(numerics[i]);
+            }
+
+            return values.Skip(numerics.Length).ToList();
+        }
+
+        public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params string[] strings)
+        {
+            var values = dataValue.ShouldBeOfType<ArrayValue>().Value;
+
+            for (int i = 0; i < strings.Length; i++)
+            {
+                values[i].ShouldBeAssignableTo<StringValue>().Value.ShouldBe(strings[i]);
+            }
+
+            return values.Skip(strings.Length).ToList();
+        }
+
+        public static IReadOnlyList<DataValue> ThenShouldContinueWith(this IReadOnlyList<DataValue> dataValues, params double[] numerics)
+        {
+            for (int i = 0; i < numerics.Length; i++)
+            {
+                dataValues[i].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(numerics[i]);
+            }
+
+            return dataValues.Skip(numerics.Length).ToList();
+        }
+
+        public static IReadOnlyList<DataValue> ThenShouldContinueWith(this IReadOnlyList<DataValue> dataValues, params string[] strings)
+        {
+            for (int i = 0; i < strings.Length; i++)
+            {
+                dataValues[i].ShouldBeAssignableTo<StringValue>().Value.ShouldBe(strings[i]);
+            }
+
+            return dataValues.Skip(strings.Length).ToList();
         }
     }
 }
