@@ -26,7 +26,7 @@ namespace Pangolin.Core
         }
 
         public virtual IReadOnlyList<DataValue> IterationValues { get { throw new PangolinException($"Iteration not implemented on data type {Type}"); } }
-
+        
         public static DataValue Truthy => new DataValueImplementations.NumericValue(1);
         public static DataValue Falsey => new DataValueImplementations.NumericValue(0);
     }

@@ -13,10 +13,10 @@ namespace Pangolin.Core.DataValueImplementations
 
         public override DataValueType Type => DataValueType.Array;
 
-        public ArrayValue(object select)
-        {
-            _inner = new List<DataValue>();
-        }
+        //public ArrayValue(object select)
+        //{
+        //    _inner = new List<DataValue>();
+        //}
 
         public ArrayValue(IEnumerable<DataValue> values)
         {

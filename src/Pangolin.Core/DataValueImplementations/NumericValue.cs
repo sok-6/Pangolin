@@ -27,7 +27,7 @@ namespace Pangolin.Core.DataValueImplementations
         public override bool IsTruthy => Value != 0;
 
         public override string ToString() => Value.ToString();
-
+        
         public static NumericValue Zero => new NumericValue(0);
     }
 }

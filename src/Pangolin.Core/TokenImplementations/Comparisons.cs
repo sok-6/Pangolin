@@ -10,7 +10,7 @@ namespace Pangolin.Core.TokenImplementations
 {
     public abstract class EqualityBase : ArityTwoIterableToken
     {
-        protected static bool AreEqual(DataValue a, DataValue b)
+        public static bool AreEqual(DataValue a, DataValue b)
         {
             if (a.Type != b.Type)
             {

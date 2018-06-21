@@ -787,6 +787,18 @@ namespace Pangolin.Core.Test
         {
             '\u2295'.ShouldBeParsedAs(typeof(TokenImplementations.IteratedAdd));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_SquareRoot()
+        {
+            '\u221A'.ShouldBeParsedAs(typeof(TokenImplementations.SquareRoot));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Membership()
+        {
+            '\u2208'.ShouldBeParsedAs(typeof(TokenImplementations.Membership));
+        }
     }
 }
 
