@@ -919,6 +919,12 @@ namespace Pangolin.Core.Test
         {
             '\u1ECC'.ShouldBeParsedAs(typeof(TokenImplementations.IsOdd));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Reverse()
+        {
+            '\u042F'.ShouldBeParsedAs(typeof(TokenImplementations.Reverse));
+        }        
     }
 }
 
