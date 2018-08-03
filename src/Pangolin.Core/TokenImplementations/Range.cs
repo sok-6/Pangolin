@@ -1,4 +1,5 @@
-﻿using Pangolin.Core.DataValueImplementations;
+﻿using Pangolin.Common;
+using Pangolin.Core.DataValueImplementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,12 @@ namespace Pangolin.Core.TokenImplementations
                         .Range(Math.Min(0, a + 1), Math.Abs(a))
                         .Select(i => new NumericValue(i)));
             }
+            // String/Array - get last element
             else
             {
-                throw GetInvalidArgumentTypeException(argument.Type);
+                if (argument.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {argument.Type}");
+
+                return argument.IterationValues[argument.IterationValues.Count - 1];
             }
         }
     }
@@ -45,9 +49,12 @@ namespace Pangolin.Core.TokenImplementations
                         .Reverse()
                         .Select(i => new NumericValue(i)));
             }
+            // String/Array - get first element
             else
             {
-                throw GetInvalidArgumentTypeException(argument.Type);
+                if (argument.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {argument.Type}");
+
+                return argument.IterationValues[0];
             }
         }
     }
@@ -69,7 +76,7 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(argument.Type);
+                throw GetInvalidArgumentTypeException(ToString(), argument.Type);
             }
         }
     }
@@ -92,7 +99,7 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(argument.Type);
+                throw GetInvalidArgumentTypeException(ToString(), argument.Type);
             }
         }
     }

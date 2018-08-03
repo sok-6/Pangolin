@@ -657,27 +657,87 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void Tokeniser_should_parse_Where()
-        {
-            'W'.ShouldBeParsedAs(typeof(TokenImplementations.Where));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_WhereValue()
-        {
-            'w'.ShouldBeParsedAs(typeof(TokenImplementations.WhereValue));
-        }
-
-        [Fact]
         public void Tokeniser_should_parse_Select()
         {
             'S'.ShouldBeParsedAs(typeof(TokenImplementations.Select));
         }
 
         [Fact]
-        public void Tokeniser_should_parse_SelectValue()
+        public void Tokeniser_should_parse_SelectIterationVariable0()
         {
-            's'.ShouldBeParsedAs(typeof(TokenImplementations.SelectValue));
+            's'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable0));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationVariable1()
+        {
+            't'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationVariable2()
+        {
+            'u'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable2));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationVariable3()
+        {
+            'v'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable3));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationIndex0()
+        {
+            'i'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex0));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationIndex1()
+        {
+            'j'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationIndex2()
+        {
+            'k'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex2));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SelectIterationIndex3()
+        {
+            'l'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex3));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Where()
+        {
+            'W'.ShouldBeParsedAs(typeof(TokenImplementations.Where));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_WhereIterationVariable0()
+        {
+            'w'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationVariable0));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_WhereIterationVariable1()
+        {
+            'x'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationVariable1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_WhereIterationIndex0()
+        {
+            'g'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationIndex0));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_WhereIterationIndex1()
+        {
+            'h'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationIndex1));
         }
 
         [Fact]
@@ -753,6 +813,12 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
+        public void Tokeniser_should_parse_ArrayTriple()
+        {
+            '\u039E'.ShouldBeParsedAs(typeof(TokenImplementations.ArrayTriple));
+        }
+
+        [Fact]
         public void Tokeniser_should_parse_Interpolation()
         {
             '$'.ShouldBeParsedAs(typeof(TokenImplementations.Interpolation));
@@ -798,6 +864,60 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_Membership()
         {
             '\u2208'.ShouldBeParsedAs(typeof(TokenImplementations.Membership));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Sum()
+        {
+            '\u03A3'.ShouldBeParsedAs(typeof(TokenImplementations.Sum));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Elements()
+        {
+            '\u03B4'.ShouldBeParsedAs(typeof(TokenImplementations.Elements));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_IteratedEquality()
+        {
+            '\u229C'.ShouldBeParsedAs(typeof(TokenImplementations.IteratedEquality));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantLowercaseAlphabet()
+        {
+            '\u1EA0'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantLowercaseAlphabet));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantUppercaseAlphabet()
+        {
+            '\u1E05'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantUppercaseAlphabet));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Double()
+        {
+            'D'.ShouldBeParsedAs(typeof(TokenImplementations.Double));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Half()
+        {
+            'H'.ShouldBeParsedAs(typeof(TokenImplementations.Half));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_IsEven()
+        {
+            '\u1EB8'.ShouldBeParsedAs(typeof(TokenImplementations.IsEven));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_IsOdd()
+        {
+            '\u1ECC'.ShouldBeParsedAs(typeof(TokenImplementations.IsOdd));
         }
     }
 }

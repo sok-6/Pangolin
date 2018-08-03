@@ -58,5 +58,35 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("");
         }
+
+        [Fact]
+        public void ConstantLowercaseAlphabet_should_evaluate_to_lowercase_alphabet()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantLowercaseAlphabet();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("abcdefghijklmnopqrstuvwxyz");
+        }
+
+        [Fact]
+        public void ConstantUppercaseAlphabet_should_evaluate_to_uppercase_alphabet()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantUppercaseAlphabet();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        }
     }
 }

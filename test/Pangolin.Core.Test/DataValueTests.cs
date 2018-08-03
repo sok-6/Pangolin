@@ -241,5 +241,25 @@ cd";
             // Assert
             a.IterationRequired.ShouldBe(true);
         }
+
+        [Fact]
+        public void DataValue_BoolToTruthiness_should_return_1_for_true()
+        {
+            // Act
+            var result = DataValue.BoolToTruthiness(true);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void DataValue_BoolToTruthiness_should_return_0_for_false()
+        {
+            // Act
+            var result = DataValue.BoolToTruthiness(false);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
     }
 }

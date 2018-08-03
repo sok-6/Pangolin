@@ -24,7 +24,7 @@ namespace Pangolin.Core.TokenImplementations
             else
             {
                 var op2 = programState.DequeueAndEvaluate();
-                return op2.IsTruthy ? DataValue.Truthy : DataValue.Falsey;
+                return DataValue.BoolToTruthiness(op2.IsTruthy);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Pangolin.Core.TokenImplementations
             else
             {
                 var op2 = programState.DequeueAndEvaluate();
-                return op2.IsTruthy ? DataValue.Truthy : DataValue.Falsey;
+                return DataValue.BoolToTruthiness(op2.IsTruthy);
             }
         }
 
@@ -65,14 +65,7 @@ namespace Pangolin.Core.TokenImplementations
             var op1 = programState.DequeueAndEvaluate();
             var op2 = programState.DequeueAndEvaluate();
 
-            if (op1.IsTruthy && !op2.IsTruthy || !op1.IsTruthy && op2.IsTruthy)
-            {
-                return DataValue.Truthy;
-            }
-            else
-            {
-                return DataValue.Falsey;
-            }
+            return DataValue.BoolToTruthiness(op1.IsTruthy ^ op2.IsTruthy);
         }
 
         public override string ToString() => "X";
@@ -87,14 +80,7 @@ namespace Pangolin.Core.TokenImplementations
             var op1 = programState.DequeueAndEvaluate();
             var op2 = programState.DequeueAndEvaluate();
 
-            if (op1.IsTruthy == op2.IsTruthy)
-            {
-                return DataValue.Truthy;
-            }
-            else
-            {
-                return DataValue.Falsey;
-            }
+            return DataValue.BoolToTruthiness(!(op1.IsTruthy ^ op2.IsTruthy));
         }
 
         public override string ToString() => "~";

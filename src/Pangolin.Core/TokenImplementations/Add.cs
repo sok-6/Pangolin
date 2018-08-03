@@ -77,7 +77,7 @@ namespace Pangolin.Core.TokenImplementations
                 }
                 else
                 {
-                    throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
+                    throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
                 }
             }
         }

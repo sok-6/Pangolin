@@ -365,5 +365,117 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to > command - String,Numeric");
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to > command - Array,Numeric");
         }
+
+        [Fact]
+        public void IteratedEquality_should_compare_each_character_of_two_strings_individually()
+        {
+            // Arrange
+            var ps = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockStringValue("xbz").Object);
+
+            var token = new IteratedEquality();
+
+            // Act
+            var result = token.Evaluate(ps.Object);
+
+            // Assert
+            result.ShouldBeArrayWhichStartsWith(0, 1, 0);
+        }
+
+        [Fact]
+        public void IteratedEquality_should_compare_each_character_of_string_to_numeric()
+        {
+            // Arrange
+            var ps1 = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc123").Object,
+                MockFactory.MockNumericValue(1).Object);
+            var ps2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(1).Object,
+                MockFactory.MockStringValue("abc123").Object);
+
+            var token = new IteratedEquality();
+
+            // Act
+            var result1 = token.Evaluate(ps1.Object);
+            var result2 = token.Evaluate(ps2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(0, 0, 0, 1, 0, 0);
+            result2.ShouldBeArrayWhichStartsWith(0, 0, 0, 1, 0, 0);
+        }
+
+        [Fact]
+        public void IteratedEquality_should_compare_each_character_of_string_to_each_element_of_array()
+        {
+            // Arrange
+            var ps1 = MockFactory.MockProgramState(
+                MockFactory.MockStringValue("abc").Object,
+                MockFactory.MockArrayBuilder.StartingStrings("c","b","a").Complete());
+            var ps2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingStrings("c", "b", "a").Complete(),
+                MockFactory.MockStringValue("abc").Object);
+
+            var token = new IteratedEquality();
+
+            // Act
+            var result1 = token.Evaluate(ps1.Object);
+            var result2 = token.Evaluate(ps2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(0, 1, 0);
+            result2.ShouldBeArrayWhichStartsWith(0, 1, 0);
+        }
+
+        [Fact]
+        public void IteratedEquality_should_compare_each_element_of_array_to_numeric()
+        {
+            // Arrange
+            var ps1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var ps2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete(),
+                MockFactory.MockNumericValue(3).Object);
+
+            var token = new IteratedEquality();
+
+            // Act
+            var result1 = token.Evaluate(ps1.Object);
+            var result2 = token.Evaluate(ps2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(0, 0, 1);
+            result2.ShouldBeArrayWhichStartsWith(0, 0, 1);
+        }
+
+        [Fact]
+        public void IteratedEquality_should_compare_two_arrays_element_wise()
+        {
+            // Arrange
+            var ps = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(5, 4, 3).Complete());
+
+            var token = new IteratedEquality();
+
+            // Act
+            var result = token.Evaluate(ps.Object);
+
+            // Assert
+            result.ShouldBeArrayWhichStartsWith(0, 0, 1);
+        }
+
+        [Fact]
+        public void IteratedEquality_should_throw_exception_if_two_numerics_passed()
+        {
+            // Arrange
+            var ps = MockFactory.MockProgramState(1, 2);
+
+            var token = new IteratedEquality();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps.Object)).Message.ShouldBe("Invalid argument types passed to \u229C command - Numeric,Numeric");
+        }
     }
 }

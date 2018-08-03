@@ -29,7 +29,7 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(value.Type);
+                throw GetInvalidArgumentTypeException(ToString(), value.Type);
             }
         }
     }

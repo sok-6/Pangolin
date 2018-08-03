@@ -94,6 +94,27 @@ namespace Pangolin.Core.Test.Tokens
             return mockProgramState;
         }
 
+        public static Mock<ProgramState> MockProgramState(params string[] dequeueSequence)
+        {
+            var mockProgramState = new Mock<ProgramState>();
+
+            if (dequeueSequence.Length == 1)
+            {
+                mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(MockStringValue(dequeueSequence[0]).Object);
+            }
+            else
+            {
+                var returnSet = mockProgramState.SetupSequence(p => p.DequeueAndEvaluate());
+
+                foreach (var v in dequeueSequence)
+                {
+                    returnSet.Returns(MockStringValue(v).Object);
+                }
+            }
+
+            return mockProgramState;
+        }
+
         public class MockArrayBuilder
         {
             private List<DataValue> _valueList;

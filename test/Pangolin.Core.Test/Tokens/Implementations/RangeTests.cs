@@ -68,23 +68,47 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         }
 
         [Fact]
-        public void Range_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        public void Range_should_return_last_element_of_string()
         {
             // Arrange
-            var mockStringValue = new Mock<StringValue>();
-            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
-            var mockStringTokenQueue = new Mock<ProgramState>();
-            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
-            var mockArrayValue = new Mock<ArrayValue>();
-            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
-            var mockArrayTokenQueue = new Mock<ProgramState>();
-            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockStringValue("abc").Object);
+
+            var token = new TokenImplementations.Range();
+
+            // Act 
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("c");
+        }
+
+        [Fact]
+        public void Range_should_return_last_element_of_array()
+        {
+            // Arrange
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1,2,3).Complete());
+
+            var token = new TokenImplementations.Range();
+
+            // Act 
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(3);
+        }
+
+        [Fact]
+        public void Range_should_throw_Exception_when_empty_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringTokenQueue = MockFactory.MockProgramState(MockFactory.MockStringValue("").Object);
+            var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.Range();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2192 command - String");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2192 command - Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Can't get last item of empty String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Can't get last item of empty Array");
         }
 
         [Fact]
@@ -142,23 +166,47 @@ namespace Pangolin.Core.Test.Tokens.Implementations
         }
 
         [Fact]
-        public void ReverseRange_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
+        public void ReverseRange_should_return_first_element_of_string()
         {
             // Arrange
-            var mockStringValue = new Mock<StringValue>();
-            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
-            var mockStringTokenQueue = new Mock<ProgramState>();
-            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
-            var mockArrayValue = new Mock<ArrayValue>();
-            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
-            var mockArrayTokenQueue = new Mock<ProgramState>();
-            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockStringValue("abc").Object);
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act 
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("a");
+        }
+
+        [Fact]
+        public void ReverseRange_should_return_first_element_of_array()
+        {
+            // Arrange
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+
+            var token = new TokenImplementations.ReverseRange();
+
+            // Act 
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(1);
+        }
+
+        [Fact]
+        public void ReverseRange_should_throw_Exception_when_empty_non_numeric_passed()
+        {
+            // Arrange
+            var mockStringTokenQueue = MockFactory.MockProgramState(MockFactory.MockStringValue("").Object);
+            var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.ReverseRange();
 
             // Act / Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2190 command - String");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Invalid argument type passed to \u2190 command - Array");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockStringTokenQueue.Object)).Message.ShouldBe("Can't get last item of empty String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockArrayTokenQueue.Object)).Message.ShouldBe("Can't get last item of empty Array");
         }
 
         [Fact]

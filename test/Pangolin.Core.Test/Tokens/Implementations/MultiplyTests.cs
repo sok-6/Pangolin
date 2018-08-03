@@ -734,5 +734,62 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             a9.Value[0].ShouldBe(mockVal3.Object);
             a9.Value[1].ShouldBeOfType<StringValue>().Value.ShouldBe("c");
         }
+
+        [Fact]
+        public void Double_should_double_value_of_numeric()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(5);
+            var mockProgramState2 = MockFactory.MockProgramState(-1.2);
+            var mockProgramState3 = MockFactory.MockProgramState(0);
+
+            var token = new TokenImplementations.Double();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+
+            // Assert
+            result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(10);
+            result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(-2.4);
+            result3.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Double_should_duplicate_string()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockStringValue("abc").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockStringValue("").Object);
+
+            var token = new TokenImplementations.Double();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeOfType<StringValue>().Value.ShouldBe("abcabc");
+            result2.ShouldBeOfType<StringValue>().Value.ShouldBe("");
+        }
+
+        [Fact]
+        public void Double_should_duplicate_array()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1,2,3).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
+
+            var token = new TokenImplementations.Double();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(1, 2, 3, 1, 2, 3);
+            result2.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+        }
     }
 }

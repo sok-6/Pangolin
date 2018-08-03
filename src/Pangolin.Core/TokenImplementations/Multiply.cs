@@ -12,16 +12,21 @@ namespace Pangolin.Core.TokenImplementations
 
         protected override DataValue EvaluateInner(DataValue a, DataValue b)
         {
+            return ProcessMultiply(a, b);
+        }
+
+        public static DataValue ProcessMultiply(DataValue arg1, DataValue arg2)
+        {
             // Both numeric, regular multiplication
-            if (a.Type == DataValueType.Numeric && b.Type == DataValueType.Numeric)
+            if (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric)
             {
-                return new NumericValue(((NumericValue)a).Value * ((NumericValue)b).Value);
+                return new NumericValue(((NumericValue)arg1).Value * ((NumericValue)arg2).Value);
             }
             // Exactly 1 numeric, repeat
-            else if (a.Type == DataValueType.Numeric || b.Type == DataValueType.Numeric)
+            else if (arg1.Type == DataValueType.Numeric || arg2.Type == DataValueType.Numeric)
             {
-                var repeatTimes = (a.Type) == DataValueType.Numeric ? ((NumericValue)a).Value : ((NumericValue)b).Value;
-                var returnString = (a.Type == DataValueType.String || b.Type == DataValueType.String);
+                var repeatTimes = (arg1.Type) == DataValueType.Numeric ? ((NumericValue)arg1).Value : ((NumericValue)arg2).Value;
+                var returnString = (arg1.Type == DataValueType.String || arg2.Type == DataValueType.String);
 
                 // If repeat 0 times, return empty value
                 if (repeatTimes == 0)
@@ -31,13 +36,13 @@ namespace Pangolin.Core.TokenImplementations
 
                 // Get values to repeat
                 var repeatValues = new List<object>(
-                    a.Type == DataValueType.Numeric
+                    arg1.Type == DataValueType.Numeric
                         ? returnString
-                            ? ((StringValue)b).Value.Cast<object>()
-                            : ((ArrayValue)b).Value.Cast<object>()
+                            ? ((StringValue)arg2).Value.Cast<object>()
+                            : ((ArrayValue)arg2).Value.Cast<object>()
                         : returnString
-                            ? ((StringValue)a).Value.Cast<object>()
-                            : ((ArrayValue)a).Value.Cast<object>());
+                            ? ((StringValue)arg1).Value.Cast<object>()
+                            : ((ArrayValue)arg1).Value.Cast<object>());
 
                 // If no values, return empty value
                 if (repeatValues.Count == 0)
@@ -79,20 +84,20 @@ namespace Pangolin.Core.TokenImplementations
             else
             {
                 // If either is falsey (i.e. is empty string or empty array), product is empty
-                if (!a.IsTruthy || !b.IsTruthy)
+                if (!arg1.IsTruthy || !arg2.IsTruthy)
                 {
                     return new ArrayValue();
                 }
 
                 // Get elements of a and b - if string, treat each character as separate value
                 var setA = new List<DataValue>(
-                    a.Type == DataValueType.String
-                        ? ((StringValue)a).Value.Select(c => new StringValue(c.ToString())).Cast<DataValue>()
-                        : ((ArrayValue)a).Value);
+                    arg1.Type == DataValueType.String
+                        ? ((StringValue)arg1).Value.Select(c => new StringValue(c.ToString())).Cast<DataValue>()
+                        : ((ArrayValue)arg1).Value);
                 var setB = new List<DataValue>(
-                    b.Type == DataValueType.String
-                        ? ((StringValue)b).Value.Select(c => new StringValue(c.ToString())).Cast<DataValue>()
-                        : ((ArrayValue)b).Value);
+                    arg2.Type == DataValueType.String
+                        ? ((StringValue)arg2).Value.Select(c => new StringValue(c.ToString())).Cast<DataValue>()
+                        : ((ArrayValue)arg2).Value);
 
                 // Return pairs, iterating over b first
                 // TODO: iteration order arbitrary, could be revisited?
@@ -107,6 +112,16 @@ namespace Pangolin.Core.TokenImplementations
 
                 return new ArrayValue(result);
             }
+        }
+    }
+
+    public class Double : ArityOneIterableToken
+    {
+        public override string ToString() => "D";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            return Multiply.ProcessMultiply(new NumericValue(2), arg);
         }
     }
 }

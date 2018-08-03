@@ -14,7 +14,7 @@ namespace Pangolin.Core.TokenImplementations
             // Only defined at present between two numerics
             if (arg1.Type != DataValueType.Numeric || arg2.Type != DataValueType.Numeric)
             {
-                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
             }
 
             var numericArg1 = (NumericValue)arg1;

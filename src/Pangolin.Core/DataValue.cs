@@ -29,5 +29,6 @@ namespace Pangolin.Core
         
         public static DataValue Truthy => new DataValueImplementations.NumericValue(1);
         public static DataValue Falsey => new DataValueImplementations.NumericValue(0);
+        public static DataValue BoolToTruthiness(bool b) => new DataValueImplementations.NumericValue(b ? 1 : 0);
     }
 }

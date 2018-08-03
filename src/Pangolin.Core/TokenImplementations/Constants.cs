@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pangolin.Core.DataValueImplementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,5 +41,23 @@ namespace Pangolin.Core.TokenImplementations
         }
 
         public override string ToString() => "e";
+    }
+
+    public class ConstantLowercaseAlphabet : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState) => new StringValue("abcdefghijklmnopqrstuvwxyz");
+
+        public override string ToString() => "\u1EA0";
+    }
+
+    public class ConstantUppercaseAlphabet : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState) => new StringValue("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+        public override string ToString() => "\u1E05";
     }
 }

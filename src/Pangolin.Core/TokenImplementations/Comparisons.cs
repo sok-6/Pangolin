@@ -55,7 +55,7 @@ namespace Pangolin.Core.TokenImplementations
 
         protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            return AreEqual(arg1, arg2) ? DataValue.Truthy : DataValue.Falsey;
+            return DataValue.BoolToTruthiness(AreEqual(arg1, arg2));
         }
     }
 
@@ -65,7 +65,7 @@ namespace Pangolin.Core.TokenImplementations
 
         protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
         {
-            return AreEqual(arg1, arg2) ? DataValue.Falsey : DataValue.Truthy;
+            return DataValue.BoolToTruthiness(!AreEqual(arg1, arg2));
         }
     }
 
@@ -81,11 +81,11 @@ namespace Pangolin.Core.TokenImplementations
                 var numeric1 = ((NumericValue)arg1).Value;
                 var numeric2 = ((NumericValue)arg2).Value;
 
-                return numeric1 < numeric2 ? DataValue.Truthy : DataValue.Falsey;
+                return DataValue.BoolToTruthiness(numeric1 < numeric2);
             }
             else
             {
-                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
             }
         }
     }
@@ -102,11 +102,78 @@ namespace Pangolin.Core.TokenImplementations
                 var numeric1 = ((NumericValue)arg1).Value;
                 var numeric2 = ((NumericValue)arg2).Value;
 
-                return numeric1 > numeric2 ? DataValue.Truthy : DataValue.Falsey;
+                return DataValue.BoolToTruthiness(numeric1 > numeric2);
             }
             else
             {
-                throw GetInvalidArgumentTypeException(arg1.Type, arg2.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
+            }
+        }
+    }
+
+    public class IteratedEquality : Equality
+    {
+        public override string ToString() => "\u229C";
+
+        /* 
++=========+==================================+=============================================================+==================================================+
+|  Type   |             Numeric              |                           String                            |                    Array                         |
++=========+==================================+=============================================================+==================================================+
+| Numeric | Exception                        | Num-> string, iterate over string                           | iterate over array                               |
++---------+----------------------------------+-------------------------------------------------------------+--------------------------------------------------+
+| String  | num->string, iterate over string | zip                                                         | zip                                              |
++---------+----------------------------------+-------------------------------------------------------------+--------------------------------------------------+
+| Array   | iterate over array               | zip                                                         | zip                                              |
++---------+----------------------------------+-------------------------------------------------------------+--------------------------------------------------+
+         */
+        public override DataValue Evaluate(ProgramState tokenQueue)
+        {
+            // Get two arguments
+            var arg1 = tokenQueue.DequeueAndEvaluate();
+            var arg2 = tokenQueue.DequeueAndEvaluate();
+
+            if (arg1.Type == DataValueType.Numeric)
+            {
+                // Numeric, string -> a1 to string, iterate over a2
+                if (arg2.Type == DataValueType.String)
+                {
+                    var str1 = new StringValue(arg1.ToString());
+                    return new ArrayValue(arg2.IterationValues.Select(s => EvaluateInner(str1, s)));
+                }
+                // Numeric, array -> iterate over a2
+                else if (arg2.Type == DataValueType.Array)
+                {
+                    return new ArrayValue(arg2.IterationValues.Select(a => EvaluateInner(arg1, a)));
+                }
+                // Numeric, numeric -> nothing
+                else
+                {
+                    throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
+                }
+            }
+            else if (arg2.Type == DataValueType.Numeric)
+            {
+                // String, Numeric -> a2 to string, iterate over a1
+                if (arg1.Type == DataValueType.String)
+                {
+                    var str2 = new StringValue(arg2.ToString());
+                    return new ArrayValue(arg1.IterationValues.Select(s => EvaluateInner(s, str2)));
+                }
+                // Array, Numeric -> iterate over a1
+                else if (arg1.Type == DataValueType.Array)
+                {
+                    return new ArrayValue(arg1.IterationValues.Select(a => EvaluateInner(a, arg2)));
+                }
+                // Numeric, numeric -> nothing
+                else
+                {
+                    throw GetInvalidArgumentTypeException(ToString(), arg1.Type, arg2.Type);
+                }
+            }
+            // Both a1 and a2 are iterable, zip them
+            else
+            {
+                return new ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1, a2) => EvaluateInner(a1, a2)));
             }
         }
     }

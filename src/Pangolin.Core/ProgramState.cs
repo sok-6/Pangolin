@@ -20,17 +20,17 @@ namespace Pangolin.Core
         public int CurrentTokenIndex { get; private set; }
         public bool ExecutionInProgress => CurrentTokenIndex < TokenList.Count;
 
-        public bool IsWhereBlockExecuting { get; set; }
-        public DataValue WhereValue { get; set; }
-
-        public bool IsSelectBlockExecuting { get; set; }
-        public DataValue SelectValue { get; set; }
+        private Dictionary<string, DataValue> _iterationFunctionConstants;
+        public IReadOnlyDictionary<string, DataValue> IterationFunctionConstants => _iterationFunctionConstants;
+        public Stack<string> DefaultTokenStack { get; private set; }
 
         public ProgramState()
         {
             CurrentTokenIndex = 0;
             TokenList = new List<Token>();
             _argumentList = new List<DataValue>();
+            _iterationFunctionConstants = new Dictionary<string, DataValue>();
+            DefaultTokenStack = new Stack<string>();
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
@@ -41,6 +41,8 @@ namespace Pangolin.Core
             CurrentTokenIndex = 0;
             TokenList = tokens;
             _argumentList = new List<DataValue>(argumentList ?? new DataValue[0]);
+            _iterationFunctionConstants = new Dictionary<string, DataValue>();
+            DefaultTokenStack = new Stack<string>();
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
@@ -49,10 +51,18 @@ namespace Pangolin.Core
         public virtual DataValue DequeueAndEvaluate()
         {
             // Check if run out of tokens
-            if (CurrentTokenIndex == TokenList.Count)
+            if (CurrentTokenIndex >= TokenList.Count)
             {
-                // Return 0th argument, or lit 0
-                return _argumentList.Count > 0 ? _argumentList[0] : DataValueImplementations.NumericValue.Zero;
+                // Get default token if any
+                if (DefaultTokenStack.Count > 0)
+                {
+                    return _iterationFunctionConstants[DefaultTokenStack.Peek()];
+                }
+                else
+                {
+                    // Return 0th argument, or lit 0
+                    return _argumentList.Count > 0 ? _argumentList[0] : DataValueImplementations.NumericValue.Zero;
+                }
             }
 
             // 'Dequeue' and evaluate
@@ -69,6 +79,16 @@ namespace Pangolin.Core
         public virtual DataValue GetVariable(int index)
         {
             return _variables[index];
+        }
+
+        public virtual void SetIterationFunctionConstant(string token, DataValue value)
+        {
+            _iterationFunctionConstants[token] = value;
+        }
+
+        public virtual void ClearIterationFunctionConstant(string token)
+        {
+            _iterationFunctionConstants.Remove(token);
         }
 
         /// <summary>
@@ -96,7 +116,7 @@ namespace Pangolin.Core
 
         public virtual void StepOverNextTokenBlock()
         {
-            SetCurrentTokenIndex(FindEndOfBlock(CurrentTokenIndex));
+            SetCurrentTokenIndex(FindEndOfBlock(CurrentTokenIndex) + 1);
         }
     }
 }

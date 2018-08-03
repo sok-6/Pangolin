@@ -15,9 +15,9 @@ namespace Pangolin.Core
         public abstract DataValue Evaluate(ProgramState programState);
         public abstract override string ToString();
 
-        protected Exception GetInvalidArgumentTypeException(params DataValueType[] invalidTypes)
+        protected static Exception GetInvalidArgumentTypeException(string tokenString, params DataValueType[] invalidTypes)
         {
-            return new PangolinInvalidArgumentTypeException($"Invalid argument type{(invalidTypes.Length > 1 ? "s" : "")} passed to {ToString()} command - {String.Join(",", invalidTypes)}");
+            return new PangolinInvalidArgumentTypeException($"Invalid argument type{(invalidTypes.Length > 1 ? "s" : "")} passed to {tokenString} command - {String.Join(",", invalidTypes)}");
         }
         
         #region Public factory methods
@@ -86,7 +86,7 @@ namespace Pangolin.Core
             }
         }
 
-        protected abstract DataValue EvaluateInner(DataValue value);
+        protected abstract DataValue EvaluateInner(DataValue arg);
     }
 
     public abstract class ArityTwoIterableToken : Token

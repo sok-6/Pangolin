@@ -45,7 +45,7 @@ namespace Pangolin.Core.Test
         {
             // Arrange
             var code = token.ToString();
-            var mockLog = new Mock<System.Action<string>>();
+            var mockLog = new Mock<Action<string>>();
 
             // Act
             var result = Tokeniser.Tokenise(code, mockLog.Object);
@@ -57,7 +57,7 @@ namespace Pangolin.Core.Test
 
         public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params double[] numerics)
         {
-            var values = dataValue.ShouldBeOfType<ArrayValue>().Value;
+            var values = dataValue.ShouldBeAssignableTo<ArrayValue>().Value;
 
             for (int i = 0; i < numerics.Length; i++)
             {
@@ -69,7 +69,7 @@ namespace Pangolin.Core.Test
 
         public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params string[] strings)
         {
-            var values = dataValue.ShouldBeOfType<ArrayValue>().Value;
+            var values = dataValue.ShouldBeAssignableTo<ArrayValue>().Value;
 
             for (int i = 0; i < strings.Length; i++)
             {

@@ -13,7 +13,7 @@ namespace Pangolin
             //    Console.WriteLine(s);
             //}
 
-            var simpleCode = "`<<%10001101#FF, %11000000#6E!";
+            var simpleCode = "M`->m`<-5";
 
             var (success, code) = CommandLineUtilities.ParseSimpleCode(simpleCode, true);
 
