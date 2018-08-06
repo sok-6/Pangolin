@@ -226,5 +226,225 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             array2.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
             array2.Value[1].ShouldBeArrayWhichStartsWith(5, 6, 7);
         }
+
+        [Fact]
+        public void IntegerDivision_should_calculate_truncated_division_between_two_numerics()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(4, 9);
+            var mockProgramState2 = MockFactory.MockProgramState(1.2, 7.5);
+            var mockProgramState3 = MockFactory.MockProgramState(3, -20);
+
+            var token = new IntegerDivision();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+
+            // Assert
+            result1.ShouldBeOfType<NumericValue>().Value.ShouldBe(2);
+            result2.ShouldBeOfType<NumericValue>().Value.ShouldBe(6);
+            result3.ShouldBeOfType<NumericValue>().Value.ShouldBe(-6);
+        }
+
+        [Fact]
+        public void IntegerDivision_should_split_iterable_into_x_sized_pieces()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockStringValue("").Object);
+            var mockProgramState3 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1,2,3,4,5,6,7,8,9,10).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(3).Object,
+                MockFactory.MockArrayBuilder.Empty);
+
+            var token = new IntegerDivision();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith("abc", "def", "ghi", "j");
+
+            result2.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+
+            var array3 = result3.ShouldBeOfType<ArrayValue>();
+            array3.Value.Count.ShouldBe(4);
+            array3.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3);
+            array3.Value[1].ShouldBeArrayWhichStartsWith(4, 5, 6);
+            array3.Value[2].ShouldBeArrayWhichStartsWith(7, 8, 9);
+            array3.Value[3].ShouldBeArrayWhichStartsWith(10);
+
+            result4.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void IntegerDivision_should_split_iterable_into_x_sized_pieces_reversed_if_negative()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(-3).Object,
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(-3).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).Complete());
+
+            var token = new IntegerDivision();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith("cba", "fed", "ihg", "j");
+
+            var array2 = result2.ShouldBeOfType<ArrayValue>();
+            array2.Value.Count.ShouldBe(4);
+            array2.Value[0].ShouldBeArrayWhichStartsWith(3, 2, 1);
+            array2.Value[1].ShouldBeArrayWhichStartsWith(6, 5, 4);
+            array2.Value[2].ShouldBeArrayWhichStartsWith(9, 8, 7);
+            array2.Value[3].ShouldBeArrayWhichStartsWith(10);
+        }
+
+        [Fact]
+        public void IntegerDivision_should_error_if_splitting_iterable_and_zero_or_non_integral_size_passed()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(0).Object,
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(2.5).Object,
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState3 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(0).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(
+                MockFactory.MockNumericValue(2.5).Object,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).Complete());
+
+            var token = new IntegerDivision();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("For \u00F7, if 1st argument is numeric, it must be non-zero - arg1=0, arg2=abcdefghij");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("For \u00F7, if 1st argument is numeric, it must be integral - arg1=2.5, arg2=abcdefghij");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("For \u00F7, if 1st argument is numeric, it must be non-zero - arg1=0, arg2=[1,2,3,4,5,6,7,8,9,10]");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("For \u00F7, if 1st argument is numeric, it must be integral - arg1=2.5, arg2=[1,2,3,4,5,6,7,8,9,10]");
+        }
+
+        [Fact]
+        public void IntegerDivision_should_split_iterable_into_pieces_with_sizes_described_by_int_array()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 0, -3).Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState3 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1,2,3,4,5,6,7,8,9,10).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 0, -3).Complete(),
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).Complete());
+
+            var token = new IntegerDivision();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith("a", "bc", "def", "g", "hi", "j");
+            result2.ShouldBeArrayWhichStartsWith("a", "", "dcb", "e", "", "hgf", "i", "", "j");
+
+            var array3 = result3.ShouldBeOfType<ArrayValue>();
+            array3.Value.Count.ShouldBe(6);
+            array3.Value[0].ShouldBeArrayWhichStartsWith(1);
+            array3.Value[1].ShouldBeArrayWhichStartsWith(2, 3);
+            array3.Value[2].ShouldBeArrayWhichStartsWith(4, 5, 6);
+            array3.Value[3].ShouldBeArrayWhichStartsWith(7);
+            array3.Value[4].ShouldBeArrayWhichStartsWith(8, 9);
+            array3.Value[5].ShouldBeArrayWhichStartsWith(10);
+
+            var array4 = result4.ShouldBeOfType<ArrayValue>();
+            array4.Value.Count.ShouldBe(9);
+            array4.Value[0].ShouldBeArrayWhichStartsWith(1);
+            array4.Value[1].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            array4.Value[2].ShouldBeArrayWhichStartsWith(4, 3, 2);
+            array4.Value[3].ShouldBeArrayWhichStartsWith(5);
+            array4.Value[4].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            array4.Value[5].ShouldBeArrayWhichStartsWith(8, 7, 6);
+            array4.Value[6].ShouldBeArrayWhichStartsWith(9);
+            array4.Value[7].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            array4.Value[8].ShouldBeArrayWhichStartsWith(10);
+        }
+
+        [Fact]
+        public void IntegerDivision_should_error_if_splitting_iterable_and_empty_array_passed_as_piece_sizes()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.Empty,
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.Empty,
+                MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).Complete());
+
+            var token = new IntegerDivision();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, it must be populated - arg1=[], arg2=abcdefghij");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, it must be populated - arg1=[], arg2=[1,2,3,4,5,6,7,8,9,10]");
+        }
+
+        [Fact]
+        public void IntegerDivision_should_error_if_splitting_iterable_and_array_of_zeros_or_non_integrals_passed_as_piece_sizes()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(0,0,0).Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(1.5,10).Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+
+            var token = new IntegerDivision();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, at least one element must be non-zero - arg1=[0,0,0], arg2=abcdefghij");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, all elements of that array must be integral - arg1=[1.5,10], arg2=abcdefghij");
+        }
+
+        [Fact]
+        public void IntegerDivision_should_error_if_splitting_iterable_and_array_of_non_numerics_passed_as_piece_sizes()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(3, 4).WithStrings("abc").Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockArrayBuilder.StartingNumerics(3, 4).WithArray(MockFactory.MockArrayBuilder.StartingNumerics(1,2,3).Complete()).Complete(),
+                MockFactory.MockStringValue("abcdefghij").Object);
+
+            var token = new IntegerDivision();
+
+            // Act/Assert
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, all elements of that array must be integral - arg1=[3,4,abc], arg2=abcdefghij");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("For \u00F7, if 1st argument is array, all elements of that array must be integral - arg1=[3,4,[1,2,3]], arg2=abcdefghij");
+        }
     }
 }
