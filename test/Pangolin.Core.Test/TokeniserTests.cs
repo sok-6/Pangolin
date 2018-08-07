@@ -924,7 +924,26 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_Reverse()
         {
             '\u042F'.ShouldBeParsedAs(typeof(TokenImplementations.Reverse));
-        }        
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_PrimeLessThanOneMillion()
+        {
+            '\u1E33'.ShouldBeParsedAs(typeof(TokenImplementations.PrimesLessThanOneMillion));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_PrimeFactorisation()
+        {
+            'K'.ShouldBeParsedAs(typeof(TokenImplementations.PrimeFactorisation));
+        }
+
+
+        [Fact]
+        public void Tokeniser_should_parse_IsPrime()
+        {
+            '\u1E32'.ShouldBeParsedAs(typeof(TokenImplementations.IsPrime));
+        }
     }
 }
 

@@ -1,6 +1,8 @@
 ﻿using Pangolin.Common;
 using Pangolin.Core.DataValueImplementations;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Pangolin.Core.TokenImplementations
 {
@@ -28,27 +30,160 @@ namespace Pangolin.Core.TokenImplementations
                 throw new PangolinInvalidArgumentTypeException($"{ToString()} not defined for negative integrals - arg={arg}");
             }
 
-            var workingValue = numericArg.IntValue;
-
             // If 0 or 1, return empty array
-            if (workingValue < 2)
+            if (numericArg.IntValue < 2)
             {
                 return new ArrayValue();
             }
 
-            throw new NotImplementedException();
+            // Get factorisation
+            var factorisation = new List<int>();
+            Factorise(numericArg.IntValue, factorisation);
+
+            return new ArrayValue(factorisation.Select(i => new NumericValue(i)));
+        }
+
+        private void Factorise(int value, List<int> factorisation)
+        {
+            // Get list of known primes
+            var knownPrimes = PrimesLessThanOneMillion.PrimeList.Value;
+
+            if (knownPrimes.Contains(value))
+            {
+                factorisation.Add(value);
+                return;
+            }
+
+            // Trial division by known primes
+            foreach (var p in knownPrimes)
+            {
+                if (value % p == 0)
+                {
+                    factorisation.Add(p);
+                    Factorise(value / p, factorisation);
+                    return;
+                }
+            }
+
+            // Number must be larger than 1e12
+            // Largest prime <1e6 is 999983 which is 5 (mod 6)
+            // Use that as starting point for incremental search
+            for (var trial = knownPrimes.Max(); trial * trial < value; trial += 6)
+            {
+                if (value % trial == 0)
+                {
+                    factorisation.Add(trial);
+                    Factorise(value / trial, factorisation);
+                    return;
+                }
+                if (value % (trial + 2) == 0)
+                {
+                    factorisation.Add((trial + 2));
+                    Factorise(value / (trial + 2), factorisation);
+                    return;
+                }
+            }
+
+            // If it's reached here, it's a prime
+            factorisation.Add(value);
+            return;
         }
     }
 
     public class PrimesLessThanOneMillion : Token
     {
-        public override int Arity => throw new NotImplementedException();
+        private const int LIMIT = 1000000;
+
+        public override int Arity => 0;
 
         public override DataValue Evaluate(ProgramState programState)
         {
-            throw new NotImplementedException();
+            return new ArrayValue(PrimeList.Value.Select(p => new NumericValue(p)));
         }
 
-        public override string ToString() => "k";
+        public override string ToString() => "\u1E33";
+
+        public static Lazy<IEnumerable<int>> PrimeList = new Lazy<IEnumerable<int>>(() =>
+        {
+            var candidates = Enumerable.Repeat(true, LIMIT).ToArray();
+            candidates[0] = false;
+            candidates[1] = false;
+
+            for (int i = 2; i * i < LIMIT; i++)
+            {
+                if (candidates[i])
+                {
+                    var multiple = i * 2;
+                    while (multiple < LIMIT)
+                    {
+                        candidates[multiple] = false;
+                        multiple += i;
+                    }
+                }
+            }
+
+            return candidates.Select((c, i) => c ? i : 0).Where(i => i > 0);
+        });
+    }
+
+    public class IsPrime : ArityOneIterableToken
+    {
+        public override string ToString() => "\u1E32";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // Only defined for non-negative integrals for now
+            if (arg.Type != DataValueType.Numeric)
+            {
+                throw GetInvalidArgumentTypeException(ToString(), arg.Type);
+            }
+
+            var numericArg = (NumericValue)arg;
+
+            if (!numericArg.IsIntegral)
+            {
+                throw new PangolinInvalidArgumentTypeException($"{ToString()} not defined for non-integrals - arg={arg}");
+            }
+
+            int intValue = numericArg.IntValue;
+            if (intValue < 0)
+            {
+                throw new PangolinInvalidArgumentTypeException($"{ToString()} not defined for negative integrals - arg={arg}");
+            }
+
+            // Get list of known primes
+            var knownPrimes = PrimesLessThanOneMillion.PrimeList.Value;
+            var maxPrime = knownPrimes.Max();
+
+            // If less than max known prime, check for membership
+            if (intValue <= maxPrime)
+            {
+                return DataValue.BoolToTruthiness(knownPrimes.Contains(intValue));
+            }
+
+            // Trial division by each of the precomputed primes
+            foreach (var p in knownPrimes.Where(p => p * p <= intValue))
+            {
+                if (intValue % p == 0)
+                {
+                    return DataValue.Falsey;
+                }
+            }
+
+            if (Math.Sqrt(intValue) < maxPrime)
+            {
+                return DataValue.Truthy;
+            }
+
+            for (int i = maxPrime; i * i <= intValue; i += 6)
+            {
+                if (intValue % i == 0 || intValue % (i + 2) == 0)
+                {
+                    return DataValue.Falsey;
+                }
+            }
+
+            return DataValue.Truthy;
+        }
     }
 }
