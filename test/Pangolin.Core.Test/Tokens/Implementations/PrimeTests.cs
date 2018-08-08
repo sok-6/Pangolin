@@ -157,7 +157,65 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument type passed to \u1E32 command - Array");
         }
 
+        [Fact]
+        public void Palindromise_PrimesList_should_return_primes_list_for_numerics()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(20);
+            var mockProgramState2 = MockFactory.MockProgramState(20.5);
+            var mockProgramState3 = MockFactory.MockProgramState(2);
+            var mockProgramState4 = MockFactory.MockProgramState(-10);
 
+            var token = new Palindromise_PrimesList();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19);
+            result2.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19);
+            result3.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result4.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public void Palindromise_PrimesList_should_return_palindromised_string()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState("abcde");
+            var mockProgramState2 = MockFactory.MockProgramState("");
+
+            var token = new Palindromise_PrimesList();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeOfType<StringValue>().Value.ShouldBe("abcdedcba");
+            result2.ShouldBeOfType<StringValue>().Value.ShouldBe("");
+        }
+
+        [Fact]
+        public void Palindromise_PrimesList_should_return_palindromised_array()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
+
+            var token = new Palindromise_PrimesList();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(1, 2, 3, 2, 1);
+            result2.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+        }
     }
 }
 

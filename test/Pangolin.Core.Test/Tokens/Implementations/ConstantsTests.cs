@@ -88,5 +88,35 @@ namespace Pangolin.Core.Test.Tokens.Implementations
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         }
+
+        [Fact]
+        public void ConstantPi_should_evaluate_to_numeric_pi()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantPi();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(Math.PI);
+        }
+
+        [Fact]
+        public void ConstantPi_should_evaluate_to_numeric_tau()
+        {
+            // Arrange
+            var mockProgramState = new Mock<ProgramState>();
+
+            var token = new ConstantTau();
+
+            // Act
+            var result = token.Evaluate(mockProgramState.Object);
+
+            // Assert
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(2 * Math.PI);
+        }
     }
 }

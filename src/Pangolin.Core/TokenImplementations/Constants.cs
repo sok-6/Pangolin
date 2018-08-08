@@ -60,4 +60,22 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "\u1E05";
     }
+
+    public class ConstantPi : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState) => new NumericValue(Math.PI);
+
+        public override string ToString() => "\u03C0";
+    }
+
+    public class ConstantTau : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState) => new NumericValue(2 * Math.PI);
+
+        public override string ToString() => "\u03C4";
+    }
 }

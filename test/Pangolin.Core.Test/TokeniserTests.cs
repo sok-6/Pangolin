@@ -938,11 +938,28 @@ namespace Pangolin.Core.Test
             'K'.ShouldBeParsedAs(typeof(TokenImplementations.PrimeFactorisation));
         }
 
-
         [Fact]
         public void Tokeniser_should_parse_IsPrime()
         {
             '\u1E32'.ShouldBeParsedAs(typeof(TokenImplementations.IsPrime));
+        }
+        
+        [Fact]
+        public void Tokeniser_should_parse_Palindromise_PrimesList()
+        {
+            '\u0416'.ShouldBeParsedAs(typeof(TokenImplementations.Palindromise_PrimesList));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantPi()
+        {
+            '\u03C0'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantPi));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantTau()
+        {
+            '\u03C4'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantTau));
         }
     }
 }

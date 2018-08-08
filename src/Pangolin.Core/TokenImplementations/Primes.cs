@@ -105,24 +105,7 @@ namespace Pangolin.Core.TokenImplementations
 
         public static Lazy<IEnumerable<int>> PrimeList = new Lazy<IEnumerable<int>>(() =>
         {
-            var candidates = Enumerable.Repeat(true, LIMIT).ToArray();
-            candidates[0] = false;
-            candidates[1] = false;
-
-            for (int i = 2; i * i < LIMIT; i++)
-            {
-                if (candidates[i])
-                {
-                    var multiple = i * 2;
-                    while (multiple < LIMIT)
-                    {
-                        candidates[multiple] = false;
-                        multiple += i;
-                    }
-                }
-            }
-
-            return candidates.Select((c, i) => c ? i : 0).Where(i => i > 0);
+            return Palindromise_PrimesList.GetPrimesLessThan(LIMIT);
         });
     }
 
@@ -184,6 +167,71 @@ namespace Pangolin.Core.TokenImplementations
             }
 
             return DataValue.Truthy;
+        }
+    }
+
+    public class Palindromise_PrimesList : ArityOneIterableToken
+    {
+        public override string ToString() => "\u0416";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // Numeric, get primes list
+            if (arg.Type == DataValueType.Numeric)
+            {
+                var numericArg = (NumericValue)arg;
+                
+                // Less than 2, no primes
+                if (numericArg.IntValue <= 2)
+                {
+                    return new ArrayValue();
+                }
+
+                // TODO: check less than 1M?
+
+                // Get primes list
+                return new ArrayValue(GetPrimesLessThan(numericArg.IntValue).Select(i => new NumericValue(i)));
+            }
+            // Iterable, palindromise
+            else
+            {
+                var elements = arg.IterationValues;
+
+                var result = new List<DataValue>();
+                result.AddRange(elements);
+                result.AddRange(elements.Reverse().Skip(1));
+
+                if (arg.Type == DataValueType.String)
+                {
+                    return new StringValue(String.Join("", result));
+                }
+                else
+                {
+                    return new ArrayValue(result);
+                }
+            }
+        }
+
+        public static IEnumerable<int> GetPrimesLessThan(int n)
+        {
+            var candidates = Enumerable.Repeat(true, n).ToArray();
+            candidates[0] = false;
+            candidates[1] = false;
+
+            for (int i = 2; i * i <= n; i++)
+            {
+                if (candidates[i])
+                {
+                    var multiple = i * 2;
+                    while (multiple < n)
+                    {
+                        candidates[multiple] = false;
+                        multiple += i;
+                    }
+                }
+            }
+
+            return candidates.Select((c, i) => c ? i : 0).Where(i => i > 0);
         }
     }
 }
