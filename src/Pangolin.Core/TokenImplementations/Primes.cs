@@ -43,7 +43,16 @@ namespace Pangolin.Core.TokenImplementations
             return new ArrayValue(factorisation.Select(i => new NumericValue(i)));
         }
 
-        private void Factorise(int value, List<int> factorisation)
+        public static IEnumerable<int> GetPrimeFactorisation(int n)
+        {
+            var result = new List<int>();
+
+            Factorise(n, result);
+
+            return result;
+        }
+
+        private static void Factorise(int value, List<int> factorisation)
         {
             // Get list of known primes
             var knownPrimes = PrimesLessThanOneMillion.PrimeList.Value;

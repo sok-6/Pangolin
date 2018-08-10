@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Pangolin.Core.Test.Tokens.Implementations
+namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 {
     public class SubtractTests
     {

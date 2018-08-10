@@ -961,6 +961,36 @@ namespace Pangolin.Core.Test
         {
             '\u03C4'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantTau));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_MultiplicativePartitions_PowerSet()
+        {
+            '#'.ShouldBeParsedAs(typeof(TokenImplementations.MultiplicativePartitions_PowerSet));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Pair()
+        {
+            'P'.ShouldBeParsedAs(typeof(TokenImplementations.Pair));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_PairIterationVariableLeft()
+        {
+            'p'.ShouldBeParsedAs(typeof(TokenImplementations.PairIterationVariableLeft));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_PairIterationVariableRight()
+        {
+            'q'.ShouldBeParsedAs(typeof(TokenImplementations.PairIterationVariableRight));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_SimplePair()
+        {
+            ','.ShouldBeParsedAs(typeof(TokenImplementations.SimplePair));
+        }
     }
 }
 

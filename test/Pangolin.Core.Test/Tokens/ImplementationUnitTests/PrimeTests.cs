@@ -9,7 +9,7 @@ using Pangolin.Core.TokenImplementations;
 using Pangolin.Core.DataValueImplementations;
 using Pangolin.Common;
 
-namespace Pangolin.Core.Test.Tokens.Implementations
+namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 {
     public class PrimeTests
     {

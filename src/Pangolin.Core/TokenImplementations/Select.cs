@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Select : Token
+    public class Select : Token // TODO: Write tests
     {
         private const string ITERATION_VARIABLE_TOKENS = "stuv";
         private const string ITERATION_INDEX_TOKENS = "ijkl";

@@ -8,7 +8,7 @@ using Pangolin.Core.TokenImplementations;
 using Shouldly;
 using Xunit;
 
-namespace Pangolin.Core.Test.Tokens.Implementations
+namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 {
     public class TestPropertyTests
     {
