@@ -279,26 +279,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LessThan_should_error_if_non_numerics_passed()
         {
             // Arrange
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-
-            var mockString = new Mock<StringValue>();
-            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
-
-            var mockArray = new Mock<ArrayValue>();
-            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
-
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
-
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.EmptyString);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.Empty);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.Zero);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.Zero);
 
             var token = new LessThan();
 
@@ -336,26 +320,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void GreaterThan_should_error_if_non_numerics_passed()
         {
             // Arrange
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-
-            var mockString = new Mock<StringValue>();
-            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
-
-            var mockArray = new Mock<ArrayValue>();
-            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
-
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
-
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.EmptyString);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.Empty);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.Zero);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.Zero);
 
             var token = new GreaterThan();
 

@@ -122,14 +122,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(ps.Object);
 
             // Assert
-            var arrayResult = result.ShouldBeOfType<ArrayValue>().Value;
-            arrayResult.Count.ShouldBe(6);
-            arrayResult[0].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(1);
-            arrayResult[1].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(2);
-            arrayResult[2].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(3);
-            arrayResult[3].ShouldBeAssignableTo<StringValue>().Value.ShouldBe("abc");
-            arrayResult[4].ShouldBeAssignableTo<StringValue>().Value.ShouldBe("xyz");
-            arrayResult[5].ShouldBeArrayWhichStartsWith(7, 8, 9);
+            result.ShouldBeArrayWhichStartsWith(1, 2, 3)
+                .ThenShouldContinueWith("abc", "xyz")
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(7, 8, 9).End())
+                .End();
         }
     }
 }

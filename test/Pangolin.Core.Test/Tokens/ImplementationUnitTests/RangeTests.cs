@@ -17,10 +17,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Range_should_return_positive_range_when_positive_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(5);
 
             var token = new TokenImplementations.Range();
 
@@ -28,17 +25,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(0, 1, 2, 3, 4);
+            result.ShouldBeArrayWhichStartsWith(0, 1, 2, 3, 4).End();
         }
 
         [Fact]
         public void Range_should_return_negative_range_when_negative_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(-5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(-5);
 
             var token = new TokenImplementations.Range();
 
@@ -46,17 +40,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(-4, -3, -2, -1, 0);
+            result.ShouldBeArrayWhichStartsWith(-4, -3, -2, -1, 0).End();
         }
 
         [Fact]
         public void Range_should_return_empty_array_when_0_passed()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(0);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(0);
 
             var token = new TokenImplementations.Range();
 
@@ -64,14 +55,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result.ShouldBeEmptyArray();
         }
 
         [Fact]
         public void Range_should_return_last_element_of_string()
         {
             // Arrange
-            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockStringValue("abc").Object);
+            var mockProgramState = MockFactory.MockProgramState("abc");
 
             var token = new TokenImplementations.Range();
 
@@ -101,7 +92,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Range_should_throw_Exception_when_empty_non_numeric_passed()
         {
             // Arrange
-            var mockStringTokenQueue = MockFactory.MockProgramState(MockFactory.MockStringValue("").Object);
+            var mockStringTokenQueue = MockFactory.MockProgramState(MockFactory.EmptyString);
             var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.Range();
@@ -115,10 +106,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ReverseRange_should_return_positive_range_when_positive_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(5);
 
             var token = new TokenImplementations.ReverseRange();
 
@@ -126,17 +114,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(4, 3, 2, 1, 0);
+            result.ShouldBeArrayWhichStartsWith(4, 3, 2, 1, 0).End();
         }
 
         [Fact]
         public void ReverseRange_should_return_negative_range_when_negative_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(-5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(-5);
 
             var token = new TokenImplementations.ReverseRange();
 
@@ -144,17 +129,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(0, -1, -2, -3, -4);
+            result.ShouldBeArrayWhichStartsWith(0, -1, -2, -3, -4).End();
         }
 
         [Fact]
         public void ReverseRange_should_return_empty_array_when_0_passed()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(0);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(0);
 
             var token = new TokenImplementations.ReverseRange();
 
@@ -162,14 +144,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result.ShouldBeEmptyArray();
         }
 
         [Fact]
         public void ReverseRange_should_return_first_element_of_string()
         {
             // Arrange
-            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockStringValue("abc").Object);
+            var mockProgramState = MockFactory.MockProgramState("abc");
 
             var token = new TokenImplementations.ReverseRange();
 
@@ -199,7 +181,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ReverseRange_should_throw_Exception_when_empty_non_numeric_passed()
         {
             // Arrange
-            var mockStringTokenQueue = MockFactory.MockProgramState(MockFactory.MockStringValue("").Object);
+            var mockStringTokenQueue = MockFactory.MockProgramState("");
             var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.ReverseRange();
@@ -213,10 +195,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Range1_should_return_positive_range_when_positive_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(5);
 
             var token = new TokenImplementations.Range1();
 
@@ -224,17 +203,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(1, 2, 3, 4, 5);
+            result.ShouldBeArrayWhichStartsWith(1, 2, 3, 4, 5).End();
         }
 
         [Fact]
         public void Range1_should_return_negative_range_when_negative_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(-5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(-5);
 
             var token = new TokenImplementations.Range1();
 
@@ -242,17 +218,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(-5, -4, -3, -2, -1);
+            result.ShouldBeArrayWhichStartsWith(-5, -4, -3, -2, -1).End();
         }
 
         [Fact]
         public void Range1_should_return_empty_array_when_0_passed()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(0);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(0);
 
             var token = new TokenImplementations.Range1();
 
@@ -260,21 +233,15 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result.ShouldBeEmptyArray();
         }
 
         [Fact]
         public void Range1_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
         {
             // Arrange
-            var mockStringValue = new Mock<StringValue>();
-            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
-            var mockStringTokenQueue = new Mock<ProgramState>();
-            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
-            var mockArrayValue = new Mock<ArrayValue>();
-            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
-            var mockArrayTokenQueue = new Mock<ProgramState>();
-            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+            var mockStringTokenQueue = MockFactory.MockProgramState("");
+            var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.Range1();
 
@@ -287,10 +254,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ReverseRange1_should_return_positive_range_when_positive_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(5);
 
             var token = new TokenImplementations.ReverseRange1();
 
@@ -298,17 +262,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(5, 4, 3, 2, 1);
+            result.ShouldBeArrayWhichStartsWith(5, 4, 3, 2, 1).End();
         }
 
         [Fact]
         public void ReverseRange1_should_return_negative_range_when_negative_numeric_provided()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(-5);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(-5);
 
             var token = new TokenImplementations.ReverseRange1();
 
@@ -316,17 +277,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(-1, -2, -3, -4, -5);
+            result.ShouldBeArrayWhichStartsWith(-1, -2, -3, -4, -5).End();
         }
 
         [Fact]
         public void ReverseRange1_should_return_empty_array_when_0_passed()
         {
             // Arrange
-            var mockDataValue = new Mock<NumericValue>();
-            mockDataValue.Setup(m => m.Value).Returns(0);
-            var mockTokenQueue = new Mock<ProgramState>();
-            mockTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockTokenQueue = MockFactory.MockProgramState(0);
 
             var token = new TokenImplementations.ReverseRange1();
 
@@ -334,21 +292,15 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockTokenQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result.ShouldBeEmptyArray();
         }
 
         [Fact]
         public void ReverseRange1_should_throw_InvalidArgumentTypeException_when_non_numeric_passed()
         {
             // Arrange
-            var mockStringValue = new Mock<StringValue>();
-            mockStringValue.Setup(m => m.Type).Returns(DataValueType.String);
-            var mockStringTokenQueue = new Mock<ProgramState>();
-            mockStringTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockStringValue.Object);
-            var mockArrayValue = new Mock<ArrayValue>();
-            mockArrayValue.Setup(m => m.Type).Returns(DataValueType.Array);
-            var mockArrayTokenQueue = new Mock<ProgramState>();
-            mockArrayTokenQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockArrayValue.Object);
+            var mockStringTokenQueue = MockFactory.MockProgramState("");
+            var mockArrayTokenQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new TokenImplementations.ReverseRange1();
 

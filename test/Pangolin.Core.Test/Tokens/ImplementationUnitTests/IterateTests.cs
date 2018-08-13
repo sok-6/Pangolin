@@ -18,11 +18,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Iterate_should_error_if_numeric_passed()
         {
             // Arrange
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object);
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.Zero);
 
             var token = new Iterate();
 
@@ -40,11 +36,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var mockArray = new Mock<ArrayValue>();
             mockArray.SetupGet(x => x.Type).Returns(DataValueType.Array);
 
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.Setup(p => p.DequeueAndEvaluate()).Returns(mockString.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.Setup(p => p.DequeueAndEvaluate()).Returns(mockArray.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(mockString.Object);
+            var mockProgramState2 = MockFactory.MockProgramState(mockArray.Object);
 
             var token = new Iterate();
 

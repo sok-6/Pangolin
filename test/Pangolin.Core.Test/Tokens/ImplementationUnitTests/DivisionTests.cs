@@ -18,18 +18,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Division_should_calculate_float_division_between_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(2);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(15);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(2, 15);
 
             var token = new Division();
 
@@ -44,18 +33,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Division_should_throw_exception_if_1st_argument_0()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(0);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(15);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(0, 15);
 
             var token = new Division();
 
@@ -103,51 +81,29 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result2 = token.Evaluate(mockProgramState2.Object);
 
             // Assert
-            var array1 = result1.ShouldBeOfType<ArrayValue>();
-            array1.Value.Count.ShouldBe(3);
-            array1.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
-            array1.Value[1].ShouldBeArrayWhichStartsWith(5, 6, 7, 8);
-            array1.Value[2].ShouldBeArrayWhichStartsWith(9, 10, 11, 12);
+            result1.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(5, 6, 7, 8).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(9, 10, 11, 12).End())
+                .End();
 
-            var array2 = result2.ShouldBeOfType<ArrayValue>();
-            array2.Value.Count.ShouldBe(5);
-            array2.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3);
-            array2.Value[1].ShouldBeArrayWhichStartsWith(4, 5, 6);
-            array2.Value[2].ShouldBeArrayWhichStartsWith(7, 8);
-            array2.Value[3].ShouldBeArrayWhichStartsWith(9, 10);
-            array2.Value[4].ShouldBeArrayWhichStartsWith(11, 12);
+            result2.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4, 5, 6).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(7, 8).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(9, 10).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(11, 12).End())
+                .End();
         }
 
         [Fact]
         public void Division_should_error_if_first_value_non_numeric()
         {
             // Arrange
-            var mockNumeric = new Mock<NumericValue>();
-            mockNumeric.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-
-            var mockString = new Mock<StringValue>();
-            mockString.SetupGet(s => s.Type).Returns(DataValueType.String);
-
-            var mockArray = new Mock<ArrayValue>();
-            mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
-            
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockString.Object);
-
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockArray.Object);
-
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
-
-            var mockProgramState5 = new Mock<ProgramState>();
-            mockProgramState5.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockString.Object);
-
-            var mockProgramState6 = new Mock<ProgramState>();
-            mockProgramState6.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockArray.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.Zero);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.EmptyString);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.MockArrayBuilder.Empty);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.Zero);
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.EmptyString);
+            var mockProgramState6 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.MockArrayBuilder.Empty);
 
             var token = new Division();
 
@@ -216,15 +172,13 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result2 = token.Evaluate(mockProgramState2.Object);
 
             // Assert
-            var array1 = result1.ShouldBeOfType<ArrayValue>();
-            array1.Value.Count.ShouldBe(2);
-            array1.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3);
-            array1.Value[1].ShouldBeArrayWhichStartsWith(4, 5, 6);
+            result1.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4, 5, 6).End())
+                .End();
 
-            var array2 = result2.ShouldBeOfType<ArrayValue>();
-            array2.Value.Count.ShouldBe(2);
-            array2.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
-            array2.Value[1].ShouldBeArrayWhichStartsWith(5, 6, 7);
+            result2.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(5, 6, 7).End())
+                .End();
         }
 
         [Fact]
@@ -275,17 +229,13 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 
             // Assert
             result1.ShouldBeArrayWhichStartsWith("abc", "def", "ghi", "j");
-
-            result2.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-
-            var array3 = result3.ShouldBeOfType<ArrayValue>();
-            array3.Value.Count.ShouldBe(4);
-            array3.Value[0].ShouldBeArrayWhichStartsWith(1, 2, 3);
-            array3.Value[1].ShouldBeArrayWhichStartsWith(4, 5, 6);
-            array3.Value[2].ShouldBeArrayWhichStartsWith(7, 8, 9);
-            array3.Value[3].ShouldBeArrayWhichStartsWith(10);
-
-            result4.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result2.ShouldBeEmptyArray();
+            result3.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4, 5, 6).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(7, 8, 9).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(10).End())
+                .End();
+            result4.ShouldBeEmptyArray();
         }
 
         [Fact]
@@ -307,13 +257,11 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 
             // Assert
             result1.ShouldBeArrayWhichStartsWith("cba", "fed", "ihg", "j");
-
-            var array2 = result2.ShouldBeOfType<ArrayValue>();
-            array2.Value.Count.ShouldBe(4);
-            array2.Value[0].ShouldBeArrayWhichStartsWith(3, 2, 1);
-            array2.Value[1].ShouldBeArrayWhichStartsWith(6, 5, 4);
-            array2.Value[2].ShouldBeArrayWhichStartsWith(9, 8, 7);
-            array2.Value[3].ShouldBeArrayWhichStartsWith(10);
+            result2.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(3, 2, 1).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(6, 5, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(9, 8, 7).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(10).End())
+                .End();
         }
 
         [Fact]
@@ -370,27 +318,23 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Assert
             result1.ShouldBeArrayWhichStartsWith("a", "bc", "def", "g", "hi", "j");
             result2.ShouldBeArrayWhichStartsWith("a", "", "dcb", "e", "", "hgf", "i", "", "j");
-
-            var array3 = result3.ShouldBeOfType<ArrayValue>();
-            array3.Value.Count.ShouldBe(6);
-            array3.Value[0].ShouldBeArrayWhichStartsWith(1);
-            array3.Value[1].ShouldBeArrayWhichStartsWith(2, 3);
-            array3.Value[2].ShouldBeArrayWhichStartsWith(4, 5, 6);
-            array3.Value[3].ShouldBeArrayWhichStartsWith(7);
-            array3.Value[4].ShouldBeArrayWhichStartsWith(8, 9);
-            array3.Value[5].ShouldBeArrayWhichStartsWith(10);
-
-            var array4 = result4.ShouldBeOfType<ArrayValue>();
-            array4.Value.Count.ShouldBe(9);
-            array4.Value[0].ShouldBeArrayWhichStartsWith(1);
-            array4.Value[1].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            array4.Value[2].ShouldBeArrayWhichStartsWith(4, 3, 2);
-            array4.Value[3].ShouldBeArrayWhichStartsWith(5);
-            array4.Value[4].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            array4.Value[5].ShouldBeArrayWhichStartsWith(8, 7, 6);
-            array4.Value[6].ShouldBeArrayWhichStartsWith(9);
-            array4.Value[7].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            array4.Value[8].ShouldBeArrayWhichStartsWith(10);
+            result3.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4, 5, 6).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(7).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(8, 9).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(10).End())
+                .End();
+            result4.ShouldBeArrayWhichStartsWith(v => v.ShouldBeArrayWhichStartsWith(1).End())
+                .ThenShouldContinueWith(v => v.ShouldBeEmptyArray())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4, 3, 2).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(5).End())
+                .ThenShouldContinueWith(v => v.ShouldBeEmptyArray())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(8, 7, 6).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(9).End())
+                .ThenShouldContinueWith(v => v.ShouldBeEmptyArray())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(10).End())
+                .End();
         }
 
         [Fact]

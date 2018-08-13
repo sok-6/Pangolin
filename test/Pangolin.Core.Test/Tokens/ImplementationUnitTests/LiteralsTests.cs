@@ -19,11 +19,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var token = new NumericLiteral(1.5);
 
             // Act
-            var result = token.Evaluate(null);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
-            result.ShouldBeOfType(typeof(NumericValue));
-            result.ToString().ShouldBe("1.5");
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1.5);
         }
 
         [Fact]
@@ -33,11 +32,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var token = new StringLiteral("abc");
 
             // Act
-            var result = token.Evaluate(null);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
-            result.ShouldBeOfType(typeof(StringValue));
-            result.ToString().ShouldBe("abc");
+            result.ShouldBeOfType<StringValue>().Value.ShouldBe("abc");
         }
     }
 }

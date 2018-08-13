@@ -18,9 +18,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Add_should_add_two_integers()
         {
             // Arrange
-            var mockQueue = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(1).Object,
-                MockFactory.MockNumericValue(2).Object);
+            var mockQueue = MockFactory.MockProgramState(1, 2);
 
             var addToken = new Add();
 
@@ -35,9 +33,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Add_should_add_two_floats()
         {
             // Arrange
-            var mockQueue = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(1.5).Object,
-                MockFactory.MockNumericValue(2.3).Object);
+            var mockQueue = MockFactory.MockProgramState(1.5, 2.3);
 
             var addToken = new Add();
 
@@ -52,9 +48,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Add_should_concatenate_two_strings()
         {
             // Arrange
-            var mockQueue = MockFactory.MockProgramState(
-                MockFactory.MockStringValue("ab").Object,
-                MockFactory.MockStringValue("cd").Object);
+            var mockQueue = MockFactory.MockProgramState("ab", "cd");
 
             var addToken = new Add();
 

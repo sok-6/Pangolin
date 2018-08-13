@@ -18,10 +18,9 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Arrayify_should_wrap_any_value_in_an_array()
         {
             // Arrange
-            var mockDataValue = new Mock<DataValue>();
+            var mockDataValue = MockFactory.MockDataValue().Object;
 
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockDataValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(mockDataValue);
 
             var token = new Arrayify();
 
@@ -29,22 +28,17 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            var arrayResult = result.ShouldBeOfType<ArrayValue>();
-            arrayResult.Value.Count.ShouldBe(1);
-            arrayResult.Value[0].ShouldBe(mockDataValue.Object);
+            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue);
         }
 
         [Fact]
         public void ArrayPair_should_wrap_any_two_values_in_an_array()
         {
             // Arrange
-            var mockDataValue1 = new Mock<DataValue>();
-            var mockDataValue2 = new Mock<DataValue>();
+            var mockDataValue1 = MockFactory.MockDataValue().Object;
+            var mockDataValue2 = MockFactory.MockDataValue().Object;
 
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockDataValue1.Object)
-                .Returns(mockDataValue2.Object);
+            var mockProgramState = MockFactory.MockProgramState(mockDataValue1, mockDataValue2);
 
             var token = new ArrayPair();
 
@@ -52,25 +46,18 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            var arrayResult = result.ShouldBeOfType<ArrayValue>();
-            arrayResult.Value.Count.ShouldBe(2);
-            arrayResult.Value[0].ShouldBe(mockDataValue1.Object);
-            arrayResult.Value[1].ShouldBe(mockDataValue2.Object);
+            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue1, mockDataValue2);
         }
 
         [Fact]
         public void ArrayTriple_should_wrap_any_three_values_in_an_array()
         {
             // Arrange
-            var mockDataValue1 = new Mock<DataValue>();
-            var mockDataValue2 = new Mock<DataValue>();
-            var mockDataValue3 = new Mock<DataValue>();
+            var mockDataValue1 = MockFactory.MockDataValue().Object;
+            var mockDataValue2 = MockFactory.MockDataValue().Object;
+            var mockDataValue3 = MockFactory.MockDataValue().Object;
 
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockDataValue1.Object)
-                .Returns(mockDataValue2.Object)
-                .Returns(mockDataValue3.Object);
+            var mockProgramState = MockFactory.MockProgramState(mockDataValue1, mockDataValue2, mockDataValue3);
 
             var token = new ArrayTriple();
 
@@ -78,11 +65,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            var arrayResult = result.ShouldBeOfType<ArrayValue>();
-            arrayResult.Value.Count.ShouldBe(3);
-            arrayResult.Value[0].ShouldBe(mockDataValue1.Object);
-            arrayResult.Value[1].ShouldBe(mockDataValue2.Object);
-            arrayResult.Value[2].ShouldBe(mockDataValue3.Object);
+            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue1, mockDataValue2, mockDataValue3);
         }
 
         [Fact]

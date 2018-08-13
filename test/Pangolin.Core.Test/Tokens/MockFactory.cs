@@ -10,6 +10,11 @@ namespace Pangolin.Core.Test.Tokens
 {
     public static class MockFactory
     {
+        public static ProgramState EmptyProgramState => new Mock<ProgramState>().Object;
+
+        public static NumericValue Zero => MockNumericValue(0).Object;
+        public static StringValue EmptyString => MockStringValue("").Object;
+
         public static Mock<DataValue> MockDataValue(bool isTruthy = false)
         {
             var mockDataValue = new Mock<DataValue>();

@@ -47,17 +47,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Truthify_should_evaluate_over_iterable()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.Setup(m => m.IsTruthy).Returns(false);
-
-            var mockIteratableArray = new Mock<ArrayValue>();
-            mockIteratableArray.SetupGet(x => x.IterationRequired).Returns(true);
-            mockIteratableArray.SetupGet(x => x.IterationValues).Returns(new DataValue[] { mockTruthyValue.Object, mockFalseyValue.Object });
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockIteratableArray.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 0).CompleteIterationRequired());
 
             var token = new Truthify();
 
@@ -65,60 +55,44 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(1, 0);
+            result.ShouldBeArrayWhichStartsWith(1, 0).End();
         }
 
         [Fact]
         public void Untruthify_should_evaluate_truthy_value_as_falsey()
         {
             // Arrange
-            var mockValue = new Mock<DataValue>();
-            mockValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockDataValue(true).Object);
+
             var token = new UnTruthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(0);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
         }
 
         [Fact]
         public void Untruthify_should_evaluate_falsey_value_as_truthy()
         {
             // Arrange
-            var mockValue = new Mock<DataValue>();
-            mockValue.Setup(m => m.IsTruthy).Returns(false);
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockValue.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockDataValue(false).Object);
+
             var token = new UnTruthify();
 
             // Act
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            var numericResult = result.ShouldBeOfType<NumericValue>();
-            numericResult.Value.ShouldBe(1);
+            result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
         }
 
         [Fact]
         public void Untruthify_should_evaluate_over_iterable()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.Setup(m => m.IsTruthy).Returns(true);
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.Setup(m => m.IsTruthy).Returns(false);
-
-            var mockIteratableArray = new Mock<ArrayValue>();
-            mockIteratableArray.SetupGet(x => x.IterationRequired).Returns(true);
-            mockIteratableArray.SetupGet(x => x.IterationValues).Returns(new DataValue[] { mockTruthyValue.Object, mockFalseyValue.Object });
-
-            var mockQueue = new Mock<ProgramState>();
-            mockQueue.Setup(m => m.DequeueAndEvaluate()).Returns(mockIteratableArray.Object);
+            var mockQueue = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 0).CompleteIterationRequired());
 
             var token = new UnTruthify();
 
@@ -126,7 +100,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockQueue.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(0, 1);
+            result.ShouldBeArrayWhichStartsWith(0, 1).End();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var token = new PrimesLessThanOneMillion();
 
             // Act
-            var result = token.Evaluate(null);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             var arrayResult = result.ShouldBeOfType<ArrayValue>();
@@ -55,14 +55,14 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result8 = token.Evaluate(mockProgramState8.Object);
 
             // Assert
-            result1.ShouldBeArrayWhichStartsWith(2, 5);
-            result2.ShouldBeArrayWhichStartsWith(13);
-            result3.ShouldBeArrayWhichStartsWith(2, 2, 2, 2, 2, 2, 3, 643);
-            result4.ShouldBeArrayWhichStartsWith(123457);
-            result5.ShouldBeArrayWhichStartsWith(127, 9721);
-            result6.ShouldBeArrayWhichStartsWith(1234577);
-            result7.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            result8.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result1.ShouldBeArrayWhichStartsWith(2, 5).End();
+            result2.ShouldBeArrayWhichStartsWith(13).End();
+            result3.ShouldBeArrayWhichStartsWith(2, 2, 2, 2, 2, 2, 3, 643).End();
+            result4.ShouldBeArrayWhichStartsWith(123457).End();
+            result5.ShouldBeArrayWhichStartsWith(127, 9721).End();
+            result6.ShouldBeArrayWhichStartsWith(1234577).End();
+            result7.ShouldBeEmptyArray();
+            result8.ShouldBeEmptyArray();
         }
 
         [Fact]
@@ -175,10 +175,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result4 = token.Evaluate(mockProgramState4.Object);
 
             // Assert
-            result1.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19);
-            result2.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19);
-            result3.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            result4.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result1.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19).End();
+            result2.ShouldBeArrayWhichStartsWith(2, 3, 5, 7, 11, 13, 17, 19).End();
+            result3.ShouldBeEmptyArray();
+            result4.ShouldBeEmptyArray();
         }
 
         [Fact]
@@ -214,7 +214,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 
             // Assert
             result1.ShouldBeArrayWhichStartsWith(1, 2, 3, 2, 1);
-            result2.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result2.ShouldBeEmptyArray();
         }
     }
 }

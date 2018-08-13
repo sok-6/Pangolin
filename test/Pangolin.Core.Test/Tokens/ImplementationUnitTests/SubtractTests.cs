@@ -18,18 +18,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Subtract_should_calculate_mod_between_numerics()
         {
             // Arrange
-            var mockNumeric1 = new Mock<NumericValue>();
-            mockNumeric1.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric1.SetupGet(n => n.Value).Returns(7);
-
-            var mockNumeric2 = new Mock<NumericValue>();
-            mockNumeric2.SetupGet(n => n.Type).Returns(DataValueType.Numeric);
-            mockNumeric2.SetupGet(n => n.Value).Returns(18);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockNumeric1.Object)
-                .Returns(mockNumeric2.Object);
+            var mockProgramState = MockFactory.MockProgramState(7, 18);
 
             var token = new Subtract();
 
@@ -53,17 +42,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var mockArray = new Mock<ArrayValue>();
             mockArray.SetupGet(a => a.Type).Returns(DataValueType.Array);
 
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockString.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockNumeric.Object).Returns(mockArray.Object);
-
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockString.Object).Returns(mockNumeric.Object);
-
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockArray.Object).Returns(mockNumeric.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.EmptyString);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.Empty);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.EmptyString, MockFactory.Zero);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty, MockFactory.Zero);
 
             var token = new Subtract();
 

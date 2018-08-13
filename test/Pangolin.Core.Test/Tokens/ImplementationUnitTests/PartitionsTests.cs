@@ -87,29 +87,24 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Assert
             result1.ShouldBeArrayWhichStartsWith("", "a", "b", "c", "d", "ab", "ac", "ad", "bc", "bd", "cd", "abc", "abd", "acd", "bcd", "abcd");
             result2.ShouldBeArrayWhichStartsWith("");
-
-            var array3 = result3.ShouldBeOfType<ArrayValue>();
-            array3.Value.Count.ShouldBe(16);
-            array3.Value[0].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
-            array3.Value[1].ShouldBeArrayWhichStartsWith(1);
-            array3.Value[2].ShouldBeArrayWhichStartsWith(2);
-            array3.Value[3].ShouldBeArrayWhichStartsWith(3);
-            array3.Value[4].ShouldBeArrayWhichStartsWith(4);
-            array3.Value[5].ShouldBeArrayWhichStartsWith(1, 2);
-            array3.Value[6].ShouldBeArrayWhichStartsWith(1, 3);
-            array3.Value[7].ShouldBeArrayWhichStartsWith(1, 4);
-            array3.Value[8].ShouldBeArrayWhichStartsWith(2, 3);
-            array3.Value[9].ShouldBeArrayWhichStartsWith(2, 4);
-            array3.Value[10].ShouldBeArrayWhichStartsWith(3, 4);
-            array3.Value[11].ShouldBeArrayWhichStartsWith(1, 2, 3);
-            array3.Value[12].ShouldBeArrayWhichStartsWith(1, 2, 4);
-            array3.Value[13].ShouldBeArrayWhichStartsWith(1, 3, 4);
-            array3.Value[14].ShouldBeArrayWhichStartsWith(2, 3, 4);
-            array3.Value[15].ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
-
-            var array4 = result4.ShouldBeOfType<ArrayValue>();
-            array4.Value.Count.ShouldBe(1);
-            array4.Value[0].ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result3.ShouldBeArrayWhichStartsWith(v => v.ShouldBeEmptyArray())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(2).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 2).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(2, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(3, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 3, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(2, 3, 4).End())
+                .ThenShouldContinueWith(v => v.ShouldBeArrayWhichStartsWith(1, 2, 3, 4).End())
+                .End();
+            result4.ShouldBeArrayWhichStartsWith(v => v.ShouldBeEmptyArray()).End();
         }
     }
 }

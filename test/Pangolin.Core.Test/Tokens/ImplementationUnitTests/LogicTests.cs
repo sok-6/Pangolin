@@ -16,11 +16,9 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicAnd_should_return_truthy_when_both_operands_truthy()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(true).Object);
 
             var token = new TokenImplementations.LogicAnd();
 
@@ -35,16 +33,9 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicAnd_should_return_falsey_when_second_operand_falsey()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockTruthyValue.Object)
-                .Returns(mockFalseyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(false).Object);
 
             var token = new TokenImplementations.LogicAnd();
 
@@ -59,11 +50,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicAnd_should_return_falsey_when_first_operand_falsey_without_evaluating_second_operand()
         {
             // Arrange
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockDataValue(false).Object);
             mockProgramState.Setup(p => p.StepOverNextTokenBlock());
 
             var token = new TokenImplementations.LogicAnd();
@@ -81,11 +68,9 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicOr_should_return_falsey_when_both_operands_falsey()
         {
             // Arrange
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object, 
+                MockFactory.MockDataValue(false).Object);
 
             var token = new TokenImplementations.LogicOr();
 
@@ -100,16 +85,9 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicOr_should_return_truthy_when_second_operand_truthy()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.SetupSequence(p => p.DequeueAndEvaluate())
-                .Returns(mockFalseyValue.Object)
-                .Returns(mockTruthyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object,
+                MockFactory.MockDataValue(true).Object);
 
             var token = new TokenImplementations.LogicOr();
 
@@ -124,11 +102,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicOr_should_return_truthy_when_first_operand_truthy_without_evaluating_second_operand()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockProgramState = new Mock<ProgramState>();
-            mockProgramState.Setup(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object);
+            var mockProgramState = MockFactory.MockProgramState(MockFactory.MockDataValue(true).Object);
             mockProgramState.Setup(p => p.StepOverNextTokenBlock());
 
             var token = new TokenImplementations.LogicOr();
@@ -146,27 +120,25 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicXor_should_follow_xor_truth_table()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
             // Test 1 - false,false => false
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object).Returns(mockFalseyValue.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object,
+                MockFactory.MockDataValue(false).Object);
 
             // Test 2 - false,true => true
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object).Returns(mockTruthyValue.Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object,
+                MockFactory.MockDataValue(true).Object);
 
             // Test 3 - true,false => true
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object).Returns(mockFalseyValue.Object);
+            var mockProgramState3 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(false).Object);
 
             // Test 4 - true,true => false
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object).Returns(mockTruthyValue.Object);
+            var mockProgramState4 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(true).Object);
 
             var token = new TokenImplementations.LogicXor();
 
@@ -187,27 +159,25 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void LogicXnor_should_follow_xnor_truth_table()
         {
             // Arrange
-            var mockTruthyValue = new Mock<DataValue>();
-            mockTruthyValue.SetupGet(t => t.IsTruthy).Returns(true);
-
-            var mockFalseyValue = new Mock<DataValue>();
-            mockFalseyValue.SetupGet(t => t.IsTruthy).Returns(false);
-
             // Test 1 - false,false => true
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object).Returns(mockFalseyValue.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object,
+                MockFactory.MockDataValue(false).Object);
 
             // Test 2 - false,true => false
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockFalseyValue.Object).Returns(mockTruthyValue.Object);
+            var mockProgramState2 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(false).Object,
+                MockFactory.MockDataValue(true).Object);
 
             // Test 3 - true,false => false
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object).Returns(mockFalseyValue.Object);
+            var mockProgramState3 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(false).Object);
 
             // Test 4 - true,true => true
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.SetupSequence(p => p.DequeueAndEvaluate()).Returns(mockTruthyValue.Object).Returns(mockTruthyValue.Object);
+            var mockProgramState4 = MockFactory.MockProgramState(
+                MockFactory.MockDataValue(true).Object,
+                MockFactory.MockDataValue(true).Object);
 
             var token = new TokenImplementations.LogicXnor();
 

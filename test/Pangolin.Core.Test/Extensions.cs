@@ -2,6 +2,7 @@
 using Pangolin.Core.DataValueImplementations;
 using Shouldly;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,7 +56,7 @@ namespace Pangolin.Core.Test
             result[0].ShouldBeOfType(tokenType);
         }
 
-        public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params double[] numerics)
+        public static TestResultArrayContents ShouldBeArrayWhichStartsWith(this DataValue dataValue, params double[] numerics)
         {
             var values = dataValue.ShouldBeAssignableTo<ArrayValue>().Value;
 
@@ -64,10 +65,10 @@ namespace Pangolin.Core.Test
                 values[i].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(numerics[i]);
             }
 
-            return values.Skip(numerics.Length).ToList();
+            return new TestResultArrayContents(values.Skip(numerics.Length).ToList());
         }
 
-        public static IReadOnlyList<DataValue> ShouldBeArrayWhichStartsWith(this DataValue dataValue, params string[] strings)
+        public static TestResultArrayContents ShouldBeArrayWhichStartsWith(this DataValue dataValue, params string[] strings)
         {
             var values = dataValue.ShouldBeAssignableTo<ArrayValue>().Value;
 
@@ -76,27 +77,69 @@ namespace Pangolin.Core.Test
                 values[i].ShouldBeAssignableTo<StringValue>().Value.ShouldBe(strings[i]);
             }
 
-            return values.Skip(strings.Length).ToList();
+            return new TestResultArrayContents(values.Skip(strings.Length).ToList());
         }
 
-        public static IReadOnlyList<DataValue> ThenShouldContinueWith(this IReadOnlyList<DataValue> dataValues, params double[] numerics)
+        public static TestResultArrayContents ShouldBeArrayWhichStartsWith(this DataValue dataValue, Action<DataValue> arrayVerificationAction)
+        {
+            var values = dataValue.ShouldBeAssignableTo<ArrayValue>().Value;
+
+            arrayVerificationAction(values[0]);
+
+            return new TestResultArrayContents(values.Skip(1).ToList());
+        }
+
+        public static void ShouldBeEmptyArray(this DataValue dataValue)
+        {
+            dataValue.ShouldBeAssignableTo<ArrayValue>().Value.Count.ShouldBe(0);
+        }
+
+        public static TestResultArrayContents ThenShouldContinueWith(this TestResultArrayContents dataValues, params double[] numerics)
         {
             for (int i = 0; i < numerics.Length; i++)
             {
                 dataValues[i].ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(numerics[i]);
             }
 
-            return dataValues.Skip(numerics.Length).ToList();
+            return dataValues.StepOver(numerics.Length);
         }
 
-        public static IReadOnlyList<DataValue> ThenShouldContinueWith(this IReadOnlyList<DataValue> dataValues, params string[] strings)
+        public static TestResultArrayContents ThenShouldContinueWith(this TestResultArrayContents dataValues, params string[] strings)
         {
             for (int i = 0; i < strings.Length; i++)
             {
                 dataValues[i].ShouldBeAssignableTo<StringValue>().Value.ShouldBe(strings[i]);
             }
 
-            return dataValues.Skip(strings.Length).ToList();
+            return dataValues.StepOver(strings.Length);
         }
+
+        public static TestResultArrayContents ThenShouldContinueWith(this TestResultArrayContents dataValues, Action<DataValue> arrayVerificationAction)
+        {
+            arrayVerificationAction(dataValues[0]);
+
+            return dataValues.StepOver(1);
+        }
+
+        public static void End(this TestResultArrayContents dataValues)
+        {
+            dataValues.Count.ShouldBe(0);
+        }
+    }
+
+    public class TestResultArrayContents
+    {
+        private IReadOnlyList<DataValue> _values;
+
+        public DataValue this[int index] => _values[index];
+
+        public int Count => _values.Count;
+
+        public TestResultArrayContents(IReadOnlyList<DataValue> values)
+        {
+            _values = values;
+        }
+
+        public TestResultArrayContents StepOver(int steps) => new TestResultArrayContents(_values.Skip(steps).ToList());
     }
 }

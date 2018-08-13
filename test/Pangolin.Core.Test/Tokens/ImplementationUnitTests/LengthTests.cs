@@ -17,41 +17,12 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Length_should_return_absolute_value_of_numeric()
         {
             // Arrange
-            var mockPositiveInt = new Mock<NumericValue>();
-            mockPositiveInt.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockPositiveInt.SetupGet(x => x.Value).Returns(5);
-
-            var mockNegativeInt = new Mock<NumericValue>();
-            mockNegativeInt.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockNegativeInt.SetupGet(x => x.Value).Returns(-3);
-
-            var mockPositiveFloat = new Mock<NumericValue>();
-            mockPositiveFloat.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockPositiveFloat.SetupGet(x => x.Value).Returns(1.23);
-
-            var mockNegativeFloat = new Mock<NumericValue>();
-            mockNegativeFloat.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockNegativeFloat.SetupGet(x => x.Value).Returns(-10.5);
-
-            var mockZero = new Mock<NumericValue>();
-            mockZero.SetupGet(x => x.Type).Returns(DataValueType.Numeric);
-            mockZero.SetupGet(x => x.Value).Returns(0);
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.Setup(p => p.DequeueAndEvaluate()).Returns(mockPositiveInt.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.Setup(p => p.DequeueAndEvaluate()).Returns(mockNegativeInt.Object);
-
-            var mockProgramState3 = new Mock<ProgramState>();
-            mockProgramState3.Setup(p => p.DequeueAndEvaluate()).Returns(mockPositiveFloat.Object);
-
-            var mockProgramState4 = new Mock<ProgramState>();
-            mockProgramState4.Setup(p => p.DequeueAndEvaluate()).Returns(mockNegativeFloat.Object);
-
-            var mockProgramState5 = new Mock<ProgramState>();
-            mockProgramState5.Setup(p => p.DequeueAndEvaluate()).Returns(mockZero.Object);
-
+            var mockProgramState1 = MockFactory.MockProgramState(5);
+            var mockProgramState2 = MockFactory.MockProgramState(-3);
+            var mockProgramState3 = MockFactory.MockProgramState(1.23);
+            var mockProgramState4 = MockFactory.MockProgramState(-10.5);
+            var mockProgramState5 = MockFactory.MockProgramState(0);
+            
             var token = new Length();
 
             // Act
@@ -73,19 +44,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Length_should_return_length_of_string()
         {
             // Arrange
-            var mockPopulatedString = new Mock<StringValue>();
-            mockPopulatedString.SetupGet(x => x.Type).Returns(DataValueType.String);
-            mockPopulatedString.SetupGet(x => x.Value).Returns("test");
-
-            var mockEmptyString = new Mock<StringValue>();
-            mockEmptyString.SetupGet(x => x.Type).Returns(DataValueType.String);
-            mockEmptyString.SetupGet(x => x.Value).Returns("");
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.Setup(p => p.DequeueAndEvaluate()).Returns(mockPopulatedString.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.Setup(p => p.DequeueAndEvaluate()).Returns(mockEmptyString.Object);
+            var mockProgramState1 = MockFactory.MockProgramState("test");
+            var mockProgramState2 = MockFactory.MockProgramState("");
 
             var token = new Length();
 
@@ -102,26 +62,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Length_should_return_length_of_array()
         {
             // Arrange
-            var mockGenericDataValue = new Mock<DataValue>();
-
-            var mockPopulatedArray = new Mock<ArrayValue>();
-            mockPopulatedArray.SetupGet(x => x.Type).Returns(DataValueType.Array);
-            mockPopulatedArray.SetupGet(x => x.Value).Returns(new DataValue[]
-            {
-                mockGenericDataValue.Object,
-                mockGenericDataValue.Object,
-                mockGenericDataValue.Object
-            });
-
-            var mockEmptyArray = new Mock<ArrayValue>();
-            mockEmptyArray.SetupGet(x => x.Type).Returns(DataValueType.Array);
-            mockEmptyArray.SetupGet(x => x.Value).Returns(new DataValue[] { });
-
-            var mockProgramState1 = new Mock<ProgramState>();
-            mockProgramState1.Setup(p => p.DequeueAndEvaluate()).Returns(mockPopulatedArray.Object);
-
-            var mockProgramState2 = new Mock<ProgramState>();
-            mockProgramState2.Setup(p => p.DequeueAndEvaluate()).Returns(mockEmptyArray.Object);
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(0, 0, 0).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
 
             var token = new Length();
 

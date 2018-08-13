@@ -72,12 +72,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void Membership_should_check_divisors()
         {
             // Arrange
-            var ps1 = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(3).Object,
-                MockFactory.MockNumericValue(12).Object);
-            var ps2 = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(5).Object,
-                MockFactory.MockNumericValue(12).Object);
+            var ps1 = MockFactory.MockProgramState(3, 12);
+            var ps2 = MockFactory.MockProgramState(5, 12);
 
             var token = new Membership();
 

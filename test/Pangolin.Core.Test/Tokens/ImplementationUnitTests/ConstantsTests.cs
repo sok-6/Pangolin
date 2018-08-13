@@ -18,12 +18,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantNewline_should_evaluate_to_newline_string()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantNewline();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("\n");
@@ -33,27 +31,23 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantEmptyArray_should_evaluate_to_empty_array()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantEmptyArray();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().Value.Count.ShouldBe(0);
+            result.ShouldBeEmptyArray();
         }
 
         [Fact]
         public void ConstantEmptyString_should_evaluate_to_empty_string()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantEmptyString();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("");
@@ -63,12 +57,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantLowercaseAlphabet_should_evaluate_to_lowercase_alphabet()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantLowercaseAlphabet();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("abcdefghijklmnopqrstuvwxyz");
@@ -78,12 +70,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantUppercaseAlphabet_should_evaluate_to_uppercase_alphabet()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantUppercaseAlphabet();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<StringValue>().Value.ShouldBe("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -93,12 +83,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantPi_should_evaluate_to_numeric_pi()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantPi();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<NumericValue>().Value.ShouldBe(Math.PI);
@@ -108,12 +96,10 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         public void ConstantPi_should_evaluate_to_numeric_tau()
         {
             // Arrange
-            var mockProgramState = new Mock<ProgramState>();
-
             var token = new ConstantTau();
 
             // Act
-            var result = token.Evaluate(mockProgramState.Object);
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
 
             // Assert
             result.ShouldBeOfType<NumericValue>().Value.ShouldBe(2 * Math.PI);
