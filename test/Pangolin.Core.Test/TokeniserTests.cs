@@ -991,6 +991,12 @@ namespace Pangolin.Core.Test
         {
             ','.ShouldBeParsedAs(typeof(TokenImplementations.SimplePair));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Transform_Transpose()
+        {
+            '\u0393'.ShouldBeParsedAs(typeof(TokenImplementations.Transform_Transpose));
+        }
     }
 }
 

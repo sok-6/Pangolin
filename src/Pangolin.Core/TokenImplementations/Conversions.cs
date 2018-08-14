@@ -88,4 +88,58 @@ namespace Pangolin.Core.TokenImplementations
             }
         }
     }
+
+    public class Transform_Transpose : ArityOneIterableToken
+    {
+        public override string ToString() => "\u0393";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // Numeric, stringify
+            if (arg.Type == DataValueType.Numeric)
+            {
+                return new StringValue(arg.ToString());
+            }
+            // String, parse as numeric
+            else if (arg.Type == DataValueType.String)
+            {
+                var s = arg.ToString();
+                if (!double.TryParse(s, out var value))
+                {
+                    throw new PangolinException($"Failed to parse string \"{s}\" as numeric");
+                }
+
+                return new NumericValue(value);
+            }
+            // Array, transpose with truncation
+            else
+            {
+                var elements = ((ArrayValue)arg).Value;
+
+                // If any numerics, can't transpose
+                if (elements.Any(e => e.Type == DataValueType.Numeric))
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(Transform_Transpose)} can only be evaluated on array if none of the elements are non-numeric - arg={arg.ToString()}");
+                }
+
+                var nestedElements = elements.Select(e => e.IterationValues);
+
+                var result = new List<IEnumerable<DataValue>>();
+                for (int i = 0; i < nestedElements.Min(n => n.Count); i++)
+                {
+                    result.Add(nestedElements.Select(n => n[i]).ToArray()); // Materialisation required as value of i changes :/
+                }
+
+                // If all elements were strings, cast back to strings
+                if (elements.All(e => e.Type == DataValueType.String))
+                {
+                    return new ArrayValue(result.Select(r => new StringValue(String.Join("", r.Select(x => x.ToString())))));
+                }
+                else
+                {
+                    return new ArrayValue(result.Select(r => new ArrayValue(r)));
+                }
+            }
+        }
+    }
 }
