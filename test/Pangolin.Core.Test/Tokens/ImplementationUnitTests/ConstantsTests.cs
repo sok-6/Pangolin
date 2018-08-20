@@ -104,5 +104,18 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Assert
             result.ShouldBeOfType<NumericValue>().Value.ShouldBe(2 * Math.PI);
         }
+
+        [Fact]
+        public void ConstantSpace_should_evaluate_to_string_space()
+        {
+            // Arrange
+            var token = new ConstantSpace();
+
+            // Act
+            var result = token.Evaluate(MockFactory.EmptyProgramState);
+
+            // Assert
+            result.ShouldBeAssignableTo<StringValue>().Value.ShouldBe(" ");
+        }
     }
 }

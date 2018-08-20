@@ -1033,6 +1033,12 @@ namespace Pangolin.Core.Test
         {
             '\u22BD'.ShouldBeParsedAs(typeof(TokenImplementations.InverseConjunction));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConstantSpace()
+        {
+            '\u1E63'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantSpace));
+        }
     }
 }
 

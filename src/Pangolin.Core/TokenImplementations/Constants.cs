@@ -78,4 +78,13 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "\u03C4";
     }
+
+    public class ConstantSpace : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState) => new StringValue(" ");
+
+        public override string ToString() => "\u1E63";
+    }
 }
