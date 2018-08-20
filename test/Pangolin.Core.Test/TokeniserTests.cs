@@ -993,9 +993,45 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
+        public void Tokeniser_should_parse_IfThenElse()
+        {
+            '?'.ShouldBeParsedAs(typeof(TokenImplementations.IfThenElse));
+        }
+
+        [Fact]
         public void Tokeniser_should_parse_Transform_Transpose()
         {
             '\u0393'.ShouldBeParsedAs(typeof(TokenImplementations.Transform_Transpose));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_BaseConversion()
+        {
+            'B'.ShouldBeParsedAs(typeof(TokenImplementations.BaseConversion));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Disjunction_ToLower()
+        {
+            'V'.ShouldBeParsedAs(typeof(TokenImplementations.Disjunction_ToLower));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Conjunction_ToUpper()
+        {
+            '\u039B'.ShouldBeParsedAs(typeof(TokenImplementations.Conjunction_ToUpper));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_InverseDisjunction()
+        {
+            '\u22BC'.ShouldBeParsedAs(typeof(TokenImplementations.InverseDisjunction));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_InverseConjunction()
+        {
+            '\u22BD'.ShouldBeParsedAs(typeof(TokenImplementations.InverseConjunction));
         }
     }
 }

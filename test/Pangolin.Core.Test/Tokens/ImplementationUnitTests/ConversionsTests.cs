@@ -84,6 +84,21 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         }
 
         [Fact]
+        public void Elements_should_get_0_for_0_numeric()
+        {
+            // Arrange
+            var ps = MockFactory.MockProgramState(0);
+
+            var token = new Elements();
+
+            // Act
+            var result = token.Evaluate(ps.Object);
+
+            // Assert
+            result.ShouldBeArrayWhichStartsWith(0);
+        }
+
+        [Fact]
         public void Elements_should_throw_exception_for_negatvie_or_non_integral_numerics()
         {
             // Arrange
@@ -267,5 +282,316 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Act/Assert
             Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState.Object)).Message.ShouldBe("Transform_Transpose can only be evaluated on array if none of the elements are non-numeric - arg=[1,2,3]");
         }
+
+        [Fact]
+        public void BaseConversion_should_convert_positive_integrals_into_positive_integral_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(10, 123);
+            var mockProgramState2 = MockFactory.MockProgramState(20, 123);
+            var mockProgramState3 = MockFactory.MockProgramState(2, 10);
+            var mockProgramState4 = MockFactory.MockProgramState(1, 10);
+            var mockProgramState5 = MockFactory.MockProgramState(10, 0);
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+            var result5 = token.Evaluate(mockProgramState5.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(1, 2, 3).End();
+            result2.ShouldBeArrayWhichStartsWith(6, 3).End();
+            result3.ShouldBeArrayWhichStartsWith(1, 0, 1, 0).End();
+            result4.ShouldBeArrayWhichStartsWith(0, 0, 0, 0, 0, 0, 0, 0, 0, 0).End();
+            result5.ShouldBeEmptyArray();
+        }
+
+        [Fact]
+        public void BaseConversion_should_convert_integrals_into_negative_integral_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(-10, 123);
+            var mockProgramState2 = MockFactory.MockProgramState(-10, -123);
+            var mockProgramState3 = MockFactory.MockProgramState(-20, 123);
+            var mockProgramState4 = MockFactory.MockProgramState(-20, -123);
+            var mockProgramState5 = MockFactory.MockProgramState(-2, 10);
+            var mockProgramState6 = MockFactory.MockProgramState(-2, -10);
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+            var result5 = token.Evaluate(mockProgramState5.Object);
+            var result6 = token.Evaluate(mockProgramState6.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(2, 8, 3).End(); // 200 - 80 + 3
+            result2.ShouldBeArrayWhichStartsWith(1, 9, 3, 7).End(); // -1000 + 900 -30 + 7
+            result3.ShouldBeArrayWhichStartsWith(1, 14, 3).End(); // 400 - 280 + 3
+            result4.ShouldBeArrayWhichStartsWith(7, 17).End(); // - 140 + 17
+            result5.ShouldBeArrayWhichStartsWith(1, 1, 1, 1, 0).End(); // + 16 - 8 + 4 - 2
+            result6.ShouldBeArrayWhichStartsWith(1, 0, 1, 0).End(); // - 8 - 2
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_base_0_or_neg1()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(0, 10);
+            var mockProgramState2 = MockFactory.MockProgramState(0, -10);
+            var mockProgramState3 = MockFactory.MockProgramState(0, 2.5);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.EmptyString);
+            var mockProgramState6 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState7 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.StartingNumerics(-1, 2, -3).Complete());
+            var mockProgramState8 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.StartingStrings("a", "bc").Complete());
+            var mockProgramState9 = MockFactory.MockProgramState(MockFactory.Zero, MockFactory.MockArrayBuilder.Empty);
+            var mockProgramState10 = MockFactory.MockProgramState(-1, 10);
+            var mockProgramState11 = MockFactory.MockProgramState(-1, -10);
+            var mockProgramState12 = MockFactory.MockProgramState(-1, 2.5);
+            var mockProgramState13 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState14 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.EmptyString);
+            var mockProgramState15 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState16 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.MockArrayBuilder.StartingNumerics(-1, 2, -3).Complete());
+            var mockProgramState17 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.MockArrayBuilder.StartingStrings("a", "bc").Complete());
+            var mockProgramState18 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-1).Object, MockFactory.MockArrayBuilder.Empty);
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=-10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=2.5");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=abc");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState5.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState6.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=[1,2,3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState7.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=[-1,2,-3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState8.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=[a,bc]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState9.Object)).Message.ShouldBe("Conversion not possible with specified base - base=0, value=[]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState10.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState11.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=-10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState12.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=2.5");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState13.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=abc");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState14.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState15.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=[1,2,3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState16.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=[-1,2,-3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState17.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=[a,bc]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState18.Object)).Message.ShouldBe("Conversion not possible with specified base - base=-1, value=[]");
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_float_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(2.5, 10);
+            var mockProgramState2 = MockFactory.MockProgramState(2.5, -10);
+            var mockProgramState3 = MockFactory.MockProgramState(2.5, 2.5);
+            var mockProgramState4 = MockFactory.MockProgramState(2.5, 0);
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState6 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.EmptyString);
+            var mockProgramState7 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState8 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.MockArrayBuilder.StartingNumerics(-1, 2, -3).Complete());
+            var mockProgramState9 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.MockArrayBuilder.StartingStrings("a", "bc").Complete());
+            var mockProgramState10 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2.5).Object, MockFactory.MockArrayBuilder.Empty);
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=-10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=2.5");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=0");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState5.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=abc");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState6.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState7.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=[1,2,3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState8.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=[-1,2,-3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState9.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=[a,bc]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState10.Object)).Message.ShouldBe("Non-integral bases not implemented yet - base=2.5, value=[]");
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_positive_base_and_negative_value()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(10, -10);
+            var mockProgramState2 = MockFactory.MockProgramState(1, -10);
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Can't convert negative number into positive base - newBase=10, number=-10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Can't convert negative number into positive base - newBase=1, number=-10");
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_integral_base_and_non_integral_value()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(10, 2.5);
+            var mockProgramState2 = MockFactory.MockProgramState(-10, 2.5);
+            var mockProgramState3 = MockFactory.MockProgramState(1, 2.5);
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Base conversion of non-integral numbers not implemented yet - newBase=10, number=2.5");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Base conversion of non-integral numbers not implemented yet - newBase=-10, number=2.5");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Can't convert non-integral number into unary - newBase=1, number=2.5");
+        }
+
+        [Fact]
+        public void BaseConversion_should_return_empty_array_for_integral_base_and_0_values()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(10, 0);
+            var mockProgramState2 = MockFactory.MockProgramState(-10, 0);
+            var mockProgramState3 = MockFactory.MockProgramState(1, 0);
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+
+            // Assert
+            result1.ShouldBeEmptyArray();
+            result2.ShouldBeEmptyArray();
+            result3.ShouldBeEmptyArray();
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_numeric_base_and_string_value()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockNumericValue(10).Object, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockNumericValue(10).Object, MockFactory.MockStringValue("").Object);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-10).Object, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-10).Object, MockFactory.MockStringValue("").Object);
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.MockNumericValue(1).Object, MockFactory.MockStringValue("abc").Object);
+            var mockProgramState6 = MockFactory.MockProgramState(MockFactory.MockNumericValue(1).Object, MockFactory.MockStringValue("").Object);
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState5.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState6.Object)).Message.ShouldBe("Invalid argument types passed to BaseConversion command - Numeric,String");
+        }
+
+        [Fact]
+        public void BaseConversion_should_convert_positive_integer_array_into_integer_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockNumericValue(10).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockNumericValue(20).Object, MockFactory.MockArrayBuilder.StartingNumerics(6, 3).Complete());
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.MockNumericValue(2).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 0, 1, 0).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockNumericValue(1).Object, MockFactory.MockArrayBuilder.StartingNumerics(0, 0, 0, 0, 0, 0, 0, 0, 0, 0).Complete());
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-10).Object, MockFactory.MockArrayBuilder.StartingNumerics(2, 8, 3).Complete());
+            var mockProgramState6 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-10).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 9, 3, 7).Complete());
+            var mockProgramState7 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-20).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 14, 3).Complete());
+            var mockProgramState8 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-20).Object, MockFactory.MockArrayBuilder.StartingNumerics(7, 17).Complete());
+            var mockProgramState9 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-2).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 1, 1, 1, 0).Complete());
+            var mockProgramState10 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-2).Object, MockFactory.MockArrayBuilder.StartingNumerics(1, 0, 1, 0).Complete());
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+            var result5 = token.Evaluate(mockProgramState5.Object);
+            var result6 = token.Evaluate(mockProgramState6.Object);
+            var result7 = token.Evaluate(mockProgramState7.Object);
+            var result8 = token.Evaluate(mockProgramState8.Object);
+            var result9 = token.Evaluate(mockProgramState9.Object);
+            var result10 = token.Evaluate(mockProgramState10.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result2.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(10);
+            result4.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(10);
+            result5.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result6.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(-123);
+            result7.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result8.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(-123);
+            result9.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(10);
+            result10.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(-10);
+        }
+
+        [Fact]
+        public void BaseConversion_should_throw_exception_for_integral_base_and_array_with_element_gte_abs_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockNumericValue(10).Object, MockFactory.MockArrayBuilder.StartingNumerics(8, 9, 10).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockNumericValue(-10).Object, MockFactory.MockArrayBuilder.StartingNumerics(8, 9, 10).Complete());
+
+            var token = new BaseConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("When converting to decimal from numeric base, all digit values must be less than base - base=10, value=[8,9,10]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("When converting to decimal from numeric base, all digit values must be less than base - base=-10, value=[8,9,10]");
+        }
+
+        [Fact]
+        public void BaseConversion_should_convert_non_negative_integral_to_string_base()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockStringValue("abcde").Object, MockFactory.MockNumericValue(123).Object);
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockStringValue("aA").Object, MockFactory.MockNumericValue(10).Object);
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.MockStringValue("x").Object, MockFactory.MockNumericValue(5).Object);
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockStringValue("abcde").Object, MockFactory.MockNumericValue(0).Object);
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("eed");
+            result2.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("AaAa");
+            result3.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("xxxxx");
+            result4.ShouldBeAssignableTo<StringValue>().Value.ShouldBe("");
+        }
+
+        [Fact]
+        public void BaseConversion_should_convert_string_from_string_base_to_decimal()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState("abcde", "eed");
+            var mockProgramState2 = MockFactory.MockProgramState("aA", "AaAa");
+            var mockProgramState3 = MockFactory.MockProgramState("x", "xxxxx");
+            var mockProgramState4 = MockFactory.MockProgramState("abcde", "");
+
+            var token = new BaseConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result2.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(10);
+            result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(5);
+            result4.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
+        }
     }
 }
+

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Pangolin.Common;
+using Pangolin.Core.DataValueImplementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -84,5 +86,205 @@ namespace Pangolin.Core.TokenImplementations
         }
 
         public override string ToString() => "~";
+    }
+
+    public class Disjunction_ToLower : ArityOneIterableToken
+    {
+        public override string ToString() => "V";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // String, tolower
+            if (arg.Type == DataValueType.String)
+            {
+                return new StringValue(((StringValue)arg).Value.ToLower());
+            }
+            // Numeric, check if any are nonzero
+            else if (arg.Type == DataValueType.Numeric)
+            {
+                var numericArg = (NumericValue)arg;
+
+                if (!numericArg.IsIntegral)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(Disjunction_ToLower)} not defined for float values - arg={arg}");
+                }
+
+                if (numericArg.Value < 0)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(Disjunction_ToLower)} not defined for negative values - arg={arg}");
+                }
+
+                // If 0, that's the only digit
+                if (numericArg.Value == 0)
+                {
+                    return DataValue.Falsey;
+                }
+                else
+                {
+                    return DataValue.BoolToTruthiness(BaseConversion.ConvertToIntegerBase(10, numericArg.Value).Any(d => d != 0));
+                }
+            }
+            // Array, just get elements
+            else
+            {
+                // Empty array is always falsey
+                if (arg.IterationValues.Count == 0)
+                {
+                    return DataValue.Falsey;
+                }
+
+                return DataValue.BoolToTruthiness(((ArrayValue)arg).Value.Any(e => e.IsTruthy));
+            }
+        }
+    }
+
+    public class Conjunction_ToUpper : ArityOneIterableToken
+    {
+        public override string ToString() => "\u039B";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // String, tolower
+            if (arg.Type == DataValueType.String)
+            {
+                return new StringValue(((StringValue)arg).Value.ToUpper());
+            }
+            // Numeric, check if any are nonzero
+            else if (arg.Type == DataValueType.Numeric)
+            {
+                var numericArg = (NumericValue)arg;
+
+                if (!numericArg.IsIntegral)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(Conjunction_ToUpper)} not defined for float values - arg={arg}");
+                }
+
+                if (numericArg.Value < 0)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(Conjunction_ToUpper)} not defined for negative values - arg={arg}");
+                }
+
+                // If 0, that's the only digit
+                if (numericArg.Value == 0)
+                {
+                    return DataValue.Falsey;
+                }
+                else
+                {
+                    return DataValue.BoolToTruthiness(BaseConversion.ConvertToIntegerBase(10, numericArg.Value).All(d => d != 0));
+                }
+            }
+            // Array, just get elements
+            else
+            {
+                // Empty array is always falsey
+                if (arg.IterationValues.Count == 0)
+                {
+                    return DataValue.Falsey;
+                }
+
+                return DataValue.BoolToTruthiness(((ArrayValue)arg).Value.All(e => e.IsTruthy));
+            }
+        }
+    }
+
+    public class InverseDisjunction : ArityOneIterableToken
+    {
+        public override string ToString() => "\u22BC";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // String, tolower
+            if (arg.Type == DataValueType.String)
+            {
+                throw GetInvalidArgumentTypeException(nameof(InverseDisjunction), arg.Type);
+            }
+            // Numeric, check if any are nonzero
+            else if (arg.Type == DataValueType.Numeric)
+            {
+                var numericArg = (NumericValue)arg;
+
+                if (!numericArg.IsIntegral)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(InverseDisjunction)} not defined for float values - arg={arg}");
+                }
+
+                if (numericArg.Value < 0)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(InverseDisjunction)} not defined for negative values - arg={arg}");
+                }
+
+                // If 0, that's the only digit
+                if (numericArg.Value == 0)
+                {
+                    return DataValue.Truthy;
+                }
+                else
+                {
+                    return DataValue.BoolToTruthiness(BaseConversion.ConvertToIntegerBase(10, numericArg.Value).Any(d => d == 0));
+                }
+            }
+            // Array, just get elements
+            else
+            {
+                // Empty array is always falsey
+                if (arg.IterationValues.Count == 0)
+                {
+                    return DataValue.Falsey;
+                }
+
+                return DataValue.BoolToTruthiness(((ArrayValue)arg).Value.Any(e => !e.IsTruthy));
+            }
+        }
+    }
+
+    public class InverseConjunction : ArityOneIterableToken
+    {
+        public override string ToString() => "\u22BD";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // String, tolower
+            if (arg.Type == DataValueType.String)
+            {
+                throw GetInvalidArgumentTypeException(nameof(InverseConjunction), arg.Type);
+            }
+            // Numeric, check if any are nonzero
+            else if (arg.Type == DataValueType.Numeric)
+            {
+                var numericArg = (NumericValue)arg;
+
+                if (!numericArg.IsIntegral)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(InverseConjunction)} not defined for float values - arg={arg}");
+                }
+
+                if (numericArg.Value < 0)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"{nameof(InverseConjunction)} not defined for negative values - arg={arg}");
+                }
+
+                // If 0, that's the only digit
+                if (numericArg.Value == 0)
+                {
+                    return DataValue.Truthy;
+                }
+                else
+                {
+                    return DataValue.BoolToTruthiness(BaseConversion.ConvertToIntegerBase(10, numericArg.Value).All(d => d == 0));
+                }
+            }
+            // Array, just get elements
+            else
+            {
+                // Empty array is always falsey
+                if (arg.IterationValues.Count == 0)
+                {
+                    return DataValue.Falsey;
+                }
+
+                return DataValue.BoolToTruthiness(((ArrayValue)arg).Value.All(e => !e.IsTruthy));
+            }
+        }
     }
 }

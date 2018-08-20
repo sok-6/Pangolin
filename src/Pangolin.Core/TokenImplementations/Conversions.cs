@@ -63,16 +63,13 @@ namespace Pangolin.Core.TokenImplementations
                     throw new PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03B4 command - non-integral value: {numericArg.Value}");
                 }
 
-                var result = new List<int>();
-                var valueCopy = numericArg.IntValue;
+                var result = BaseConversion.ConvertToIntegerBase(10, numericArg.IntValue);
 
-                while (valueCopy > 0)
+                // Special case 0
+                if (result.Count() == 0)
                 {
-                    result.Add(valueCopy % 10);
-                    valueCopy /= 10;
+                    result = new int[] { 0 };
                 }
-
-                result.Reverse();
 
                 return new ArrayValue(result.Select(r => new NumericValue(r)));
             }
@@ -140,6 +137,203 @@ namespace Pangolin.Core.TokenImplementations
                     return new ArrayValue(result.Select(r => new ArrayValue(r)));
                 }
             }
+        }
+    }
+
+    public class BaseConversion : ArityTwoIterableToken // TODO: Finish writing tests, they're so boring to do :/
+    {
+        public override string ToString() => "B";
+
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        {
+            // Arguments are base, value
+
+            // Numeric base
+            if (arg1.Type == DataValueType.Numeric)
+            {
+                var numericArg1 = (NumericValue)arg1;
+
+                if (!numericArg1.IsIntegral)
+                {
+                    // TODO: Implement non-integral bases
+                    throw new PangolinInvalidArgumentTypeException($"Non-integral bases not implemented yet - base={arg1}, value={arg2}");
+                }
+
+                var baseValue = numericArg1.IntValue;
+
+                if (baseValue == 0 || baseValue == -1)
+                {
+                    throw new PangolinException($"Conversion not possible with specified base - base={arg1}, value={arg2}");
+                }
+
+                // Numeric value, convert from decimal to new base
+                if (arg2.Type == DataValueType.Numeric)
+                {
+                    var result = ConvertToIntegerBase(baseValue, ((NumericValue)arg2).Value);
+
+                    return new ArrayValue(result.Select(r => new NumericValue(r)));
+                }
+                // Array value, convert to decimal from specified base
+                else if (arg2.Type == DataValueType.Array)
+                {
+                    var arrayArg2 = (ArrayValue)arg2;
+
+                    // All elements must be numeric, integral and less than abs base value
+                    if (arrayArg2.Value.Any(a => a.Type != DataValueType.Numeric))
+                    {
+                        throw new PangolinInvalidArgumentTypeException($"When converting to decimal from numeric base, all digit values must be numeric - base={arg1}, value={arg2}");
+                    }
+
+                    var arrayNumericsArg2 = arrayArg2.Value.Select(a => (NumericValue)a);
+                    if (!arrayNumericsArg2.All(n => n.IsIntegral))
+                    {
+                        throw new PangolinInvalidArgumentTypeException($"When converting to decimal from numeric base, all digit values must be integral - base={arg1}, value={arg2}");
+                    }
+
+                    if (arrayNumericsArg2.Any(n => n.IntValue >= Math.Abs(baseValue)))
+                    {
+                        throw new PangolinInvalidArgumentTypeException($"When converting to decimal from numeric base, all digit values must be less than base - base={arg1}, value={arg2}");
+                    }
+
+                    // Perform conversion back to decimal
+                    var result = ConvertFromIntegerBase(baseValue, arrayNumericsArg2.Select(n => n.IntValue));
+                    return new NumericValue(result);
+                }
+                // String value, not defined
+                else
+                {
+                    throw GetInvalidArgumentTypeException(nameof(BaseConversion), arg1.Type, arg2.Type);
+                }
+            }
+            // String base
+            else if (arg1.Type == DataValueType.String)
+            {
+                var baseCharacters = ((StringValue)arg1).Value;
+
+                // Check if base's characters are unique
+                if (baseCharacters.Distinct().Count() != baseCharacters.Length)
+                {
+                    throw new PangolinInvalidArgumentTypeException($"For string base, all characters in base must be unique - base={arg1}, value={arg2}");
+                }
+
+                // Numeric value, convert from decimal to new base
+                if (arg2.Type == DataValueType.Numeric)
+                {
+                    var result = ConvertToIntegerBase(baseCharacters.Length, ((NumericValue)arg2).Value);
+
+                    // Convert indices to characters and concatenate
+                    return new StringValue(String.Join("", result.Select(r => baseCharacters[r])));
+                }
+                // String value, convert to decimal from base
+                else if (arg2.Type == DataValueType.String)
+                {
+                    var valueString = ((StringValue)arg2).Value;
+                    if (!valueString.All(c => baseCharacters.Contains(c)))
+                    {
+                        throw new PangolinException($"For string base, value can't contain characters that aren't in base definition - base={arg1}, value={arg2}");
+                    }
+
+                    // Get indices from value string
+                    var digitValues = valueString.Select(c => baseCharacters.IndexOf(c));
+
+                    var result = ConvertFromIntegerBase(baseCharacters.Length, digitValues);
+                    return new NumericValue(result);
+                }
+                // Array value, not defined
+                else
+                {
+                    throw GetInvalidArgumentTypeException(nameof(BaseConversion), arg1.Type, arg2.Type);
+                }
+            }
+            // Array, implies complex or higher dimensional base
+            else
+            {
+                // TODO: Implement complex base conversions
+                throw new PangolinInvalidArgumentTypeException($"Complex and higher dimensional bases not implemented yet - base={arg1}, value={arg2}");
+
+                // arr, num -> real to complex base
+                // arr, arr -> complex based number to decimal based complex
+                // A different operator is required to convert a decimal base complex number to complex base
+            }
+        }
+
+        public static IEnumerable<int> ConvertToIntegerBase(int newBase, double number)
+        {
+            var result = new List<int>();
+
+            if (newBase == 0 || newBase == -1)
+            {
+                throw new PangolinException($"onversion not possible with specified base {newBase}");
+            }
+
+            // Can't convert negative number into positive base
+            // TODO: consider compliments?
+            if (newBase > 0 && number < 0)
+            {
+                throw new PangolinException($"Can't convert negative number into positive base - newBase={newBase}, number={number}");
+            }
+            
+            // Special case for unary
+            if (newBase == 1)
+            {
+                if (((int)number) != number)
+                {
+                    throw new PangolinException($"Can't convert non-integral number into unary - newBase={newBase}, number={number}");
+                }
+
+                result.AddRange(Enumerable.Repeat(0, (int)number));
+            }
+            else
+            {
+                // Do the base conversion for the whole numbers part
+                var intValue = (int)number;
+                while (intValue != 0)
+                {
+                    var mod = intValue % newBase;
+                    intValue /= newBase;
+
+                    if (mod < 0) // Deal with negative base issues
+                    {
+                        mod -= newBase;
+                        intValue++;
+                    }
+
+                    result.Add(mod);
+                }
+
+                var fractionalValue = number % 1;
+                if (fractionalValue != 0)
+                {
+                    throw new PangolinException($"Base conversion of non-integral numbers not implemented yet - newBase={newBase}, number={number}");
+                }
+            }
+
+            // Reverse, as base conversion builds from least -> most significant
+            result.Reverse();
+
+            return result;
+        }
+
+        public static double ConvertFromIntegerBase(int fromBase, IEnumerable<int> digits)
+        {
+            double result = 0;
+
+            if (fromBase == 0 || fromBase == -1)
+            {
+                throw new PangolinException($"Can't convert from base {fromBase}");
+            }
+
+            if (fromBase == 1)
+            {
+                return digits.Count();
+            }
+
+            foreach (var d in digits)
+            {
+                result = (result * fromBase) + d;
+            }
+
+            return result;
         }
     }
 }
