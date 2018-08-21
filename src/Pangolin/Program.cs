@@ -13,7 +13,7 @@ namespace Pangolin
             //    Console.WriteLine(s);
             //}
 
-            var simpleCode = "M`->m`<-5";
+            var simpleCode = "`N.S`S.S?`C-j]i-1-iL`0Ot`s.`0O";
 
             var (success, code) = CommandLineUtilities.ParseSimpleCode(simpleCode, true);
 
@@ -25,7 +25,7 @@ namespace Pangolin
             {
                 Core.Runner.Run(
                     code,
-                    "",
+                    "CODE-GOLF",
                     new ConsoleRunOptions
                     {
                         ArgumentParseLogging = false,

@@ -147,7 +147,7 @@ namespace Pangolin.Core
                 else if ("123456789.\u23E8".Contains(current))
                 {
                     // Match a number
-                    var readString = Regex.Match(code.Substring(index), @"^((\d+(\.\d+)?|\.\d+)\u23E8?-?\d*|\u23E8-?\d*)").Value;
+                    var readString = Regex.Match(code.Substring(index), @"^((\d+(\.\d+)?|\.\d+)(\u23E8-?)?\d*|\u23E8-?\d*)").Value;
 
                     // Replace sub-10 with e, parse
                     var fettledString = readString.Replace('\u23E8', 'e');
