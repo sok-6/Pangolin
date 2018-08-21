@@ -263,7 +263,7 @@ namespace Pangolin.Core.TokenImplementations
 
             if (newBase == 0 || newBase == -1)
             {
-                throw new PangolinException($"onversion not possible with specified base {newBase}");
+                throw new PangolinException($"Conversion not possible with specified base {newBase}");
             }
 
             // Can't convert negative number into positive base
@@ -334,6 +334,50 @@ namespace Pangolin.Core.TokenImplementations
             }
 
             return result;
+        }
+    }
+
+    public class BinaryConversion : ArityOneIterableToken
+    {
+        public override string ToString() => "\u1E04";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            if (arg.Type == DataValueType.String)
+            {
+                throw GetInvalidArgumentTypeException(nameof(BinaryConversion), arg.Type);
+            }
+            // Numeric, convert to base 2
+            else if (arg.Type == DataValueType.Numeric)
+            {
+                var result = BaseConversion.ConvertToIntegerBase(2, ((NumericValue)arg).Value);
+                return new ArrayValue(result.Select(r => new NumericValue(r)));
+            }
+            // Array, convert from base 2
+            else
+            {
+                var arrayArg = (ArrayValue)arg;
+
+                if (arrayArg.Value.Any(a => a.Type != DataValueType.Numeric))
+                {
+                    throw new PangolinInvalidArgumentTypeException($"When converting to decimal from base 2, all digit values must be numeric - value={arg}");
+                }
+
+                var numericArgs = arrayArg.Value.Select(a => (NumericValue)a);
+
+                if (!numericArgs.All(n => n.IsIntegral))
+                {
+                    throw new PangolinInvalidArgumentTypeException($"When converting to decimal from base 2, all digit values must be integral - value={arg}");
+                }
+
+                if (!numericArgs.All(n => n.IntValue == 0 || n.IntValue == 1))
+                {
+                    throw new PangolinInvalidArgumentTypeException($"When converting to decimal from base 2, all digit values must be less either 0 or 1 - value={arg}");
+                }
+
+                var result = BaseConversion.ConvertFromIntegerBase(2, numericArgs.Select(n => n.IntValue));
+                return new NumericValue(result);
+            }
         }
     }
 }

@@ -592,6 +592,103 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(5);
             result4.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
         }
+
+        [Fact]
+        public void BinaryConversion_should_convert_non_negative_integral_to_binary()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(10);
+            var mockProgramState2 = MockFactory.MockProgramState(123);
+            var mockProgramState3 = MockFactory.MockProgramState(1);
+            var mockProgramState4 = MockFactory.MockProgramState(0);
+
+            var token = new BinaryConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeArrayWhichStartsWith(1, 0, 1, 0).End();
+            result2.ShouldBeArrayWhichStartsWith(1, 1, 1, 1, 0, 1, 1).End();
+            result3.ShouldBeArrayWhichStartsWith(1).End();
+            result4.ShouldBeEmptyArray();
+        }
+
+        [Fact]
+        public void BinaryConversion_should_throw_exception_for_negative_int_or_float()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(-10);
+            var mockProgramState2 = MockFactory.MockProgramState(1.23);
+
+            var token = new BinaryConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Can't convert negative number into positive base - newBase=2, number=-10");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Base conversion of non-integral numbers not implemented yet - newBase=2, number=1.23");
+        }
+        
+        [Fact]
+        public void BinaryConversion_should_throw_exception_for_strings()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState("abc");
+            var mockProgramState2 = MockFactory.MockProgramState("");
+
+            var token = new BinaryConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("Invalid argument type passed to BinaryConversion command - String");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("Invalid argument type passed to BinaryConversion command - String");
+        }
+        
+
+        [Fact]
+        public void BinaryConversion_should_convert_binary_array_into_decimal()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 0, 1, 0).Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 1, 1, 1, 0, 1, 1).Complete());
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.Empty);
+
+            var token = new BinaryConversion();
+
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+            var result4 = token.Evaluate(mockProgramState4.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(10);
+            result2.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(123);
+            result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(1);
+            result4.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
+        }
+
+        [Fact]
+        public void BinaryConversion_should_throw_exception_for_improperly_populated_array()
+        {
+            // Arrange
+            var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 0).WithStrings("abc").Complete());
+            var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingArray(MockFactory.MockArrayBuilder.Empty).Complete());
+            var mockProgramState3 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 0.5).Complete());
+            var mockProgramState4 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
+            var mockProgramState5 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(-1, 0, 1).Complete());
+
+            var token = new BinaryConversion();
+
+            // Act/Assert
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState1.Object)).Message.ShouldBe("When converting to decimal from base 2, all digit values must be numeric - value=[1,0,abc]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState2.Object)).Message.ShouldBe("When converting to decimal from base 2, all digit values must be numeric - value=[[]]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState3.Object)).Message.ShouldBe("When converting to decimal from base 2, all digit values must be integral - value=[1,0.5]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState4.Object)).Message.ShouldBe("When converting to decimal from base 2, all digit values must be less either 0 or 1 - value=[1,2,3]");
+            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState5.Object)).Message.ShouldBe("When converting to decimal from base 2, all digit values must be less either 0 or 1 - value=[-1,0,1]");
+        }
     }
 }
 

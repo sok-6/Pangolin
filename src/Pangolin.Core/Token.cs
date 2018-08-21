@@ -17,6 +17,7 @@ namespace Pangolin.Core
 
         protected static Exception GetInvalidArgumentTypeException(string tokenString, params DataValueType[] invalidTypes)
         {
+            // Invalid argument types passed to x command - y,z
             return new PangolinInvalidArgumentTypeException($"Invalid argument type{(invalidTypes.Length > 1 ? "s" : "")} passed to {tokenString} command - {String.Join(",", invalidTypes)}");
         }
         

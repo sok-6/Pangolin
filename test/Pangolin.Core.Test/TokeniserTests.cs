@@ -1039,6 +1039,12 @@ namespace Pangolin.Core.Test
         {
             '\u1E63'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantSpace));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_BinaryConversion()
+        {
+            '\u1E04'.ShouldBeParsedAs(typeof(TokenImplementations.BinaryConversion));
+        }
     }
 }
 
