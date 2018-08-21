@@ -1045,6 +1045,24 @@ namespace Pangolin.Core.Test
         {
             '\u1E04'.ShouldBeParsedAs(typeof(TokenImplementations.BinaryConversion));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Join()
+        {
+            'J'.ShouldBeParsedAs(typeof(TokenImplementations.Join));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_JoinOnSpaces()
+        {
+            '\u1E62'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnSpaces));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_JoinOnNewlines()
+        {
+            '\u1E46'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnNewlines));
+        }
     }
 }
 
