@@ -28,7 +28,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue);
+            result.ShouldBeOfType<ArrayValue>().CompareArrayTo(mockDataValue);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue1, mockDataValue2);
+            result.ShouldBeOfType<ArrayValue>().CompareArrayTo(mockDataValue1, mockDataValue2);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(mockDataValue1, mockDataValue2, mockDataValue3);
+            result.ShouldBeOfType<ArrayValue>().CompareArrayTo(mockDataValue1, mockDataValue2, mockDataValue3);
         }
 
         [Fact]

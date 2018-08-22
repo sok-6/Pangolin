@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Pangolin.Common;
+using Pangolin.Core.DataValueImplementations;
 using Pangolin.Core.TokenImplementations;
 
 namespace Pangolin.Core
@@ -19,6 +20,18 @@ namespace Pangolin.Core
         {
             // Invalid argument types passed to x command - y,z
             return new PangolinInvalidArgumentTypeException($"Invalid argument type{(invalidTypes.Length > 1 ? "s" : "")} passed to {tokenString} command - {String.Join(",", invalidTypes)}");
+        }
+
+        protected DataValue DataValueSetToStringOrArray(IEnumerable<DataValue> dataValueSet, DataValueType destinationType)
+        {
+            if (destinationType == DataValueType.String)
+            {
+                return new StringValue(String.Join("", dataValueSet.Select(v => v.ToString())));
+            }
+            else
+            {
+                return new ArrayValue(dataValueSet);
+            }
         }
         
         #region Public factory methods

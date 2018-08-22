@@ -1063,6 +1063,42 @@ namespace Pangolin.Core.Test
         {
             '\u1E46'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnNewlines));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Ascend()
+        {
+            '\u2191'.ShouldBeParsedAs(typeof(TokenImplementations.Ascend));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Descend()
+        {
+            '\u2193'.ShouldBeParsedAs(typeof(TokenImplementations.Descend));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_OrderIterationVariable()
+        {
+            'o'.ShouldBeParsedAs(typeof(TokenImplementations.OrderIterationVariable));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_OrderIterationIndex()
+        {
+            '\u1ECD'.ShouldBeParsedAs(typeof(TokenImplementations.OrderIterationIndex));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_AllButFirst_ModTen()
+        {
+            '('.ShouldBeParsedAs(typeof(TokenImplementations.AllButFirst_ModTen));
+        }
+        
+        [Fact]
+        public void Tokeniser_should_parse_AllButLast_LogTen()
+        {
+            ')'.ShouldBeParsedAs(typeof(TokenImplementations.AllButLast_LogTen));
+        }
     }
 }
 

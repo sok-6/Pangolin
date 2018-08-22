@@ -12,7 +12,7 @@ namespace Pangolin.Core.Test
 {
     public static class Extensions
     {
-        public static void CompareTo(this ArrayValue arrayValue, params DataValue[] comparison)
+        public static void CompareArrayTo(this ArrayValue arrayValue, params DataValue[] comparison)
         {
             arrayValue.Value.Count.ShouldBe(comparison.Length);
 

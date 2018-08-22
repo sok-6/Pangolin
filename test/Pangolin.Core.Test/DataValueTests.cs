@@ -73,7 +73,7 @@ namespace Pangolin.Core.Test
             // Assert
             numericValue.IsTruthy.ShouldBe(false);
         }
-
+        
         [Fact]
         public void StringValue_should_correctly_store_unicode_string()
         {
@@ -164,7 +164,7 @@ cd";
         }
 
         [Fact]
-        public void ArrayValue_should_be_truthy_is_populated()
+        public void ArrayValue_should_be_truthy_if_populated()
         {
             // Arrange
             var a = new DataValue[]
@@ -180,7 +180,7 @@ cd";
         }
 
         [Fact]
-        public void ArrayValue_should_be_falsey_is_not_populated()
+        public void ArrayValue_should_be_falsey_if_not_populated()
         {
             // Arrange
             var a = new DataValue[0];

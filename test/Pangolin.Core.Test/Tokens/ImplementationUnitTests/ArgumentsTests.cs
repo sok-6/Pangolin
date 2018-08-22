@@ -86,7 +86,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(mockProgramState.Object);
 
             // Assert
-            result.ShouldBeOfType<ArrayValue>().CompareTo(value1.Object, value2.Object, value3.Object);
+            result.ShouldBeOfType<ArrayValue>().CompareArrayTo(value1.Object, value2.Object, value3.Object);
         }
     }
 }
