@@ -255,4 +255,82 @@ namespace Pangolin.Core.TokenImplementations
             }
         }
     }
+
+    public class Floor : ArityOneIterableToken
+    {
+        public override string ToString() => "_";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // Numeric, round towards -inf
+            if (arg.Type == DataValueType.Numeric)
+            {
+                return new NumericValue(Math.Floor(((NumericValue)arg).Value));
+            }
+            // String, smallest character by unicode code point
+            else if (arg.Type == DataValueType.String)
+            {
+                var stringValue = ((StringValue)arg).Value;
+
+                if (stringValue.Length == 0)
+                {
+                    throw new PangolinException($"{nameof(Floor)} unable to find minimum value of empty string");
+                }
+
+                // Order by unicode, take first
+                return new StringValue(stringValue.OrderBy(c => (int)c).First().ToString());
+            }
+            // Array, order and take first
+            else
+            {
+                var elements = ((ArrayValue)arg).Value;
+
+                if (elements.Count == 0)
+                {
+                    throw new PangolinException($"{nameof(Floor)} unable to find minimum value of empty array");
+                }
+
+                return Order.ExecuteOrdering(elements).First();
+            }
+        }
+    }
+
+    public class Ceiling : ArityOneIterableToken
+    {
+        public override string ToString() => "\u00AF";
+
+        protected override DataValue EvaluateInner(DataValue arg)
+        {
+            // Numeric, round towards +inf
+            if (arg.Type == DataValueType.Numeric)
+            {
+                return new NumericValue(Math.Ceiling(((NumericValue)arg).Value));
+            }
+            // String, smallest character by unicode code point
+            else if (arg.Type == DataValueType.String)
+            {
+                var stringValue = ((StringValue)arg).Value;
+
+                if (stringValue.Length == 0)
+                {
+                    throw new PangolinException($"{nameof(Ceiling)} unable to find minimum value of empty string");
+                }
+
+                // Order by unicode, take first
+                return new StringValue(stringValue.OrderBy(c => (int)c).Last().ToString());
+            }
+            // Array, order and take first
+            else
+            {
+                var elements = ((ArrayValue)arg).Value;
+
+                if (elements.Count == 0)
+                {
+                    throw new PangolinException($"{nameof(Ceiling)} unable to find minimum value of empty array");
+                }
+
+                return Order.ExecuteOrdering(elements).Last();
+            }
+        }
+    }
 }

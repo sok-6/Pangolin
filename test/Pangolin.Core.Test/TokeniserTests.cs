@@ -1099,6 +1099,30 @@ namespace Pangolin.Core.Test
         {
             ')'.ShouldBeParsedAs(typeof(TokenImplementations.AllButLast_LogTen));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_Root()
+        {
+            '\u1E5A'.ShouldBeParsedAs(typeof(TokenImplementations.Root));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Power_RepeatedCartesianProduct()
+        {
+            '^'.ShouldBeParsedAs(typeof(TokenImplementations.Power_RepeatedCartesianProduct));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Floor()
+        {
+            '_'.ShouldBeParsedAs(typeof(TokenImplementations.Floor));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Ceiling()
+        {
+            '\u00AF'.ShouldBeParsedAs(typeof(TokenImplementations.Ceiling));
+        }
     }
 }
 
