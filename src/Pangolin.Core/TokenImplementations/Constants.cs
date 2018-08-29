@@ -28,7 +28,7 @@ namespace Pangolin.Core.TokenImplementations
             return new DataValueImplementations.ArrayValue();
         }
 
-        public override string ToString() => "a";
+        public override string ToString() => "\u25AF";
     }
 
     public class ConstantEmptyString : Token
@@ -49,7 +49,7 @@ namespace Pangolin.Core.TokenImplementations
 
         public override DataValue Evaluate(ProgramState programState) => new StringValue("abcdefghijklmnopqrstuvwxyz");
 
-        public override string ToString() => "\u1EA0";
+        public override string ToString() => "\u1EA1";
     }
 
     public class ConstantUppercaseAlphabet : Token

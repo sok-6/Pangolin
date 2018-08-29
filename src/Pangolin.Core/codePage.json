@@ -221,7 +221,7 @@
     { "hex": "039E", "combination": "=-", "id": null, "displayHex": null },
     { "hex": "03A0", "combination": "||", "id": null, "displayHex": null },
     { "hex": "03A3", "combination": ">E", "id": null, "displayHex": null },
-    { "hex": "03A6", "combination": "|O", "id": null, "displayHex": null },
+    { "hex": "03A6", "combination": "O|", "id": null, "displayHex": null },
     { "hex": "03A8", "combination": "U|", "id": null, "displayHex": null },
     { "hex": "03B4", "combination": "o-", "id": null, "displayHex": null },
     { "hex": "03B6", "combination": "z,", "id": null, "displayHex": null },

@@ -9,7 +9,7 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class Arrayify : ArityOneIterableToken
     {
-        public override string ToString() => "A";
+        public override string ToString() => "\u1EA0";
 
         protected override DataValue EvaluateInner(DataValue value)
         {

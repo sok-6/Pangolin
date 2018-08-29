@@ -822,7 +822,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_Arrayify()
         {
-            'A'.ShouldBeParsedAs(typeof(TokenImplementations.Arrayify));
+            '\u1EA0'.ShouldBeParsedAs(typeof(TokenImplementations.Arrayify));
         }
 
         [Fact]
@@ -834,7 +834,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_ConstantEmptyArray()
         {
-            'a'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyArray));
+            '\u25AF'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyArray));
         }
 
         [Fact]
@@ -924,7 +924,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_ConstantLowercaseAlphabet()
         {
-            '\u1EA0'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantLowercaseAlphabet));
+            '\u1EA1'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantLowercaseAlphabet));
         }
 
         [Fact]
@@ -1165,6 +1165,42 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_Index()
         {
             '@'.ShouldBeParsedAs(typeof(TokenImplementations.Index));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_AggregateFirst()
+        {
+            'A'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirst));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_AggregateFirstVariableConstantCurrent()
+        {
+            'a'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirstVariableConstantCurrent));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_AggregateFirstVariableConstantNext()
+        {
+            'b'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirstVariableConstantNext));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_CollapseFunction()
+        {
+            'C'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunction));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_CollapseFunctionVariableConstantCurrent()
+        {
+            'c'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunctionVariableConstantCurrent));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_CollapseFunctionVariableConstantNext()
+        {
+            'd'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunctionVariableConstantNext));
         }
     }
 }
