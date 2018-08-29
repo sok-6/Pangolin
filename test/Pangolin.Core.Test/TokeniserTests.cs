@@ -491,18 +491,6 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void Tokeniser_should_parse_truthify()
-        {
-            '\u00A1'.ShouldBeParsedAs(typeof(TokenImplementations.Truthify));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_untruthify()
-        {
-            '!'.ShouldBeParsedAs(typeof(TokenImplementations.UnTruthify));
-        }
-
-        [Fact]
         public void Tokeniser_should_parse_single_arguments()
         {
             // Arrange
@@ -524,18 +512,6 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
-        public void Tokeniser_should_parse_argument_array()
-        {
-            '\u00A5'.ShouldBeParsedAs(typeof(TokenImplementations.ArgumentArray));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_add()
-        {
-            '+'.ShouldBeParsedAs(typeof(TokenImplementations.Add));
-        }
-
-        [Fact]
         public void Tokeniser_should_step_over_spaces()
         {
             // Arrange
@@ -553,30 +529,6 @@ namespace Pangolin.Core.Test
 
             var token2 = result[1].ShouldBeOfType<TokenImplementations.NumericLiteral>();
             token2.LiteralValue.ShouldBe(2);
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_range()
-        {
-            '\u2192'.ShouldBeParsedAs(typeof(TokenImplementations.Range));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_ReverseRange()
-        {
-            '\u2190'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_range1()
-        {
-            '\u0411'.ShouldBeParsedAs(typeof(TokenImplementations.Range1));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_ReverseRange1()
-        {
-            '\u042A'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange1));
         }
 
         [Fact]
@@ -629,25 +581,110 @@ namespace Pangolin.Core.Test
             result[9].ShouldBeOfType<TokenImplementations.SetVariable>().VariableIndex.ShouldBe(9);
         }
 
-        [Fact]
-        public void Tokeniser_should_parse_multiply()
+        [Fact(Skip = "Code page needs to be properly defined")]
+        public void Tokeniser_should_parse_dictionary_compressed_string()
         {
-            '*'.ShouldBeParsedAs(typeof(TokenImplementations.Multiply));
+            // Arrange
+
+
+            // Act
+
+            // Assert
+
+        }
+
+        [Fact(Skip = "Code page needs to be properly defined")]
+        public void Tokeniser_should_parse_dictionary_compressed_numeric()
+        {
+            // Arrange
+
+
+            // Act
+
+            // Assert
+
+        }
+
+        [Fact(Skip = "Code page needs to be properly defined")]
+        public void Tokeniser_should_parse_code_page_single_character_numeric()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+
+        }
+
+        [Fact(Skip = "Code page needs to be properly defined")]
+        public void Tokeniser_should_parse_code_page_double_character_numeric()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+
         }
 
         [Fact]
         public void Tokeniser_should_parse_equality()
         {
-            // Arrange
-            var code = "=";
-            var mockLog = new Mock<System.Action<string>>();
+            '='.ShouldBeParsedAs(typeof(TokenImplementations.Equality));
+        }
 
-            // Act
-            var result = Tokeniser.Tokenise(code, mockLog.Object);
+        [Fact]
+        public void Tokeniser_should_parse_truthify()
+        {
+            '\u00A1'.ShouldBeParsedAs(typeof(TokenImplementations.Truthify));
+        }
 
-            // Assert
-            result.Count.ShouldBe(1);
-            result[0].ShouldBeOfType<TokenImplementations.Equality>();
+        [Fact]
+        public void Tokeniser_should_parse_untruthify()
+        {
+            '!'.ShouldBeParsedAs(typeof(TokenImplementations.UnTruthify));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_argument_array()
+        {
+            '\u00A5'.ShouldBeParsedAs(typeof(TokenImplementations.ArgumentArray));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_add()
+        {
+            '+'.ShouldBeParsedAs(typeof(TokenImplementations.Add));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_range()
+        {
+            '\u2192'.ShouldBeParsedAs(typeof(TokenImplementations.Range));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ReverseRange()
+        {
+            '\u2190'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_range1()
+        {
+            '\u0411'.ShouldBeParsedAs(typeof(TokenImplementations.Range1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_ReverseRange1()
+        {
+            '\u042A'.ShouldBeParsedAs(typeof(TokenImplementations.ReverseRange1));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_multiply()
+        {
+            '*'.ShouldBeParsedAs(typeof(TokenImplementations.Multiply));
         }
 
         [Fact]
@@ -1122,6 +1159,12 @@ namespace Pangolin.Core.Test
         public void Tokeniser_should_parse_Ceiling()
         {
             '\u00AF'.ShouldBeParsedAs(typeof(TokenImplementations.Ceiling));
+        }
+
+        [Fact]
+        public void Tokeniser_should_parse_Index()
+        {
+            '@'.ShouldBeParsedAs(typeof(TokenImplementations.Index));
         }
     }
 }

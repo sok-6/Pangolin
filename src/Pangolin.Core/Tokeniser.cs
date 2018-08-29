@@ -17,7 +17,11 @@ namespace Pangolin.Core
         public static IReadOnlyList<Token> Tokenise(string code, Action<string> log)
         {
             var result = new List<Token>();
-            
+
+            log($"Sanitising code string");
+
+            code = String.Concat(code.Where(c => CodePage.CharacterExistsInCodePage(c)));
+
             // Iterate over characters until all processed
             var index = 0;
             while (index < code.Length)
@@ -25,11 +29,7 @@ namespace Pangolin.Core
                 log($"Remaining tokens = {code.Substring(index)}");
 
                 var current = code[index];
-                if (!CodePage.CharacterExistsInCodePage(current))
-                {
-                    log($"Character {current} U+{Convert.ToString(current, 16)} not found in code page, ignoring");
-                }
-                else if (current == ' ')
+                if (current == ' ')
                 {
                     // Do nothing, move on
                     // TODO: set flag?
@@ -131,6 +131,24 @@ namespace Pangolin.Core
                         }
                     }
                 }
+                // 2 char string/single dictionary entry
+                else if (current == '\u00BB')
+                {
+                    log("2 char string/single dictionary entry");
+
+                    // Check there are 2 more characters to use
+                    if (index + 2 >= code.Length)
+                    {
+                        throw new PangolinInvalidTokenException("Need 2 characters to follow \u00BB token");
+                    }
+
+                    var characters = code.Substring(index + 1, 2);
+                    index += 2;
+
+                    log($"Characters = {characters}");
+
+                    result.Add(Token.GetStringLiteral(DecodeCompressedString(characters, log)));
+                }
                 // Leading 0
                 else if (current == '0')
                 {
@@ -164,6 +182,28 @@ namespace Pangolin.Core
 
                     // Move on appropriate number of characters - last +1 is at end of loop
                     index += readString.Length - 1;
+                }
+                // Single digit code page numeric
+                else if (current == '\u2020')
+                {
+                    if (index + 1 == code.Length)
+                    {
+                        throw new PangolinInvalidTokenException("Must be at least 1 character following \u2020");
+                    }
+
+                    index++;
+                    result.Add(Token.GetNumericLiteral(DecodeCompressedNumeric(code.Substring(index, 1), false, log)));
+                }
+                // Double digit code page numeric
+                else if (current == '\u2021')
+                {
+                    if (index + 2 >= code.Length)
+                    {
+                        throw new PangolinInvalidTokenException("Must be at least 2 characters following \u2021");
+                    }
+
+                    result.Add(Token.GetNumericLiteral(DecodeCompressedNumeric(code.Substring(index + 1, 2), false, log)));
+                    index += 2;
                 }
                 // Single argument
                 else if (TokenImplementations.SingleArgument.CHAR_LIST.Contains(current))

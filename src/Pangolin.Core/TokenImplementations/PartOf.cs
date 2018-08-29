@@ -1,4 +1,5 @@
-﻿using Pangolin.Core.DataValueImplementations;
+﻿using Pangolin.Common;
+using Pangolin.Core.DataValueImplementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,36 @@ namespace Pangolin.Core.TokenImplementations
 
                 return DataValueSetToStringOrArray(trimmedElements, arg.Type);
             }
+        }
+    }
+
+    public class Index : ArityTwoIterableToken
+    {
+        public override string ToString() => "@";
+
+        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        {
+            // One must be numeric, one must be iterable
+            if ((arg1.Type != DataValueType.Numeric && arg2.Type != DataValueType.Numeric) 
+                || (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric))
+            {
+                throw GetInvalidArgumentTypeException(nameof(Index), arg1.Type, arg2.Type);
+            }
+            
+            var numericArg = (arg1 as NumericValue) ?? (NumericValue)arg2;
+            var set = (arg1.Type == DataValueType.Numeric ? arg2 : arg1).IterationValues;
+
+            if (!numericArg.IsIntegral)
+            {
+                throw new PangolinException($"{nameof(Index)} numeric argument must be integral - arg1={arg1}, arg2={arg2}");
+            }
+
+            if (set.Count == 0)
+            {
+                throw new PangolinException($"{nameof(Index)} iterable argument must not be empty - arg1={arg1}, arg2={arg2}");
+            }
+
+            return set[((numericArg.IntValue % set.Count) + set.Count) % set.Count];
         }
     }
 }
