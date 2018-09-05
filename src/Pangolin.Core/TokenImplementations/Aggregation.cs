@@ -161,8 +161,8 @@ namespace Pangolin.Core.TokenImplementations
         public override string ToString() => "A";
     }
 
-    public class AggregateFirstVariableConstantCurrent : IterationConstantBase { public override string ToString() => "a"; }
-    public class AggregateFirstVariableConstantNext : IterationConstantBase { public override string ToString() => "b"; }
+    public class AggregateFirstVariableConstantCurrent : IterationConstantToken { public override string ToString() => "a"; }
+    public class AggregateFirstVariableConstantNext : IterationConstantToken { public override string ToString() => "b"; }
 
     public class CollapseFunction : Token
     {
@@ -240,6 +240,6 @@ namespace Pangolin.Core.TokenImplementations
         public override string ToString() => "C";
     }
 
-    public class CollapseFunctionVariableConstantCurrent : IterationConstantBase { public override string ToString() => "c"; }
-    public class CollapseFunctionVariableConstantNext : IterationConstantBase { public override string ToString() => "d"; }
+    public class CollapseFunctionVariableConstantCurrent : IterationConstantToken { public override string ToString() => "c"; }
+    public class CollapseFunctionVariableConstantNext : IterationConstantToken { public override string ToString() => "d"; }
 }

@@ -97,7 +97,86 @@ namespace Pangolin.Core
     /// </summary>
     public abstract class FunctionToken : Token
     {
+        protected abstract int GetNestingLimit();
+        protected abstract int GetNestedAmount(ProgramState programState);
+        protected abstract int RetrieveFunctionArguments(ProgramState programState);
+        protected abstract string GetDefaultToken(int nestingLevel);
+        protected abstract int GetIterationCount();
+        protected abstract void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex);
+        protected abstract void ClearIterationConstants(ProgramState programState, int nestingLevel);
+        protected abstract DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results);
 
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            // Get the number of selects already in progress
+            var nestingLevel = GetNestedAmount(programState);
+
+            if (nestingLevel == GetNestingLimit())
+            {
+                throw new PangolinException($"Can't nest {ToString()} tokens more than {GetNestingLimit()} deep");
+            }
+
+            //// Get variable and index tokens
+            //var variableToken = _iterationVariableTokens[alreadyRunningSelectCount];
+            //var indexToken = ITERATION_INDEX_TOKENS.Substring(alreadyRunningSelectCount, 1);
+
+            // Save current token index to return to once subsequent arguments evaluated
+            var firstArgTokenIndex = programState.CurrentTokenIndex;
+
+            // Step over 1st arg, get other arguments
+            programState.StepOverNextTokenBlock();
+            var iterationCount = RetrieveFunctionArguments(programState);
+            
+            // Save token index to return to once select token execution ended
+            var endTokenIndex = programState.CurrentTokenIndex;
+
+            // Add variable token to stack of default values
+            var defaultToken = GetDefaultToken(nestingLevel);
+            programState.DefaultTokenStack.Push(defaultToken);
+
+            // Execute iteration block once per value in set
+            var results = new List<IterationResultContainer>();
+
+            for (int i = 0; i < iterationCount; i++)
+            {
+                // Return to the iteration block
+                programState.SetCurrentTokenIndex(firstArgTokenIndex);
+
+                // Set iteration constants
+                SetIterationConstants(programState, nestingLevel, i);
+
+                // Execute function block, add to result set
+                results.Add(new IterationResultContainer(i, programState.DequeueAndEvaluate()));
+            }
+
+            // Clear iteration variable and index
+            ClearIterationConstants(programState, nestingLevel);
+
+            // Remove variable token from stack of default values
+            if (programState.DefaultTokenStack.Peek() != defaultToken)
+            {
+                throw new PangolinException($"Top of default token stack in unexpected state - {defaultToken} expected, actually {programState.DefaultTokenStack.Peek()}");
+            }
+            programState.DefaultTokenStack.Pop();
+
+            // Move to end of arguments
+            programState.SetCurrentTokenIndex(endTokenIndex);
+
+            // All done, return
+            return ProcessResults(results);
+        }
+
+        protected class IterationResultContainer
+        {
+            public int Index { get; private set; }
+            public DataValue IterationResult { get; set; }
+
+            public IterationResultContainer(int index, DataValue iterationResult)
+            {
+                Index = index;
+                IterationResult = iterationResult;
+            }
+        }
     }
 
     /// <summary>
@@ -176,5 +255,20 @@ namespace Pangolin.Core
         }
 
         protected abstract DataValue EvaluateInner(IReadOnlyList<DataValue> arguments);
+    }
+
+    public abstract class IterationConstantToken : Token
+    {
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            if (!programState.IterationFunctionConstants.TryGetValue(ToString(), out var dataValue))
+            {
+                throw new PangolinException($"Could not get iteration constant {ToString()} as execution not in relevant block");
+            }
+
+            return dataValue;
+        }
     }
 }

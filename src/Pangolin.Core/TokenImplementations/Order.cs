@@ -207,8 +207,8 @@ namespace Pangolin.Core.TokenImplementations
         #endregion
     }
 
-    public class OrderIterationVariable : IterationConstantBase { public override string ToString() => "o"; }
-    public class OrderIterationIndex : IterationConstantBase { public override string ToString() => "\u1ECD"; }
+    public class OrderIterationVariable : IterationConstantToken { public override string ToString() => "o"; }
+    public class OrderIterationIndex : IterationConstantToken { public override string ToString() => "\u1ECD"; }
 
     public class Ascend : IterableToken
     {

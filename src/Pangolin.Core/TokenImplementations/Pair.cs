@@ -86,8 +86,8 @@ namespace Pangolin.Core.TokenImplementations
         public override string ToString() => "P";
     }
 
-    public class PairIterationVariableLeft : IterationConstantBase { public override string ToString() => "p"; }
-    public class PairIterationVariableRight : IterationConstantBase { public override string ToString() => "q"; }
+    public class PairIterationVariableLeft : IterationConstantToken { public override string ToString() => "p"; }
+    public class PairIterationVariableRight : IterationConstantToken { public override string ToString() => "q"; }
 
     public class SimplePair : IterableToken
     {

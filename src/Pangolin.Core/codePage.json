@@ -159,7 +159,7 @@
     { "hex": "1E89", "combination": "w.", "id": null, "displayHex": null },
     { "hex": "1E92", "combination": "Z.", "id": null, "displayHex": null }, 
     { "hex": "1E93", "combination": "z.", "id": null, "displayHex": null }, // Dotted alphas end
-    { "hex": "00B6", "combination": "q|", "id": 11, "displayHex": null }, // Pilcrow
+    { "hex": "00B6", "combination": "\\n", "id": 11, "displayHex": null }, // Pilcrow
     { "hex": "2070", "combination": "0^", "id": null, "displayHex": null }, // Superscript numerics start
     { "hex": "00B9", "combination": "1^", "id": null, "displayHex": null },
     { "hex": "00B2", "combination": "2^", "id": null, "displayHex": null },

@@ -13,7 +13,7 @@ namespace Pangolin
             //    Console.WriteLine(s);
             //}
 
-            var simpleCode = @"`>>d200b";
+            var simpleCode = @"M*`^|n`A.m'abc";
 
             var (success, code) = CommandLineUtilities.ParseSimpleCode(simpleCode, true);
 
