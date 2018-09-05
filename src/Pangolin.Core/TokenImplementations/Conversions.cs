@@ -7,24 +7,26 @@ using System.Text;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Arrayify : ArityOneIterableToken
+    public class Arrayify : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u1EA0";
 
-        protected override DataValue EvaluateInner(DataValue value)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
             // Get argument, return it wrapped in an array
-            return new ArrayValue(value);
+            return new ArrayValue(arguments);
         }
     }
 
-    public class ArrayPair : ArityTwoIterableToken
+    public class ArrayPair : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "]";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            return new ArrayValue(arg1, arg2);
+            return new ArrayValue(arguments);
         }
     }
 
@@ -43,12 +45,15 @@ namespace Pangolin.Core.TokenImplementations
         public override string ToString() => "\u039E";
     }
 
-    public class Elements : ArityOneIterableToken
+    public class Elements : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u03B4";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, get base 10 digits of +ve integral
             if (arg.Type == DataValueType.Numeric)
             {
@@ -86,12 +91,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Transform_Transpose : ArityOneIterableToken
+    public class Transform_Transpose : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u0393";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, stringify
             if (arg.Type == DataValueType.Numeric)
             {
@@ -140,12 +148,16 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class BaseConversion : ArityTwoIterableToken // TODO: Finish writing tests, they're so boring to do :/
+    public class BaseConversion : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "B";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Arguments are base, value
 
             // Numeric base
@@ -337,12 +349,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class BinaryConversion : ArityOneIterableToken
+    public class BinaryConversion : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u1E04";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             if (arg.Type == DataValueType.String)
             {
                 throw GetInvalidArgumentTypeException(nameof(BinaryConversion), arg.Type);

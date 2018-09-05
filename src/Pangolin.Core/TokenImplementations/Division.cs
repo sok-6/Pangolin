@@ -6,14 +6,18 @@ using System.Linq;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Division : ArityTwoIterableToken
+    public class Division : IterableToken
     {
         private const string TOKEN_STRING = "/";
-
+        
+        public override int Arity => 2;
         public override string ToString() => TOKEN_STRING;
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             return ProcessDivision(arg1, arg2);
         }
 
@@ -73,22 +77,29 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Half : ArityOneIterableToken
+    public class Half : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "H";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             return Division.ProcessDivision(new NumericValue(2), arg);
         }
     }
 
-    public class IntegerDivision : ArityTwoIterableToken
+    public class IntegerDivision : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "\u00F7";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             if (arg2.Type == DataValueType.Numeric)
             {
                 // Only defined if 1st argument numeric for now

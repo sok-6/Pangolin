@@ -210,12 +210,15 @@ namespace Pangolin.Core.TokenImplementations
     public class OrderIterationVariable : IterationConstantBase { public override string ToString() => "o"; }
     public class OrderIterationIndex : IterationConstantBase { public override string ToString() => "\u1ECD"; }
 
-    public class Ascend : ArityOneIterableToken
+    public class Ascend : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u2191";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // If numeric, increment
             if (arg.Type == DataValueType.Numeric)
             {
@@ -233,12 +236,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Descend : ArityOneIterableToken
+    public class Descend : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u2193";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // If numeric, decrement
             if (arg.Type == DataValueType.Numeric)
             {
@@ -256,12 +262,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Floor : ArityOneIterableToken
+    public class Floor : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "_";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, round towards -inf
             if (arg.Type == DataValueType.Numeric)
             {
@@ -295,12 +304,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Ceiling : ArityOneIterableToken
+    public class Ceiling : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u00AF";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, round towards +inf
             if (arg.Type == DataValueType.Numeric)
             {

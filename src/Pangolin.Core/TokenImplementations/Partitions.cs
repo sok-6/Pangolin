@@ -8,12 +8,15 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class MultiplicativePartitions_PowerSet : ArityOneIterableToken
+    public class MultiplicativePartitions_PowerSet : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "#";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, multiplicative partitions
             if (arg.Type == DataValueType.Numeric)
             {
@@ -68,12 +71,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Multiples_Endings : ArityOneIterableToken
+    public class Multiples_Endings : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "E";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             throw new NotImplementedException();
         }
     }

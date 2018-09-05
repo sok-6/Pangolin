@@ -88,12 +88,15 @@ namespace Pangolin.Core.TokenImplementations
         public override string ToString() => "~";
     }
 
-    public class Disjunction_ToLower : ArityOneIterableToken
+    public class Disjunction_ToLower : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "V";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // String, tolower
             if (arg.Type == DataValueType.String)
             {
@@ -138,12 +141,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Conjunction_ToUpper : ArityOneIterableToken
+    public class Conjunction_ToUpper : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u039B";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // String, tolower
             if (arg.Type == DataValueType.String)
             {
@@ -188,12 +194,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class InverseDisjunction : ArityOneIterableToken
+    public class InverseDisjunction : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u22BC";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // String, tolower
             if (arg.Type == DataValueType.String)
             {
@@ -238,12 +247,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class InverseConjunction : ArityOneIterableToken
+    public class InverseConjunction : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u22BD";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // String, tolower
             if (arg.Type == DataValueType.String)
             {

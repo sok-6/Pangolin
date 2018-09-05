@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class SquareRoot : ArityOneIterableToken
+    public class SquareRoot : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u221A";
 
-        protected override DataValue EvaluateInner(DataValue value)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            if (value.Type == DataValueType.Numeric)
+            var arg = arguments[0];
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                var numericArg = (NumericValue)value;
+                var numericArg = (NumericValue)arg;
 
                 if (numericArg.Value < 0)
                 {
@@ -29,17 +32,21 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(ToString(), value.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg.Type);
             }
         }
     }
 
-    public class Root : ArityTwoIterableToken
+    public class Root : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "\u1E5A";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Only defined for numerics
             if (arg1.Type != DataValueType.Numeric || arg2.Type != DataValueType.Numeric)
             {
@@ -53,12 +60,16 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Power_RepeatedCartesianProduct : ArityTwoIterableToken
+    public class Power_RepeatedCartesianProduct : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "^";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // First argument (exponent) must be numeric
             if (arg1.Type != DataValueType.Numeric)
             {

@@ -7,23 +7,29 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Truthify : ArityOneIterableToken
+    public class Truthify : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u00A1";
         
-        protected override DataValue EvaluateInner(DataValue value)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            return value.Truthify();
+            var arg = arguments[0];
+
+            return arg.Truthify();
         }
     }
 
-    public class UnTruthify : ArityOneIterableToken
+    public class UnTruthify : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "!";
 
-        protected override DataValue EvaluateInner(DataValue value)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            return value.IsTruthy ? DataValue.Falsey : DataValue.Truthy;
+            var arg = arguments[0];
+
+            return arg.IsTruthy ? DataValue.Falsey : DataValue.Truthy;
         }
     }
 }

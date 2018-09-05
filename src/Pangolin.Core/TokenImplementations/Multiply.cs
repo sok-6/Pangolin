@@ -6,13 +6,17 @@ using Pangolin.Core.DataValueImplementations;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Multiply : ArityTwoIterableToken
+    public class Multiply : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "*";
 
-        protected override DataValue EvaluateInner(DataValue a, DataValue b)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            return ProcessMultiply(a, b);
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
+            return ProcessMultiply(arg1, arg2);
         }
 
         public static DataValue ProcessMultiply(DataValue arg1, DataValue arg2)
@@ -115,12 +119,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Double : ArityOneIterableToken
+    public class Double : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "D";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             return Multiply.ProcessMultiply(new NumericValue(2), arg);
         }
     }

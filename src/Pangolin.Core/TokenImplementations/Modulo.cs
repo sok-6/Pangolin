@@ -5,12 +5,16 @@ using System.Text;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Modulo : ArityTwoIterableToken
+    public class Modulo : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "%";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Only defined at present between two numerics
             if (arg1.Type != DataValueType.Numeric || arg2.Type != DataValueType.Numeric)
             {

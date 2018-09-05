@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Length : ArityOneIterableToken
+    public class Length : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "L";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             if (arg.Type == DataValueType.Numeric)
             {
                 // Numeric, return absolute value

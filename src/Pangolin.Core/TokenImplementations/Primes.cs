@@ -6,12 +6,15 @@ using System.Linq;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class PrimeFactorisation : ArityOneIterableToken
+    public class PrimeFactorisation : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "K";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Only defined for non-negative integrals for now
             if (arg.Type != DataValueType.Numeric)
             {
@@ -118,12 +121,15 @@ namespace Pangolin.Core.TokenImplementations
         });
     }
 
-    public class IsPrime : ArityOneIterableToken
+    public class IsPrime : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u1E32";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Only defined for non-negative integrals for now
             if (arg.Type != DataValueType.Numeric)
             {
@@ -179,12 +185,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Palindromise_PrimesList : ArityOneIterableToken
+    public class Palindromise_PrimesList : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u0416";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, get primes list
             if (arg.Type == DataValueType.Numeric)
             {

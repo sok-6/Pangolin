@@ -8,12 +8,16 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Membership : ArityTwoIterableToken
+    public class Membership : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "\u2208";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Array set, check if contained in entirety
             if (arg2.Type == DataValueType.Array)
             {

@@ -89,12 +89,15 @@ namespace Pangolin.Core.TokenImplementations
     public class PairIterationVariableLeft : IterationConstantBase { public override string ToString() => "p"; }
     public class PairIterationVariableRight : IterationConstantBase { public override string ToString() => "q"; }
 
-    public class SimplePair : ArityOneIterableToken
+    public class SimplePair : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => ",";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Only implemented for non numerics
             if (arg.Type == DataValueType.Numeric)
             {

@@ -8,12 +8,15 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class AllButFirst_ModTen : ArityOneIterableToken
+    public class AllButFirst_ModTen : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "(";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, mod 10 that bad boy
             if (arg.Type == DataValueType.Numeric)
             {
@@ -37,12 +40,15 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class AllButLast_LogTen : ArityOneIterableToken
+    public class AllButLast_LogTen : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => ")";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, log 10
             if (arg.Type == DataValueType.Numeric)
             {
@@ -66,12 +72,16 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class Index : ArityTwoIterableToken
+    public class Index : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "@";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // One must be numeric, one must be iterable
             if ((arg1.Type != DataValueType.Numeric && arg2.Type != DataValueType.Numeric) 
                 || (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric))

@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Reverse : ArityOneIterableToken
+    public class Reverse : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u042F";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, invert sign
             if (arg.Type == DataValueType.Numeric)
             {

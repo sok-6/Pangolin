@@ -11,7 +11,7 @@ using Pangolin.Core.TokenImplementations;
 namespace Pangolin.Core
 {
     /// <summary>
-    /// The base definition of a token - THIS SHOULD NOT BE INHERITIED FROM DIRECTLY, USE ONE OF THE TOKEN TYPES INSTEAD
+    /// The base definition of a token
     /// </summary>
     public abstract class Token
     {
@@ -83,67 +83,7 @@ namespace Pangolin.Core
 
         #endregion
     }
-
-    public abstract class ArityOneIterableToken : Token
-    {
-        public override int Arity => 1;
-
-        public override DataValue Evaluate(ProgramState programState)
-        {
-            // Get argument
-            var arg = programState.DequeueAndEvaluate();
-
-            if (arg.IterationRequired)
-            {
-                return new DataValueImplementations.ArrayValue(arg.IterationValues.Select(a => EvaluateInner(a)));
-            }
-            else
-            {
-                return EvaluateInner(arg);
-            }
-        }
-
-        protected abstract DataValue EvaluateInner(DataValue arg);
-    }
-
-    public abstract class ArityTwoIterableToken : Token
-    {
-        public override int Arity => 2;
-
-        public override DataValue Evaluate(ProgramState tokenQueue)
-        {
-            // Get two arguments
-            var arg1 = tokenQueue.DequeueAndEvaluate();
-            var arg2 = tokenQueue.DequeueAndEvaluate();
-
-            if (arg1.IterationRequired)
-            {
-                if (arg2.IterationRequired)
-                {
-                    // Zip them
-                    return new DataValueImplementations.ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1,a2) => EvaluateInner(a1, a2)));
-                }
-                else
-                {
-                    return new DataValueImplementations.ArrayValue(arg1.IterationValues.Select(a1 => EvaluateInner(a1, arg2)));
-                }
-            }
-            else
-            {
-                if (arg2.IterationRequired)
-                {
-                    return new DataValueImplementations.ArrayValue(arg2.IterationValues.Select(a2 => EvaluateInner(arg1, a2)));
-                }
-                else
-                {
-                    return EvaluateInner(arg1, arg2);
-                }
-            }
-        }
-
-        protected abstract DataValue EvaluateInner(DataValue arg1, DataValue arg2);
-    }
-
+    
     /// <summary>
     /// A token which elevates the block level, such as loops and array builders
     /// </summary>
@@ -169,10 +109,72 @@ namespace Pangolin.Core
     }
 
     /// <summary>
-    /// A token which accepts a well-defined number of arguments and produces a single result
+    /// A token which accepts a well-defined number of arguments and produces a single result, with iteration handled by zipping
     /// </summary>
-    public abstract class PlainToken : Token
+    public abstract class IterableToken : Token
     {
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            // If arity 0, just execute
+            if (Arity == 0)
+            {
+                return EvaluateInner(new List<DataValue>());
+            }
 
+            // Dequeue the required number of arguments
+            var arguments = new List<DataValue>();
+            while (arguments.Count < Arity) arguments.Add(programState.DequeueAndEvaluate());
+
+            // Compile list of argument sets for flagged iterable types
+            var argumentSets = new List<List<DataValue>>();
+
+            if (arguments[0].IterationRequired)
+            {
+                argumentSets.AddRange(arguments[0].IterationValues.Select(a => new List<DataValue>() { a }));
+            }
+            else
+            {
+                argumentSets.Add(new List<DataValue>() { arguments[0] });
+            }
+
+            foreach (var arg in arguments.Skip(1))
+            {
+                if (!arg.IterationRequired)
+                {
+                    foreach (var argSet in argumentSets)
+                    {
+                        argSet.Add(arg);
+                    }
+                }
+                else
+                {
+                    var newArgumentSets = new List<List<DataValue>>();
+
+                    foreach (var iterationArg in arg.IterationValues)
+                    {
+                        foreach (var argSet in argumentSets)
+                        {
+                            var x = new List<DataValue>(argSet) { iterationArg };
+
+                            newArgumentSets.Add(x);
+                        }
+                    }
+
+                    argumentSets = newArgumentSets;
+                }
+            }
+
+            // If no iteration, execute once
+            if (argumentSets.Count == 1)
+            {
+                return EvaluateInner(argumentSets[0]);
+            }
+            else
+            {
+                return new ArrayValue(argumentSets.Select(z => EvaluateInner(z)));
+            }
+        }
+
+        protected abstract DataValue EvaluateInner(IReadOnlyList<DataValue> arguments);
     }
 }

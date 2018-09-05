@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public abstract class EqualityBase : ArityTwoIterableToken
+    public abstract class EqualityBase : IterableToken
     {
+        public override int Arity => 2;
         public static bool AreEqual(DataValue a, DataValue b)
         {
             if (a.Type != b.Type)
@@ -53,8 +54,11 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override string ToString() => "=";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             return DataValue.BoolToTruthiness(AreEqual(arg1, arg2));
         }
     }
@@ -63,18 +67,25 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override string ToString() => "\u2260";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             return DataValue.BoolToTruthiness(!AreEqual(arg1, arg2));
         }
     }
 
-    public class LessThan : ArityTwoIterableToken
+    public class LessThan : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => "<";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Numeric comparison
             if (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric)
             {
@@ -90,12 +101,16 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class GreaterThan : ArityTwoIterableToken
+    public class GreaterThan : IterableToken
     {
+        public override int Arity => 2;
         public override string ToString() => ">";
 
-        protected override DataValue EvaluateInner(DataValue arg1, DataValue arg2)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg1 = arguments[0];
+            var arg2 = arguments[1];
+
             // Numeric comparison
             if (arg1.Type == DataValueType.Numeric && arg2.Type == DataValueType.Numeric)
             {
@@ -138,12 +153,12 @@ namespace Pangolin.Core.TokenImplementations
                 if (arg2.Type == DataValueType.String)
                 {
                     var str1 = new StringValue(arg1.ToString());
-                    return new ArrayValue(arg2.IterationValues.Select(s => EvaluateInner(str1, s)));
+                    return new ArrayValue(arg2.IterationValues.Select(s => EvaluateInner(new List<DataValue>() { str1, s })));
                 }
                 // Numeric, array -> iterate over a2
                 else if (arg2.Type == DataValueType.Array)
                 {
-                    return new ArrayValue(arg2.IterationValues.Select(a => EvaluateInner(arg1, a)));
+                    return new ArrayValue(arg2.IterationValues.Select(a => EvaluateInner(new List<DataValue>() { arg1, a })));
                 }
                 // Numeric, numeric -> nothing
                 else
@@ -157,12 +172,12 @@ namespace Pangolin.Core.TokenImplementations
                 if (arg1.Type == DataValueType.String)
                 {
                     var str2 = new StringValue(arg2.ToString());
-                    return new ArrayValue(arg1.IterationValues.Select(s => EvaluateInner(s, str2)));
+                    return new ArrayValue(arg1.IterationValues.Select(s => EvaluateInner(new List<DataValue>() { s, str2 })));
                 }
                 // Array, Numeric -> iterate over a1
                 else if (arg1.Type == DataValueType.Array)
                 {
-                    return new ArrayValue(arg1.IterationValues.Select(a => EvaluateInner(a, arg2)));
+                    return new ArrayValue(arg1.IterationValues.Select(a => EvaluateInner(new List<DataValue>() { a, arg2 })));
                 }
                 // Numeric, numeric -> nothing
                 else
@@ -173,7 +188,7 @@ namespace Pangolin.Core.TokenImplementations
             // Both a1 and a2 are iterable, zip them
             else
             {
-                return new ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1, a2) => EvaluateInner(a1, a2)));
+                return new ArrayValue(arg1.IterationValues.Zip(arg2.IterationValues, (a1, a2) => EvaluateInner(new List<DataValue>() { a1, a2 })));
             }
         }
     }

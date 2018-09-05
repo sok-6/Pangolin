@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Range : ArityOneIterableToken
+    public class Range : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u2192";
 
-        protected override DataValue EvaluateInner(DataValue argument)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            if (argument.Type == DataValueType.Numeric)
+            var arg = arguments[0];
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                var a = ((NumericValue)argument).IntValue;
+                var a = ((NumericValue)arg).IntValue;
 
                 return new ArrayValue(
                     Enumerable
@@ -26,22 +29,25 @@ namespace Pangolin.Core.TokenImplementations
             // String/Array - get last element
             else
             {
-                if (argument.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {argument.Type}");
+                if (arg.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {arg.Type}");
 
-                return argument.IterationValues[argument.IterationValues.Count - 1];
+                return arg.IterationValues[arg.IterationValues.Count - 1];
             }
         }
     }
 
-    public class ReverseRange : ArityOneIterableToken
+    public class ReverseRange : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u2190";
 
-        protected override DataValue EvaluateInner(DataValue argument)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            if (argument.Type == DataValueType.Numeric)
+            var arg = arguments[0];
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                var a = ((NumericValue)argument).IntValue;
+                var a = ((NumericValue)arg).IntValue;
 
                 return new ArrayValue(
                     Enumerable
@@ -52,22 +58,25 @@ namespace Pangolin.Core.TokenImplementations
             // String/Array - get first element
             else
             {
-                if (argument.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {argument.Type}");
+                if (arg.IterationValues.Count == 0) throw new PangolinException($"Can't get last item of empty {arg.Type}");
 
-                return argument.IterationValues[0];
+                return arg.IterationValues[0];
             }
         }
     }
 
-    public class Range1 : ArityOneIterableToken
+    public class Range1 : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u0411";
 
-        protected override DataValue EvaluateInner(DataValue argument)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            if (argument.Type == DataValueType.Numeric)
+            var arg = arguments[0];
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                var a = ((NumericValue)argument).IntValue;
+                var a = ((NumericValue)arg).IntValue;
 
                 return new ArrayValue(
                     Enumerable
@@ -76,20 +85,23 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(ToString(), argument.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg.Type);
             }
         }
     }
 
-    public class ReverseRange1 : ArityOneIterableToken
+    public class ReverseRange1 : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u042A";
 
-        protected override DataValue EvaluateInner(DataValue argument)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
-            if (argument.Type == DataValueType.Numeric)
+            var arg = arguments[0];
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                var a = ((NumericValue)argument).IntValue;
+                var a = ((NumericValue)arg).IntValue;
 
                 return new ArrayValue(
                     Enumerable
@@ -99,7 +111,7 @@ namespace Pangolin.Core.TokenImplementations
             }
             else
             {
-                throw GetInvalidArgumentTypeException(ToString(), argument.Type);
+                throw GetInvalidArgumentTypeException(ToString(), arg.Type);
             }
         }
     }

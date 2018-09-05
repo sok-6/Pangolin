@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public abstract class ParityCheckTokenBase : ArityOneIterableToken
+    public abstract class ParityCheckTokenBase : IterableToken
     {
+        public override int Arity => 1;
         protected DataValue ProcessParity(DataValue arg, bool evenTest)
         {
             if (arg.Type == DataValueType.Numeric)
@@ -36,8 +37,10 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override string ToString() => "\u1EB8";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             return ProcessParity(arg, true);
         }
     }
@@ -46,8 +49,10 @@ namespace Pangolin.Core.TokenImplementations
     {
         public override string ToString() => "\u1ECC";
 
-        protected override DataValue EvaluateInner(DataValue arg)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             return ProcessParity(arg, false);
         }
     }

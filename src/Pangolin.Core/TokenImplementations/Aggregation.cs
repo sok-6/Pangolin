@@ -8,33 +8,36 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
-    public class Sum : ArityOneIterableToken
+    public class Sum : IterableToken
     {
+        public override int Arity => 1;
         public override string ToString() => "\u03A3";
 
-        protected override DataValue EvaluateInner(DataValue value)
+        protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
+            var arg = arguments[0];
+
             // Numeric, nth triagle number if integral
-            if (value.Type == DataValueType.Numeric)
+            if (arg.Type == DataValueType.Numeric)
             {
-                var numericArg = (NumericValue)value;
+                var numericArg = (NumericValue)arg;
 
                 if (!numericArg.IsIntegral)
                 {
-                    throw new Common.PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03A3 command - non-integral numeric: {value}");
+                    throw new Common.PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03A3 command - non-integral numeric: {arg}");
                 }
                 if (numericArg.Value < 0)
                 {
-                    throw new Common.PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03A3 command - negative numeric: {value}");
+                    throw new Common.PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03A3 command - negative numeric: {arg}");
                 }
 
                 // Calculate triagle number using (n*(n+1))/2
                 return new NumericValue((numericArg.IntValue * (numericArg.IntValue + 1)) / 2);
             }
             // Array, reduce on +
-            else if (value.Type == DataValueType.Array)
+            else if (arg.Type == DataValueType.Array)
             {
-                var arrayArg = (ArrayValue)value;
+                var arrayArg = (ArrayValue)arg;
 
                 // Figure out what type the output will be
                 // Array - concatenate all elements into single array
