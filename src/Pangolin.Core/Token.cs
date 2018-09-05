@@ -10,6 +10,9 @@ using Pangolin.Core.TokenImplementations;
 
 namespace Pangolin.Core
 {
+    /// <summary>
+    /// The base definition of a token - THIS SHOULD NOT BE INHERITIED FROM DIRECTLY, USE ONE OF THE TOKEN TYPES INSTEAD
+    /// </summary>
     public abstract class Token
     {
         public abstract int Arity { get; }
@@ -139,5 +142,37 @@ namespace Pangolin.Core
         }
 
         protected abstract DataValue EvaluateInner(DataValue arg1, DataValue arg2);
+    }
+
+    /// <summary>
+    /// A token which elevates the block level, such as loops and array builders
+    /// </summary>
+    public abstract class BlockToken : Token
+    {
+
+    }
+
+    /// <summary>
+    /// A token which accepts a function as its first argument
+    /// </summary>
+    public abstract class FunctionToken : Token
+    {
+
+    }
+
+    /// <summary>
+    /// A token which accepts another token as its first argument
+    /// </summary>
+    public abstract class TokenLedToken : Token
+    {
+
+    }
+
+    /// <summary>
+    /// A token which accepts a well-defined number of arguments and produces a single result
+    /// </summary>
+    public abstract class PlainToken : Token
+    {
+
     }
 }
