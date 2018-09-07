@@ -101,10 +101,11 @@ namespace Pangolin.Core
         protected abstract int GetNestedAmount(ProgramState programState);
         protected abstract int RetrieveFunctionArguments(ProgramState programState);
         protected abstract string GetDefaultToken(int nestingLevel);
-        protected abstract int GetIterationCount();
         protected abstract void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex);
         protected abstract void ClearIterationConstants(ProgramState programState, int nestingLevel);
         protected abstract DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results);
+
+        protected virtual void PostExecutionAction(DataValue executionResult) { }
 
         public override DataValue Evaluate(ProgramState programState)
         {
@@ -146,7 +147,9 @@ namespace Pangolin.Core
                 SetIterationConstants(programState, nestingLevel, i);
 
                 // Execute function block, add to result set
-                results.Add(new IterationResultContainer(i, programState.DequeueAndEvaluate()));
+                var executionResult = programState.DequeueAndEvaluate();
+                results.Add(new IterationResultContainer(i, executionResult));
+                PostExecutionAction(executionResult);
             }
 
             // Clear iteration variable and index

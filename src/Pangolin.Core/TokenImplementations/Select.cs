@@ -28,11 +28,6 @@ namespace Pangolin.Core.TokenImplementations
             return ITERATION_VARIABLE_TOKENS.Substring(nestingLevel, 1);
         }
 
-        protected override int GetIterationCount()
-        {
-            return _iterationValues.Count;
-        }
-
         protected override int GetNestedAmount(ProgramState programState)
         {
             return ITERATION_VARIABLE_TOKENS.Count(c => programState.IterationFunctionConstants.ContainsKey(c.ToString()));
@@ -179,8 +174,6 @@ namespace Pangolin.Core.TokenImplementations
         }
 
         protected override string GetDefaultToken(int nestingLevel) => "m";
-
-        protected override int GetIterationCount() => _iterationValues.Count;
 
         protected override int GetNestedAmount(ProgramState programState) => programState.IterationFunctionConstants.ContainsKey("m") ? 1 : 0;
 

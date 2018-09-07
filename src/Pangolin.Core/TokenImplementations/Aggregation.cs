@@ -86,158 +86,124 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class AggregateFirst : Token
+    public class AggregateFirst : FunctionToken
     {
         public override int Arity => 2;
+        public override string ToString() => "A";
 
-        public override DataValue Evaluate(ProgramState programState)
+        private IReadOnlyList<DataValue> _iterationValueSet = null;
+        private DataValue _current;
+
+        protected override void ClearIterationConstants(ProgramState programState, int nestingLevel)
         {
-            // Check if aggregate already in progress
-            if (programState.IterationFunctionConstants.ContainsKey("a"))
+            programState.ClearIterationFunctionConstant("a");
+            programState.ClearIterationFunctionConstant("b");
+        }
+
+        protected override string GetDefaultToken(int nestingLevel) => "b";
+
+        protected override int GetNestedAmount(ProgramState programState) => programState.IterationFunctionConstants.ContainsKey("a") ? 1 : 0;
+
+        protected override int GetNestingLimit() => 1;
+
+        protected override void PostExecutionAction(DataValue executionResult)
+        {
+            _current = executionResult;
+        }
+
+        protected override DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results)
+        {
+            return _current;
+        }
+
+        protected override int RetrieveFunctionArguments(ProgramState programState)
+        {
+            var arg = programState.DequeueAndEvaluate();
+            IEnumerable<DataValue> tempSet;
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                throw new PangolinException($"Can't nest {nameof(AggregateFirst)} tokens");
-            }
+                var a = ((NumericValue)arg).IntValue;
 
-            // Save current token index to return to once 2nd arg evaluated
-            var firstArgTokenIndex = programState.CurrentTokenIndex;
-
-            // Step over 1st arg, evaluate 2nd
-            programState.StepOverNextTokenBlock();
-            var iterationValue = programState.DequeueAndEvaluate();
-
-            // Save token index to return to once select token execution ended
-            var endTokenIndex = programState.CurrentTokenIndex;
-
-            // Get iteration value set
-            IEnumerable<DataValue> iterationValueSet;
-            if (iterationValue.Type == DataValueType.Numeric)
-            {
-                var a = ((NumericValue)iterationValue).IntValue;
-
-                iterationValueSet = Enumerable.Range(Math.Min(0, a + 1), Math.Abs(a))
+                tempSet = Enumerable.Range(Math.Min(0, a + 1), Math.Abs(a))
                         .Select(i => new NumericValue(i));
             }
             else
             {
-                iterationValueSet = iterationValue.IterationValues;
+                tempSet = arg.IterationValues;
             }
 
-            // Add variable token to stack of default values
-            programState.DefaultTokenStack.Push("b");
+            // First value is current, rest are queued to iterate over
+            _current = tempSet.First();
+            _iterationValueSet = tempSet.Skip(1).ToList();
 
-            // Execute iteration block once per value in set
-            var currentValue = iterationValueSet.First();
-            for (int i = 1; i < iterationValueSet.Count(); i++)
-            {
-                // Return to the iteration block
-                programState.SetCurrentTokenIndex(firstArgTokenIndex);
-
-                // Set iteration variable and index
-                programState.SetIterationFunctionConstant("a", currentValue);
-                programState.SetIterationFunctionConstant("b", iterationValueSet.Skip(i).First());
-
-                // Execute function block, add to result set
-                currentValue = programState.DequeueAndEvaluate();
-            }
-
-            // Clear iteration variable and index
-            programState.ClearIterationFunctionConstant("a");
-            programState.ClearIterationFunctionConstant("b");
-
-            // Remove variable token from stack of default values
-            if (programState.DefaultTokenStack.Peek() != "b")
-            {
-                throw new PangolinException($"Top of default token stack in unexpected state - b expected, actually {programState.DefaultTokenStack.Peek()}");
-            }
-            programState.DefaultTokenStack.Pop();
-
-            // Move to end of 2nd argument
-            programState.SetCurrentTokenIndex(endTokenIndex);
-
-            // All done, return
-            return currentValue;
+            return _iterationValueSet.Count;
         }
 
-        public override string ToString() => "A";
+        protected override void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex)
+        {
+            programState.SetIterationFunctionConstant("a", _current);
+            programState.SetIterationFunctionConstant("b", _iterationValueSet.Skip(iterationIndex).First());
+        }
     }
 
     public class AggregateFirstVariableConstantCurrent : IterationConstantToken { public override string ToString() => "a"; }
     public class AggregateFirstVariableConstantNext : IterationConstantToken { public override string ToString() => "b"; }
 
-    public class CollapseFunction : Token
+    public class CollapseFunction : FunctionToken
     {
+        public override string ToString() => "C";
         public override int Arity => 3;
 
-        public override DataValue Evaluate(ProgramState programState)
+        private IReadOnlyList<DataValue> _iterationValueSet = null;
+        private DataValue _current;
+                
+        protected override void ClearIterationConstants(ProgramState programState, int nestingLevel)
         {
-            // Check if aggregate already in progress
-            if (programState.IterationFunctionConstants.ContainsKey("c"))
+            programState.ClearIterationFunctionConstant("c");
+            programState.ClearIterationFunctionConstant("d");
+        }
+
+        protected override string GetDefaultToken(int nestingLevel) => "d";
+
+        protected override int GetNestedAmount(ProgramState programState) => programState.IterationFunctionConstants.ContainsKey("c") ? 1 : 0;
+
+        protected override int GetNestingLimit() => 1;
+
+        protected override DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results)
+        {
+            return _current;
+        }
+        protected override void PostExecutionAction(DataValue executionResult)
+        {
+            _current = executionResult;
+        }
+
+        protected override int RetrieveFunctionArguments(ProgramState programState)
+        {
+            _current = programState.DequeueAndEvaluate();
+            var arg = programState.DequeueAndEvaluate();
+
+            if (arg.Type == DataValueType.Numeric)
             {
-                throw new PangolinException($"Can't nest {nameof(CollapseFunction)} tokens");
-            }
+                var a = ((NumericValue)arg).IntValue;
 
-            // Save current token index to return to once 2nd arg evaluated
-            var firstArgTokenIndex = programState.CurrentTokenIndex;
-
-            // Step over 1st arg, evaluate 2nd and 3rd
-            programState.StepOverNextTokenBlock();
-            var initialValue = programState.DequeueAndEvaluate();
-            var iterationValue = programState.DequeueAndEvaluate();
-
-            // Save token index to return to once select token execution ended
-            var endTokenIndex = programState.CurrentTokenIndex;
-
-            // Get iteration value set
-            IEnumerable<DataValue> iterationValueSet;
-            if (iterationValue.Type == DataValueType.Numeric)
-            {
-                var a = ((NumericValue)iterationValue).IntValue;
-
-                iterationValueSet = Enumerable.Range(Math.Min(0, a + 1), Math.Abs(a))
-                        .Select(i => new NumericValue(i));
+                _iterationValueSet = Enumerable.Range(Math.Min(0, a + 1), Math.Abs(a))
+                        .Select(i => new NumericValue(i)).ToList();
             }
             else
             {
-                iterationValueSet = iterationValue.IterationValues;
+                _iterationValueSet = arg.IterationValues;
             }
-
-            // Add variable token to stack of default values
-            programState.DefaultTokenStack.Push("d");
-
-            // Execute iteration block once per value in set
-            var currentValue = initialValue;
-            for (int i = 0; i < iterationValueSet.Count(); i++)
-            {
-                // Return to the iteration block
-                programState.SetCurrentTokenIndex(firstArgTokenIndex);
-
-                // Set iteration variable and index
-                programState.SetIterationFunctionConstant("c", currentValue);
-                programState.SetIterationFunctionConstant("d", iterationValueSet.Skip(i).First());
-
-                // Execute function block, add to result set
-                currentValue = programState.DequeueAndEvaluate();
-            }
-
-            // Clear iteration variable and index
-            programState.ClearIterationFunctionConstant("c");
-            programState.ClearIterationFunctionConstant("d");
-
-            // Remove variable token from stack of default values
-            if (programState.DefaultTokenStack.Peek() != "d")
-            {
-                throw new PangolinException($"Top of default token stack in unexpected state - d expected, actually {programState.DefaultTokenStack.Peek()}");
-            }
-            programState.DefaultTokenStack.Pop();
-
-            // Move to end of 2nd argument
-            programState.SetCurrentTokenIndex(endTokenIndex);
-
-            // All done, return
-            return currentValue;
+            
+            return _iterationValueSet.Count;
         }
 
-        public override string ToString() => "C";
+        protected override void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex)
+        {
+            programState.SetIterationFunctionConstant("c", _current);
+            programState.SetIterationFunctionConstant("d", _iterationValueSet[iterationIndex]);
+        }
     }
 
     public class CollapseFunctionVariableConstantCurrent : IterationConstantToken { public override string ToString() => "c"; }

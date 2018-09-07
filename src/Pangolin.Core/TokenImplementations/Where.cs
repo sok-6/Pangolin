@@ -23,9 +23,7 @@ namespace Pangolin.Core.TokenImplementations
         }
 
         protected override string GetDefaultToken(int nestingLevel) => ITERATION_VARIABLE_TOKENS.Substring(nestingLevel, 1);
-
-        protected override int GetIterationCount() => _iterationValues.Count;
-
+        
         protected override int GetNestedAmount(ProgramState programState) => ITERATION_VARIABLE_TOKENS.Count(c => programState.IterationFunctionConstants.ContainsKey(c.ToString()));
 
         protected override int GetNestingLimit() => ITERATION_VARIABLE_TOKENS.Length;
