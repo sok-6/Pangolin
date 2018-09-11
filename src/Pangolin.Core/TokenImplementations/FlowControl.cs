@@ -16,13 +16,13 @@ namespace Pangolin.Core.TokenImplementations
             if (programState.DequeueAndEvaluate().IsTruthy)
             {
                 var result = programState.DequeueAndEvaluate();
-                programState.StepOverNextTokenBlock();
+                programState.StepOverNextFunction();
 
                 return result;
             }
             else
             {
-                programState.StepOverNextTokenBlock();
+                programState.StepOverNextFunction();
                 return programState.DequeueAndEvaluate();
             }
         }

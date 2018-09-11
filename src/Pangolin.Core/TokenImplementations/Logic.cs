@@ -20,7 +20,7 @@ namespace Pangolin.Core.TokenImplementations
             // If falsey, no need to evaluate 2nd operand
             if (!op1.IsTruthy)
             {
-                programState.StepOverNextTokenBlock();
+                programState.StepOverNextFunction();
                 return DataValue.Falsey;
             }
             else
@@ -45,7 +45,7 @@ namespace Pangolin.Core.TokenImplementations
             // If truthy, no need to evaluate 2nd operand
             if (op1.IsTruthy)
             {
-                programState.StepOverNextTokenBlock();
+                programState.StepOverNextFunction();
                 return DataValue.Truthy;
             }
             else

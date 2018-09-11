@@ -395,4 +395,43 @@ namespace Pangolin.Core.TokenImplementations
             }
         }
     }
+
+    public class ArrayConstruction : BlockToken
+    {
+        public override bool BeginsBlock => true;
+
+        public override bool EndsBlock => false;
+
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            var elements = new List<DataValue>();
+
+            // Elevate block level
+            programState.IncreaseBlockLevel();
+
+            // Dequeue until end of block or end of program reached
+            while (programState.CurrentTokenIndex < programState.TokenList.Count &&
+                !(programState.TokenList[programState.CurrentTokenIndex].Type == TokenType.Block && ((BlockToken)(programState.TokenList[programState.CurrentTokenIndex])).EndsBlock))
+            {
+                // Can't use block type token
+                if (programState.TokenList[programState.CurrentTokenIndex].Type == TokenType.Block)
+                {
+                    throw new PangolinException($"Can't next block type token {programState.TokenList[programState.CurrentTokenIndex].ToString()} in {nameof(ArrayConstruction)}");
+                }
+
+                // Store the next value
+                elements.Add(programState.DequeueAndEvaluate());
+            }
+
+            // Decrease block level
+            programState.DecreaseBlockLevel();
+
+            // Return array of elements
+            return new ArrayValue(elements);
+        }
+
+        public override string ToString() => "[";
+    }
 }

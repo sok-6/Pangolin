@@ -26,7 +26,7 @@ namespace Pangolin.Core.TokenImplementations
             var firstArgTokenIndex = programState.CurrentTokenIndex;
 
             // Step over 1st arg, evaluate 2nd
-            programState.StepOverNextTokenBlock();
+            programState.StepOverNextFunction();
             var iterationValue = programState.DequeueAndEvaluate();
 
             // Save token index to return to once select token execution ended

@@ -10,14 +10,30 @@ using Pangolin.Core.TokenImplementations;
 
 namespace Pangolin.Core
 {
+    public enum TokenType
+    {
+        Block,
+        FunctionLed,
+        TokenLed,
+        Basic
+    }
+
     /// <summary>
     /// The base definition of a token
     /// </summary>
     public abstract class Token
     {
+        /// <summary>
+        /// The number of arguments the token expects.
+        /// <para>For TokenType.Basic/FunctionLed, this is effectively the maximum number of times Dequeue will be called to evaluate this token.</para>
+        /// <para>For TokenType.TokenLed, the first argument is a token. Dequeue will be called a number of times equal to this token's Arity - 1.</para>
+        /// <para>For TokenType.Block, the Arity is the number of times Dequeue will be called to evaluate the token. Any tokens in the new block are not counted. </para>
+        /// </summary>
         public abstract int Arity { get; }
         public abstract DataValue Evaluate(ProgramState programState);
         public abstract override string ToString();
+
+        public virtual TokenType Type => TokenType.Basic;
 
         protected static Exception GetInvalidArgumentTypeException(string tokenString, params DataValueType[] invalidTypes)
         {
@@ -55,7 +71,7 @@ namespace Pangolin.Core
                     .GetExecutingAssembly()
                     .GetTypes()
                     // Get those types which are Tokens and have an empty constructor
-                    .Where(t => typeof(Token).IsAssignableFrom(t) && t.GetConstructor(Type.EmptyTypes) != null)
+                    .Where(t => typeof(Token).IsAssignableFrom(t) && t.GetConstructor(System.Type.EmptyTypes) != null)
                     // Instantiate each
                     .Select(t => (Token)Activator.CreateInstance(t))
                     // Only those with single character tokens
@@ -89,7 +105,10 @@ namespace Pangolin.Core
     /// </summary>
     public abstract class BlockToken : Token
     {
+        public override TokenType Type => TokenType.Block;
 
+        public abstract bool BeginsBlock { get; }
+        public abstract bool EndsBlock { get; }
     }
 
     /// <summary>
@@ -97,6 +116,8 @@ namespace Pangolin.Core
     /// </summary>
     public abstract class FunctionToken : Token
     {
+        public override TokenType Type => TokenType.FunctionLed;
+
         protected abstract int GetNestingLimit();
         protected abstract int GetNestedAmount(ProgramState programState);
         protected abstract int RetrieveFunctionArguments(ProgramState programState);
@@ -125,7 +146,7 @@ namespace Pangolin.Core
             var firstArgTokenIndex = programState.CurrentTokenIndex;
 
             // Step over 1st arg, get other arguments
-            programState.StepOverNextTokenBlock();
+            programState.StepOverNextFunction();
             var iterationCount = RetrieveFunctionArguments(programState);
             
             // Save token index to return to once select token execution ended
@@ -187,6 +208,8 @@ namespace Pangolin.Core
     /// </summary>
     public abstract class TokenLedToken : Token
     {
+        public override TokenType Type => TokenType.TokenLed;
+
         protected Token _argumentToken;
         protected readonly int _requiredArgumentTokenArity = 1;
 
@@ -196,9 +219,7 @@ namespace Pangolin.Core
             _argumentToken = programState.TokenList[programState.CurrentTokenIndex];
 
             // Check it's a token type which can be executed in isolation
-            if ((_argumentToken as BlockToken) != null ||
-                (_argumentToken as FunctionToken) != null ||
-                (_argumentToken as TokenLedToken) != null)
+            if (_argumentToken.Type != TokenType.Basic)
             {
                 throw new PangolinInvalidArgumentTypeException($"Token {ToString()} can't accept {_argumentToken.ToString()} as first argument");
             }

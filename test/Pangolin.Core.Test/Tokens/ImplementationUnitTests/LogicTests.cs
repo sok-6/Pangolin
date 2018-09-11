@@ -52,7 +52,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         {
             // Arrange
             var mockProgramState = MockFactory.MockProgramState(MockFactory.MockDataValue(false).Object);
-            mockProgramState.Setup(p => p.StepOverNextTokenBlock());
+            mockProgramState.Setup(p => p.StepOverNextFunction());
 
             var token = new TokenImplementations.LogicAnd();
 
@@ -62,7 +62,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Assert
             result.ShouldBeOfType<NumericValue>().Value.ShouldBe(0);
             mockProgramState.Verify(p => p.DequeueAndEvaluate(), Times.Once);
-            mockProgramState.Verify(p => p.StepOverNextTokenBlock(), Times.Once);
+            mockProgramState.Verify(p => p.StepOverNextFunction(), Times.Once);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         {
             // Arrange
             var mockProgramState = MockFactory.MockProgramState(MockFactory.MockDataValue(true).Object);
-            mockProgramState.Setup(p => p.StepOverNextTokenBlock());
+            mockProgramState.Setup(p => p.StepOverNextFunction());
 
             var token = new TokenImplementations.LogicOr();
 
@@ -114,7 +114,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             // Assert
             result.ShouldBeOfType<NumericValue>().Value.ShouldBe(1);
             mockProgramState.Verify(p => p.DequeueAndEvaluate(), Times.Once);
-            mockProgramState.Verify(p => p.StepOverNextTokenBlock(), Times.Once);
+            mockProgramState.Verify(p => p.StepOverNextFunction(), Times.Once);
         }
 
         [Fact]

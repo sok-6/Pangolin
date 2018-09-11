@@ -28,6 +28,8 @@ namespace Pangolin.Core
         public bool IsInPartialTokenApplication { get; private set; }
         private Queue<DataValue> _partialApplicationTokenQueue;
 
+        public int CurrentBlockLevel { get; private set; }
+
         public ProgramState()
         {
             CurrentTokenIndex = 0;
@@ -129,18 +131,20 @@ namespace Pangolin.Core
         }
 
         /// <summary>
-        /// Finds the end of a block of execution from a given starting index
+        /// Finds the end of a function from a given starting index
         /// </summary>
-        /// <param name="blockStartIndex">The index of the start of the block</param>
-        /// <returns>The index of the last token in the block - i.e. the start of the next block is return value + 1</returns>
-        public int FindEndOfBlock(int blockStartIndex)
+        /// <param name="functionStartIndex">The index of the start of the function</param>
+        /// <returns>The index of the last token in the function - i.e. the start of the next function is return value + 1</returns>
+        public int FindEndOfFunction(int functionStartIndex)
         {
-            var currentArity = blockStartIndex < TokenList.Count ? TokenList[blockStartIndex].Arity : 0;
-            var result = blockStartIndex;
+            // TODO: Block/TokenLed tokens?
+
+            var currentArity = functionStartIndex < TokenList.Count ? TokenList[functionStartIndex].Arity : 0;
+            var result = functionStartIndex;
             
             for (int i = 0; i < currentArity; i++)
             {
-                result = FindEndOfBlock(result + 1);
+                result = FindEndOfFunction(result + 1);
             }
 
             return result;
@@ -151,9 +155,19 @@ namespace Pangolin.Core
             CurrentTokenIndex = newIndex;
         }
 
-        public virtual void StepOverNextTokenBlock()
+        public virtual void StepOverNextFunction()
         {
-            SetCurrentTokenIndex(FindEndOfBlock(CurrentTokenIndex) + 1);
+            SetCurrentTokenIndex(FindEndOfFunction(CurrentTokenIndex) + 1);
+        }
+
+        public void IncreaseBlockLevel()
+        {
+            CurrentBlockLevel++;
+        }
+
+        public void DecreaseBlockLevel()
+        {
+            CurrentBlockLevel--;
         }
     }
 }

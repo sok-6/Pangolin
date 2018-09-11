@@ -104,10 +104,10 @@ namespace Pangolin.Core.Test
             var programState = new ProgramState(null, tokenList);
 
             // Act
-            var result1 = programState.FindEndOfBlock(0);
-            var result2 = programState.FindEndOfBlock(2);
-            var result3 = programState.FindEndOfBlock(8);
-            var result4 = programState.FindEndOfBlock(9);
+            var result1 = programState.FindEndOfFunction(0);
+            var result2 = programState.FindEndOfFunction(2);
+            var result3 = programState.FindEndOfFunction(8);
+            var result4 = programState.FindEndOfFunction(9);
 
             // Assert
             result1.ShouldBe(7);

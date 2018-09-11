@@ -22,7 +22,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
                 MockFactory.MockDataValue(true).Object,
                 MockFactory.MockNumericValue(2).Object,
                 MockFactory.MockNumericValue(3).Object);
-            mockProgramState.Setup(p => p.StepOverNextTokenBlock());
+            mockProgramState.Setup(p => p.StepOverNextFunction());
 
             var token = new IfThenElse();
 
@@ -31,7 +31,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 
             // Assert
             result.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(2);
-            mockProgramState.Verify(p => p.StepOverNextTokenBlock(), Times.Once);
+            mockProgramState.Verify(p => p.StepOverNextFunction(), Times.Once);
         }
 
         [Fact(Skip = "This is order dependent, how to set this up with the mocking framework?")]
@@ -42,7 +42,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
                 MockFactory.MockDataValue(false).Object,
                 MockFactory.MockNumericValue(2).Object,
                 MockFactory.MockNumericValue(3).Object);
-            mockProgramState.Setup(p => p.StepOverNextTokenBlock());
+            mockProgramState.Setup(p => p.StepOverNextFunction());
 
             var token = new IfThenElse();
 
@@ -51,7 +51,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
 
             // Assert
             result.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(3);
-            mockProgramState.Verify(p => p.StepOverNextTokenBlock(), Times.Once);
+            mockProgramState.Verify(p => p.StepOverNextFunction(), Times.Once);
         }
     }
 }
