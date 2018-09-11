@@ -1202,6 +1202,12 @@ namespace Pangolin.Core.Test
         {
             'd'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunctionVariableConstantNext));
         }
+
+        [Fact]
+        public void Tokeniser_should_parse_ConditionalApply()
+        {
+            '\u00BF'.ShouldBeParsedAs(typeof(TokenImplementations.ConditionalApply));
+        }
     }
 }
 

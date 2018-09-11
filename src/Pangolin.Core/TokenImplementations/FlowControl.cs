@@ -29,4 +29,32 @@ namespace Pangolin.Core.TokenImplementations
 
         public override string ToString() => "?";
     }
+
+    public class ConditionalApply : TokenLedToken
+    {
+        public override int Arity => 3;
+
+        public override string ToString() => "\u00BF";
+
+        protected override DataValue EvaluateInner(ProgramState programState)
+        {
+            var conditional = programState.DequeueAndEvaluate();
+            var argument = programState.DequeueAndEvaluate();
+
+            // Only call token if conditional is truthy
+            DataValue result = argument;
+            if (conditional.IsTruthy)
+            {
+                // Set up partial application queue
+                programState.EnqueuePartialApplicationValue(argument);
+
+                result = _argumentToken.Evaluate(programState);
+
+                // Clear partial application queue
+                programState.ClearPartialApplicationQueue();
+            }
+
+            return result;
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pangolin.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,9 @@ namespace Pangolin.Core
         public IReadOnlyDictionary<string, DataValue> IterationFunctionConstants => _iterationFunctionConstants;
         public Stack<string> DefaultTokenStack { get; private set; }
 
+        public bool IsInPartialTokenApplication { get; private set; }
+        private Queue<DataValue> _partialApplicationTokenQueue;
+
         public ProgramState()
         {
             CurrentTokenIndex = 0;
@@ -34,6 +38,9 @@ namespace Pangolin.Core
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
+
+            IsInPartialTokenApplication = false;
+            _partialApplicationTokenQueue = new Queue<DataValue>();
         }
 
         public ProgramState(IReadOnlyList<DataValue> argumentList, IReadOnlyList<Token> tokens)
@@ -46,29 +53,59 @@ namespace Pangolin.Core
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
+
+            IsInPartialTokenApplication = false;
+            _partialApplicationTokenQueue = new Queue<DataValue>();
         }
         
         public virtual DataValue DequeueAndEvaluate()
         {
-            // Check if run out of tokens
-            if (CurrentTokenIndex >= TokenList.Count)
+            // If in partial token application, return token from partial queue
+            if (IsInPartialTokenApplication)
             {
-                // Get default token if any
-                if (DefaultTokenStack.Count > 0)
+                if (_partialApplicationTokenQueue.Any())
                 {
-                    return _iterationFunctionConstants[DefaultTokenStack.Peek()];
+                    return _partialApplicationTokenQueue.Dequeue();
                 }
                 else
                 {
-                    // Return 0th argument, or lit 0
-                    return _argumentList.Count > 0 ? _argumentList[0] : DataValueImplementations.NumericValue.Zero;
+                    throw new PangolinException("Attempted to dequeue from empty partial application queue");
                 }
             }
+            else
+	        {
+                // Check if run out of tokens
+                if (CurrentTokenIndex >= TokenList.Count)
+                {
+                    // Get default token if any
+                    if (DefaultTokenStack.Count > 0)
+                    {
+                        return _iterationFunctionConstants[DefaultTokenStack.Peek()];
+                    }
+                    else
+                    {
+                        // Return 0th argument, or lit 0
+                        return _argumentList.Count > 0 ? _argumentList[0] : DataValueImplementations.NumericValue.Zero;
+                    }
+                }
 
-            // 'Dequeue' and evaluate
-            var currentToken = TokenList[CurrentTokenIndex];
-            CurrentTokenIndex++;
-            return currentToken.Evaluate(this);
+                // 'Dequeue' and evaluate
+                var currentToken = TokenList[CurrentTokenIndex];
+                CurrentTokenIndex++;
+                return currentToken.Evaluate(this); 
+            }
+        }
+
+        public void EnqueuePartialApplicationValue(DataValue value)
+        {
+            IsInPartialTokenApplication = true;
+            _partialApplicationTokenQueue.Enqueue(value);
+        }
+
+        public void ClearPartialApplicationQueue()
+        {
+            IsInPartialTokenApplication = false;
+            _partialApplicationTokenQueue.Clear();
         }
 
         public virtual void SetVariable(int index, DataValue value)

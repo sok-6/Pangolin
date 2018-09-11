@@ -187,7 +187,32 @@ namespace Pangolin.Core
     /// </summary>
     public abstract class TokenLedToken : Token
     {
+        protected Token _argumentToken;
+        protected readonly int _requiredArgumentTokenArity = 1;
 
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            // Get the next token
+            _argumentToken = programState.TokenList[programState.CurrentTokenIndex];
+
+            // Check it's a token type which can be executed in isolation
+            if ((_argumentToken as BlockToken) != null ||
+                (_argumentToken as FunctionToken) != null ||
+                (_argumentToken as TokenLedToken) != null)
+            {
+                throw new PangolinInvalidArgumentTypeException($"Token {ToString()} can't accept {_argumentToken.ToString()} as first argument");
+            }
+
+            // Check arity
+            if (_argumentToken.Arity != _requiredArgumentTokenArity)
+            {
+                throw new PangolinInvalidArgumentTypeException($"Token {ToString()} first argument must be arity {_requiredArgumentTokenArity} - {_argumentToken.ToString()} is arity {_argumentToken.Arity}");
+            }
+
+            return EvaluateInner(programState);
+        }
+
+        protected abstract DataValue EvaluateInner(ProgramState programState);
     }
 
     /// <summary>
