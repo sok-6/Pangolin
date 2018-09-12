@@ -230,6 +230,9 @@ namespace Pangolin.Core
                 throw new PangolinInvalidArgumentTypeException($"Token {ToString()} first argument must be arity {_requiredArgumentTokenArity} - {_argumentToken.ToString()} is arity {_argumentToken.Arity}");
             }
 
+            // Step over token
+            programState.SetCurrentTokenIndex(programState.CurrentTokenIndex + 1);
+
             return EvaluateInner(programState);
         }
 

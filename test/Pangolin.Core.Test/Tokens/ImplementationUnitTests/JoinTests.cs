@@ -198,26 +198,34 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         }
 
         [Fact]
-        public void JoinOnSpaces_should_throw_exception_if_argument_numeric()
+        public void JoinOnSpaces_IsPositive_should_return_if_nunmeric_argument_is_positive()
         {
             // Arrange
-            var mockProgramState = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(1).Object);
+            var mockProgramState1 = MockFactory.MockProgramState(1);
+            var mockProgramState2 = MockFactory.MockProgramState(0);
+            var mockProgramState3 = MockFactory.MockProgramState(-1);
 
-            var token = new JoinOnSpaces();
+            var token = new JoinOnSpaces_IsPositive();
 
-            // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState.Object)).Message.ShouldBe("Invalid argument type passed to JoinOnSpaces command - Numeric");
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(1);
+            result2.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
+            result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
         }
 
         [Fact]
-        public void JoinOnSpaces_should_join_characters_of_string_on_spaces()
+        public void JoinOnSpaces_IsPositive_should_join_characters_of_string_on_spaces()
         {
             // Arrange
             var mockProgramState1 = MockFactory.MockProgramState("abc");
             var mockProgramState2 = MockFactory.MockProgramState("");
 
-            var token = new JoinOnSpaces();
+            var token = new JoinOnSpaces_IsPositive();
 
             // Act
             var result1 = token.Evaluate(mockProgramState1.Object);
@@ -229,13 +237,13 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         }
 
         [Fact]
-        public void JoinOnSpaces_should_join_array_on_spaces()
+        public void JoinOnSpaces_IsPositive_should_join_array_on_spaces()
         {
             // Arrange
             var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
             var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingStrings("abc", "def", "ghi").Complete());
 
-            var token = new JoinOnSpaces();
+            var token = new JoinOnSpaces_IsPositive();
 
             // Act
             var result1 = token.Evaluate(mockProgramState1.Object);
@@ -247,26 +255,34 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         }
 
         [Fact]
-        public void JoinOnNewlines_should_throw_exception_if_argument_numeric()
+        public void JoinOnNewlines_IsNegative_should_return_if_nunmeric_argument_is_negative()
         {
             // Arrange
-            var mockProgramState = MockFactory.MockProgramState(
-                MockFactory.MockNumericValue(1).Object);
+            var mockProgramState1 = MockFactory.MockProgramState(1);
+            var mockProgramState2 = MockFactory.MockProgramState(0);
+            var mockProgramState3 = MockFactory.MockProgramState(-1);
 
-            var token = new JoinOnNewlines();
+            var token = new JoinOnNewlines_IsNegative();
 
-            // Act/Assert
-            Should.Throw<PangolinException>(() => token.Evaluate(mockProgramState.Object)).Message.ShouldBe("Invalid argument type passed to JoinOnNewlines command - Numeric");
+            // Act
+            var result1 = token.Evaluate(mockProgramState1.Object);
+            var result2 = token.Evaluate(mockProgramState2.Object);
+            var result3 = token.Evaluate(mockProgramState3.Object);
+
+            // Assert
+            result1.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
+            result2.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(0);
+            result3.ShouldBeAssignableTo<NumericValue>().Value.ShouldBe(1);
         }
 
         [Fact]
-        public void JoinOnNewlines_should_join_characters_of_string_on_newlines()
+        public void JoinOnNewlines_IsNegative_should_join_characters_of_string_on_newlines()
         {
             // Arrange
             var mockProgramState1 = MockFactory.MockProgramState("abc");
             var mockProgramState2 = MockFactory.MockProgramState("");
 
-            var token = new JoinOnNewlines();
+            var token = new JoinOnNewlines_IsNegative();
 
             // Act
             var result1 = token.Evaluate(mockProgramState1.Object);
@@ -278,13 +294,13 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
         }
 
         [Fact]
-        public void JoinOnNewlines_should_join_array_on_newlines()
+        public void JoinOnNewlines_IsNegative_should_join_array_on_newlines()
         {
             // Arrange
             var mockProgramState1 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingNumerics(1, 2, 3).Complete());
             var mockProgramState2 = MockFactory.MockProgramState(MockFactory.MockArrayBuilder.StartingStrings("abc", "def", "ghi").Complete());
 
-            var token = new JoinOnNewlines();
+            var token = new JoinOnNewlines_IsNegative();
 
             // Act
             var result1 = token.Evaluate(mockProgramState1.Object);

@@ -59,7 +59,7 @@ namespace Pangolin.Core.TokenImplementations
         }
     }
 
-    public class JoinOnSpaces : IterableToken
+    public class JoinOnSpaces_IsPositive : IterableToken
     {
         public override int Arity => 1;
         public override string ToString() => "\u1E62";
@@ -70,14 +70,16 @@ namespace Pangolin.Core.TokenImplementations
 
             if (arg.Type == DataValueType.Numeric)
             {
-                throw GetInvalidArgumentTypeException(nameof(JoinOnSpaces), arg.Type);
+                return DataValue.BoolToTruthiness(((NumericValue)arg).Value > 0);
             }
-
-            return new StringValue(Join.ExecuteJoin(new string[] { " " }, arg.IterationValues.Select(v => v.ToString())));
+            else
+            {
+                return new StringValue(Join.ExecuteJoin(new string[] { " " }, arg.IterationValues.Select(v => v.ToString()))); 
+            }
         }
     }
 
-    public class JoinOnNewlines : IterableToken
+    public class JoinOnNewlines_IsNegative : IterableToken
     {
         public override int Arity => 1;
         public override string ToString() => "\u1E46";
@@ -88,10 +90,12 @@ namespace Pangolin.Core.TokenImplementations
 
             if (arg.Type == DataValueType.Numeric)
             {
-                throw GetInvalidArgumentTypeException(nameof(JoinOnNewlines), arg.Type);
+                return DataValue.BoolToTruthiness(((NumericValue)arg).Value < 0);
             }
-
-            return new StringValue(Join.ExecuteJoin(new string[] { "\n" }, arg.IterationValues.Select(v => v.ToString())));
+            else
+            {
+                return new StringValue(Join.ExecuteJoin(new string[] { "\n" }, arg.IterationValues.Select(v => v.ToString())));
+            }
         }
     }
 }

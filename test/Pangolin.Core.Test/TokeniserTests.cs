@@ -1092,13 +1092,13 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_JoinOnSpaces()
         {
-            '\u1E62'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnSpaces));
+            '\u1E62'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnSpaces_IsPositive));
         }
 
         [Fact]
         public void Tokeniser_should_parse_JoinOnNewlines()
         {
-            '\u1E46'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnNewlines));
+            '\u1E46'.ShouldBeParsedAs(typeof(TokenImplementations.JoinOnNewlines_IsNegative));
         }
 
         [Fact]
