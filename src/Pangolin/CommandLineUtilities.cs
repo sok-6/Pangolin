@@ -11,7 +11,7 @@ namespace Pangolin
         private const string REGEX_BINARY_STRING = @"^[01]{8}$";
         private const string REGEX_DECIMAL_STRING = @"^\d{3}$";
         private const string REGEX_HEXADECIMAL_STRING = @"^(\d|[A-Fa-f]){2}$";
-
+        
         public static (bool, string) ParseSimpleCode(string simpleCode, bool logToConsole)
         {
             Action<string> log = s => { if (logToConsole) Console.WriteLine($"SimpleCodeParseLog: {s}"); };

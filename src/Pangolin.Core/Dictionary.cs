@@ -9,7 +9,7 @@ namespace Pangolin.Core
 {
     public static class Dictionary
     {
-        private const string DICTIONARY_FILE_PATH = "dictionary.txt";
+        //private const string DICTIONARY_FILE_PATH = "dictionary.txt";
 
         private static IReadOnlyList<string> _dictionaryEntries = null;
 
@@ -32,7 +32,7 @@ namespace Pangolin.Core
 
         private static void CreateDictionary()
         {
-            ProvideDictionary(System.IO.File.ReadAllLines(DICTIONARY_FILE_PATH));
+            ProvideDictionary(Properties.Resources.dictionary.Split('\n'));
         }
 
         public static void ProvideDictionary(IReadOnlyList<string> dictionaryEntries)

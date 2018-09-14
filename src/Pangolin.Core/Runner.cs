@@ -47,6 +47,12 @@ namespace Pangolin.Core
 
         private static void NullLogger(string s) { }
 
+        public static IEnumerable<string> GetAlternateStringRepresentations(string target)
+        {
+            // TODO: Populate
+            return new string[] { target };
+        }
+
         public static IEnumerable<string> GetAlternateIntegralRepresentations(int target)
         {
             var result = new List<Tuple<string, string>>();

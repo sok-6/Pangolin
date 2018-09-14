@@ -9,8 +9,6 @@ namespace Pangolin.Core
 {
     public static class CodePage
     {
-        private const string CODE_PAGE_SOURCE_DEFAULT = "codepage.json";
-
         private static IReadOnlyList<CodePoint> _codePoints = null;
         private static IReadOnlyDictionary<char, int> _codePointIndexByToken = null;
         private static IReadOnlyDictionary<string, int> _codePointIndexByCombination = null;
@@ -71,7 +69,7 @@ namespace Pangolin.Core
         {
             if (_codePoints == null)
             {
-                var codePointsJson = System.IO.File.ReadAllText(CODE_PAGE_SOURCE_DEFAULT);
+                var codePointsJson = Properties.Resources.codePage;
                 var deserialised = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType(codePointsJson, new { characters = new CodePoint[0] });
                 ProvideCodePoints(deserialised.characters);
             }
