@@ -30,9 +30,12 @@ namespace Pangolin
         [Option('e', "pangolin-encoding", Default = false, Required = false, HelpText = "Code file uses Pangolin code page rather than UTF-16")]
         public bool PangolinEncoding { get; set; }
 
-        [Option('i', "simple-encoding", Default = false, Required = false, HelpText = "Literal code to exeucte, if no file provided")]
+        [Option('i', "simple-encoding", Default = false, Required = false, HelpText = "Code uses ASCII representation")]
         public bool SimpleEncoding { get; set; }
 
+        [Option('z', "simple-logging", Default = false, Required = false, HelpText = "Display logging for simple encoding parsing")]
+        public bool SimpleLogging { get; set; }
+        
         [Option('s', "safe-mode", Default = false, Required = false, HelpText = "Prohibits disk access, web access")]
         public bool SafeMode { get; set; }
 

@@ -4,12 +4,18 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Linq;
 using System;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Pangolin.Core
 {
-    public static class Runner
+    public class Runner : IRunner
     {
-        public static void Run(string code, string arguments, IRunOptions runOptions, IEnvironmentHandleContainer environmentHandles)
+        private const string REGEX_BINARY_STRING = @"^[01]{8}$";
+        private const string REGEX_DECIMAL_STRING = @"^\d{3}$";
+        private const string REGEX_HEXADECIMAL_STRING = @"^(\d|[A-Fa-f]){2}$";
+
+        public void Run(string code, string arguments, IRunOptions runOptions, IEnvironmentHandleContainer environmentHandles)
         {
             // Set up log handlers
             Action<string> argumentLogHandler = NullLogger;
@@ -45,15 +51,149 @@ namespace Pangolin.Core
             }
         }
 
-        private static void NullLogger(string s) { }
+        private void NullLogger(string s) { }
 
-        public static IEnumerable<string> GetAlternateStringRepresentations(string target)
+        public (bool, string, string) ParseSimpleCode(string simpleCode)
+        {
+            var logBuilder = new StringBuilder();
+
+            logBuilder.AppendLine($"Parse simple code {simpleCode} start");
+
+            var codeQueue = new Queue<char>(simpleCode);
+            var sb = new StringBuilder();
+            try
+            {
+                while (codeQueue.Count > 0)
+                {
+                    logBuilder.AppendLine($"Remaining code: {new String(codeQueue.ToArray())}");
+
+                    var current = codeQueue.Dequeue();
+                    try
+                    {
+                        logBuilder.AppendLine($"Processing character {current}");
+
+                        // `## indicates character combination
+                        if (current == '`')
+                        {
+                            logBuilder.AppendLine("` - combination");
+
+                            // 2 chars required
+                            var combination = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
+
+                            logBuilder.AppendLine($"Combination string found - {combination}");
+
+                            char token;
+                            try
+                            {
+                                token = Core.CodePage.GetCharacterFromCombination(combination);
+                            }
+                            catch (Common.PangolinInvalidTokenException pite)
+                            {
+                                return (false, $"Simple encoding parse failed - unrecognised combination {combination}", logBuilder.ToString());
+                            }
+
+                            logBuilder.AppendLine($"Combination resolved as token {token}");
+
+                            sb.Append(token);
+                        }
+                        // Token index - b=binary, d=decimal, h=hex
+                        else if ("%d#".Contains(current))
+                        {
+                            int index;
+                            if (current == '%')
+                            {
+                                logBuilder.AppendLine("% - binary index");
+
+                                // 8 chars required
+                                var binaryString = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
+
+                                logBuilder.AppendLine($"Binary string found - {binaryString}");
+
+                                if (!Regex.IsMatch(binaryString, REGEX_BINARY_STRING))
+                                {
+                                    return (false, $"Simple encoding parse failed - 8 characters following '%' must be in [01]", logBuilder.ToString());
+                                }
+
+                                index = Convert.ToInt32(binaryString, 2);
+                            }
+                            else if (current == 'd')
+                            {
+                                logBuilder.AppendLine("d - decimal index");
+
+                                // 3 chars required
+                                var decimalString = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
+
+                                logBuilder.AppendLine($"Decimal string found - {decimalString}");
+
+                                if (!Regex.IsMatch(decimalString, @"^\d{3}$"))
+                                {
+                                    return (false, $"Simple encoding parse failed - 3 characters following 'd' must be in [0-9]", logBuilder.ToString());
+                                }
+
+                                index = int.Parse(decimalString);
+                            }
+                            else // Must be hex
+                            {
+                                logBuilder.AppendLine("# - hex index");
+
+                                // 2 chars required
+                                var hexString = $"{codeQueue.Dequeue()}{codeQueue.Dequeue()}";
+
+                                logBuilder.AppendLine($"Hex string found - {hexString}");
+
+                                if (!Regex.IsMatch(hexString, REGEX_HEXADECIMAL_STRING))
+                                {
+                                    return (false, $"Simple encoding parse failed - 2 characters following '#' must be in [0-9A-Fa-f]", logBuilder.ToString());
+                                }
+
+                                index = Convert.ToInt32(hexString, 16);
+                            }
+
+                            logBuilder.AppendLine($"Index resolved as decimal {index}");
+
+                            var token = Core.CodePage.GetCharacterFromIndex(index);
+
+                            logBuilder.AppendLine($"Index mapped to token {token}");
+
+                            sb.Append(token);
+                        }
+                        // Literal
+                        else if (current == '\\')
+                        {
+                            logBuilder.AppendLine("\\ - escaped literal");
+
+                            var token = codeQueue.Dequeue();
+                            logBuilder.AppendLine($"Following token is {token}");
+
+                            sb.Append(token);
+                        }
+                        else
+                        {
+                            logBuilder.AppendLine($"Token {current}");
+                            sb.Append(current);
+                        }
+                    }
+                    catch (InvalidOperationException ioe)
+                    {
+                        return (false, $"Simple encoding parse failed - insufficient number of characters found after {current} character at end of code string", logBuilder.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Simple encoding parse failed - {ex.GetType().Name} thrown, message: {ex.Message}", logBuilder.ToString());
+            }
+
+            return (true, sb.ToString(), logBuilder.ToString());
+        }
+
+        public IEnumerable<string> GetAlternateStringRepresentations(string target)
         {
             // TODO: Populate
             return new string[] { target };
         }
 
-        public static IEnumerable<string> GetAlternateIntegralRepresentations(int target)
+        public IEnumerable<string> GetAlternateIntegralRepresentations(int target)
         {
             var result = new List<Tuple<string, string>>();
 

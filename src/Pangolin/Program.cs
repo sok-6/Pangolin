@@ -11,8 +11,8 @@ namespace Pangolin
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             Parser.Default.ParseArguments<ConsoleRunOptions>(args)
-                .WithParsed<ConsoleRunOptions>(Run)
-                .WithNotParsed<ConsoleRunOptions>(HandleOptionsParseErrors);
+                .WithParsed(Run)
+                .WithNotParsed(HandleOptionsParseErrors);
 
 #if DEBUG
             Console.ReadLine();
@@ -21,6 +21,8 @@ namespace Pangolin
 
         static void Run(ConsoleRunOptions options)
         {
+            Common.IRunner runner = new Core.Runner();
+
             // If string and/or int representations requested, ignore other options
             if (options.StringRepresentations != null || options.IntRepresentations != null)
             {
@@ -28,7 +30,7 @@ namespace Pangolin
                 {
                     Console.WriteLine($"Getting alternate representations for string \"{options.StringRepresentations}\"...");
 
-                    foreach (var s in Core.Runner.GetAlternateStringRepresentations(options.StringRepresentations))
+                    foreach (var s in runner.GetAlternateStringRepresentations(options.StringRepresentations))
                     {
                         Console.WriteLine(s);
                     }
@@ -38,7 +40,7 @@ namespace Pangolin
                 {
                     Console.WriteLine($"Getting alternate representations for integer {options.IntRepresentations}...");
 
-                    foreach (var s in Core.Runner.GetAlternateIntegralRepresentations(options.IntRepresentations.Value))
+                    foreach (var s in runner.GetAlternateIntegralRepresentations(options.IntRepresentations.Value))
                     {
                         Console.WriteLine(s);
                     }
@@ -70,6 +72,7 @@ namespace Pangolin
                     }
                     else
                     {
+                        // TODO: Check file exists?
                         code = System.IO.File.ReadAllText(options.FilePath, System.Text.Encoding.Unicode);
                     }
                 }
@@ -81,10 +84,19 @@ namespace Pangolin
                 // If simple encoding, pass through parsing procedure
                 if (options.SimpleEncoding)
                 {
-                    var (success, simpleResult) = CommandLineUtilities.ParseSimpleCode(code, true);
+                    var (success, simpleResult, logResult) = runner.ParseSimpleCode(code);
+
+                    if (options.SimpleLogging)
+                    {
+                        Console.WriteLine("=== SIMPLE ENCODING PARSE LOGGING ===");
+                        Console.WriteLine(logResult);
+                    }
 
                     if (success)
                     {
+                        Console.WriteLine("=== SIMPLE ENCODING PARSED CODE ===");
+                        Console.WriteLine(simpleResult);
+                        Console.WriteLine();
                         code = simpleResult;
                     }
                     else
@@ -95,7 +107,7 @@ namespace Pangolin
                 }
 
                 // Execute the program
-                Core.Runner.Run(
+                runner.Run(
                     code,
                     options.ArgumentString,
                     options,
@@ -107,7 +119,7 @@ namespace Pangolin
         {
             foreach (var error in errors)
             {
-                if (error.Tag != ErrorType.HelpRequestedError)
+                if (!(error.Tag == ErrorType.HelpRequestedError || error.Tag == ErrorType.VersionRequestedError))
                 {
                     Console.WriteLine(error.ToString());
                 }
