@@ -48,7 +48,7 @@ namespace Pangolin.Core.TokenImplementations
     public class Elements : IterableToken
     {
         public override int Arity => 1;
-        public override string ToString() => "\u03B4";
+        public override string ToString() => "\u00D0";
 
         protected override DataValue EvaluateInner(IReadOnlyList<DataValue> arguments)
         {
@@ -61,11 +61,11 @@ namespace Pangolin.Core.TokenImplementations
 
                 if (numericArg.Value < 0)
                 {
-                    throw new PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03B4 command - negative value: {numericArg.Value}");
+                    throw new PangolinInvalidArgumentTypeException($"Invalid argument type passed to {ToString()} command - negative value: {numericArg.Value}");
                 }
                 if (!numericArg.IsIntegral)
                 {
-                    throw new PangolinInvalidArgumentTypeException($"Invalid argument type passed to \u03B4 command - non-integral value: {numericArg.Value}");
+                    throw new PangolinInvalidArgumentTypeException($"Invalid argument type passed to {ToString()} command - non-integral value: {numericArg.Value}");
                 }
 
                 var result = BaseConversion.ConvertToIntegerBase(10, numericArg.IntValue);

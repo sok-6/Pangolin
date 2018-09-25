@@ -80,7 +80,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(ps.Object);
 
             // Assert
-            result.ShouldBeArrayWhichStartsWith(1, 2, 3, 4);
+            result.ShouldBeArrayWhichStartsWith(1, 2, 3, 4).End();
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(ps.Object);
 
             // Assert
-            result.ShouldBeArrayWhichStartsWith(0);
+            result.ShouldBeArrayWhichStartsWith(0).End();
         }
 
         [Fact]
@@ -108,8 +108,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var token = new Elements();
 
             // Act/Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps1.Object)).Message.ShouldBe("Invalid argument type passed to \u03B4 command - negative value: -5");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps2.Object)).Message.ShouldBe("Invalid argument type passed to \u03B4 command - non-integral value: 1.2");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps1.Object)).Message.ShouldBe("Invalid argument type passed to \u00D0 command - negative value: -5");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps2.Object)).Message.ShouldBe("Invalid argument type passed to \u00D0 command - non-integral value: 1.2");
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var result = token.Evaluate(ps.Object);
 
             // Assert
-            result.ShouldBeArrayWhichStartsWith("a", "b", "c");
+            result.ShouldBeArrayWhichStartsWith("a", "b", "c").End();
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationUnitTests
             var token = new Elements();
 
             // Act/Assert
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps.Object)).Message.ShouldBe("Invalid argument type passed to \u03B4 command - Array");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => token.Evaluate(ps.Object)).Message.ShouldBe("Invalid argument type passed to \u00D0 command - Array");
         }
 
         [Fact]

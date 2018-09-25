@@ -855,7 +855,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_Elements()
         {
-            '\u03B4'.ShouldBeParsedAs(typeof(TokenImplementations.Elements));
+            '\u00D0'.ShouldBeParsedAs(typeof(TokenImplementations.Elements));
         }
 
         [Fact]
