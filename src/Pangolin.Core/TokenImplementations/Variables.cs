@@ -8,7 +8,7 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class GetVariable : Token
     {
-        public const string CHAR_LIST = "\u2825\u2845\u28A1\u2885\u2861\u28E1\u28C5\u28A5\u2865\u28E5";
+        public const string CHAR_LIST = "\u00E1\u0107\u00E9\u01F5\u1E31\u1E3F\u0144\u00F3\u015B\u00FA";
 
         public override int Arity => 0;
 
@@ -33,7 +33,7 @@ namespace Pangolin.Core.TokenImplementations
 
     public class SetVariable : Token
     {
-        public const string CHAR_LIST = "\u2849\u2843\u2858\u2851\u284A\u285A\u2853\u2859\u284B\u285B";
+        public const string CHAR_LIST = "\u00C1\u0106\u00C9\u01F4\u1E30\u1E3E\u0143\u00D3\u015A\u00DA";
 
         public int VariableIndex { get; private set; }
 

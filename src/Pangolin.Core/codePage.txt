@@ -96,36 +96,36 @@
     { "hex": "007C", "combination": "", "id": 124, "displayHex": null },
     { "hex": "007D", "combination": "", "id": 125, "displayHex": null },
     { "hex": "007E", "combination": "", "id": 126, "displayHex": null }, // Printable ASCII end
-    { "hex": "2849", "combination": "0s", "id": null, "displayHex": null }, // Braille start
-    { "hex": "2843", "combination": "1s", "id": null, "displayHex": null },
-    { "hex": "2858", "combination": "2s", "id": null, "displayHex": null },
-    { "hex": "2851", "combination": "3s", "id": null, "displayHex": null },
-    { "hex": "284A", "combination": "4s", "id": null, "displayHex": null },
-    { "hex": "285A", "combination": "5s", "id": null, "displayHex": null },
-    { "hex": "2853", "combination": "6s", "id": null, "displayHex": null },
-    { "hex": "2859", "combination": "7s", "id": null, "displayHex": null },
-    { "hex": "284B", "combination": "8s", "id": null, "displayHex": null },
-    { "hex": "285B", "combination": "9s", "id": null, "displayHex": null },
-    { "hex": "2825", "combination": "0g", "id": null, "displayHex": null },
-    { "hex": "2845", "combination": "1g", "id": null, "displayHex": null },
-    { "hex": "28A1", "combination": "2g", "id": null, "displayHex": null },
-    { "hex": "2885", "combination": "3g", "id": null, "displayHex": null },
-    { "hex": "2861", "combination": "4g", "id": null, "displayHex": null },
-    { "hex": "28E1", "combination": "5g", "id": null, "displayHex": null },
-    { "hex": "28C5", "combination": "6g", "id": null, "displayHex": null },
-    { "hex": "28A5", "combination": "7g", "id": null, "displayHex": null },
-    { "hex": "2865", "combination": "8g", "id": null, "displayHex": null },
-    { "hex": "28E5", "combination": "9g", "id": null, "displayHex": null }, // Braille end
-    { "hex": "24EA", "combination": "0O", "id": 0, "displayHex": null }, // Circled numerics start
-    { "hex": "2460", "combination": "1O", "id": 1, "displayHex": null },
-    { "hex": "2461", "combination": "2O", "id": 2, "displayHex": null },
-    { "hex": "2462", "combination": "3O", "id": 3, "displayHex": null },
-    { "hex": "2463", "combination": "4O", "id": 4, "displayHex": null },
-    { "hex": "2464", "combination": "5O", "id": 5, "displayHex": null },
-    { "hex": "2465", "combination": "6O", "id": 6, "displayHex": null },
-    { "hex": "2466", "combination": "7O", "id": 7, "displayHex": null },
-    { "hex": "2467", "combination": "8O", "id": 8, "displayHex": null },
-    { "hex": "2468", "combination": "9O", "id": 9, "displayHex": null }, // Circled numerics end
+    { "hex": "00C1", "combination": "A'", "id": null, "displayHex": null }, // Grave accents start
+    { "hex": "0106", "combination": "C'", "id": null, "displayHex": null },
+    { "hex": "00C9", "combination": "E'", "id": null, "displayHex": null },
+    { "hex": "01F4", "combination": "G'", "id": null, "displayHex": null },
+    { "hex": "1E30", "combination": "K'", "id": null, "displayHex": null },
+    { "hex": "1E3E", "combination": "M'", "id": null, "displayHex": null },
+    { "hex": "0143", "combination": "N'", "id": null, "displayHex": null },
+    { "hex": "00D3", "combination": "O'", "id": null, "displayHex": null },
+    { "hex": "015A", "combination": "S'", "id": null, "displayHex": null },
+    { "hex": "00DA", "combination": "U'", "id": null, "displayHex": null },
+    { "hex": "00E1", "combination": "a'", "id": null, "displayHex": null },
+    { "hex": "0107", "combination": "c'", "id": null, "displayHex": null },
+    { "hex": "00E9", "combination": "e'", "id": null, "displayHex": null },
+    { "hex": "01F5", "combination": "g'", "id": null, "displayHex": null },
+    { "hex": "1E31", "combination": "k'", "id": null, "displayHex": null },
+    { "hex": "1E3F", "combination": "m'", "id": null, "displayHex": null },
+    { "hex": "0144", "combination": "n'", "id": null, "displayHex": null },
+    { "hex": "00F3", "combination": "o'", "id": null, "displayHex": null },
+    { "hex": "015B", "combination": "s'", "id": null, "displayHex": null },
+    { "hex": "00FA", "combination": "u'", "id": null, "displayHex": null }, // Grave accents end
+    { "hex": "2474", "combination": "1)", "id": 0, "displayHex": null }, // Circled numerics start
+    { "hex": "2475", "combination": "2)", "id": 1, "displayHex": null },
+    { "hex": "2476", "combination": "3)", "id": 2, "displayHex": null },
+    { "hex": "2477", "combination": "4)", "id": 3, "displayHex": null },
+    { "hex": "2478", "combination": "5)", "id": 4, "displayHex": null },
+    { "hex": "2479", "combination": "6)", "id": 5, "displayHex": null },
+    { "hex": "247A", "combination": "7)", "id": 6, "displayHex": null },
+    { "hex": "247B", "combination": "8)", "id": 7, "displayHex": null },
+    { "hex": "247C", "combination": "9)", "id": 8, "displayHex": null },
+    { "hex": "247D", "combination": "0)", "id": 9, "displayHex": null }, // Circled numerics end
     { "hex": "25AE", "combination": "##", "id": null, "displayHex": null }, // Solid rectangle
     { "hex": "25AF", "combination": "[]", "id": null, "displayHex": null }, // Outlined rectangle
     { "hex": "2BC5", "combination": "#^", "id": null, "displayHex": null }, // Triangle up

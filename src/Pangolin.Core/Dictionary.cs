@@ -9,8 +9,6 @@ namespace Pangolin.Core
 {
     public static class Dictionary
     {
-        //private const string DICTIONARY_FILE_PATH = "dictionary.txt";
-
         private static IReadOnlyList<string> _dictionaryEntries = null;
 
         public static string GetDictionaryEntryByIndex(int index)

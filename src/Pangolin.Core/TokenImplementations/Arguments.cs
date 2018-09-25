@@ -9,7 +9,7 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class SingleArgument : Token
     {
-        public const string CHAR_LIST = "\u24EA\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u2468";
+        public const string CHAR_LIST = "\u2474\u2475\u2476\u2477\u2478\u2479\u247A\u247B\u247C\u247D";
 
         public override int Arity => 0;
 
