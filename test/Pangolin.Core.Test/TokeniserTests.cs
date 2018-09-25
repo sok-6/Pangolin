@@ -628,6 +628,21 @@ namespace Pangolin.Core.Test
         }
 
         [Fact]
+        public void Tokeniser_should_parse_iteration_constants()
+        {
+            var mockLog = new Mock<Action<string>>();
+
+            for (int i = 0; i < ProgramState.AVAILABLE_ITERATION_CONSTANTS.Length; i++)
+            {
+                var result = Tokeniser.Tokenise(ProgramState.AVAILABLE_ITERATION_CONSTANTS.Substring(i, 1), mockLog.Object);
+                result.Count.ShouldBe(1);
+
+                var token = result[0].ShouldBeOfType<TokenImplementations.LatestIterationConstant>();
+                token.IterationConstantIndex.ShouldBe(i);
+            }
+        }
+
+        [Fact]
         public void Tokeniser_should_parse_equality()
         {
             '='.ShouldBeParsedAs(typeof(TokenImplementations.Equality));
@@ -698,85 +713,13 @@ namespace Pangolin.Core.Test
         {
             'S'.ShouldBeParsedAs(typeof(TokenImplementations.Select));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationVariable0()
-        {
-            's'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable0));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationVariable1()
-        {
-            't'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable1));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationVariable2()
-        {
-            'u'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable2));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationVariable3()
-        {
-            'v'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationVariable3));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationIndex0()
-        {
-            'i'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex0));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationIndex1()
-        {
-            'j'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex1));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationIndex2()
-        {
-            'k'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex2));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_SelectIterationIndex3()
-        {
-            'l'.ShouldBeParsedAs(typeof(TokenImplementations.SelectIterationIndex3));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_Where()
         {
             'W'.ShouldBeParsedAs(typeof(TokenImplementations.Where));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_WhereIterationVariable0()
-        {
-            'w'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationVariable0));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_WhereIterationVariable1()
-        {
-            'x'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationVariable1));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_WhereIterationIndex0()
-        {
-            'g'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationIndex0));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_WhereIterationIndex1()
-        {
-            'h'.ShouldBeParsedAs(typeof(TokenImplementations.WhereIterationIndex1));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_LogicAnd()
         {
@@ -840,7 +783,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_ConstantEmptyString()
         {
-            'e'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyString));
+            '\u1EB9'.ShouldBeParsedAs(typeof(TokenImplementations.ConstantEmptyString));
         }
 
         [Fact]
@@ -864,7 +807,7 @@ namespace Pangolin.Core.Test
         [Fact]
         public void Tokeniser_should_parse_GetRandomDecimal()
         {
-            'r'.ShouldBeParsedAs(typeof(TokenImplementations.GetRandomDecimal));
+            '\u1E5B'.ShouldBeParsedAs(typeof(TokenImplementations.GetRandomDecimal));
         }
 
         [Fact]
@@ -1010,19 +953,7 @@ namespace Pangolin.Core.Test
         {
             'P'.ShouldBeParsedAs(typeof(TokenImplementations.Pair));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_PairIterationVariableLeft()
-        {
-            'p'.ShouldBeParsedAs(typeof(TokenImplementations.PairIterationVariableLeft));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_PairIterationVariableRight()
-        {
-            'q'.ShouldBeParsedAs(typeof(TokenImplementations.PairIterationVariableRight));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_SimplePair()
         {
@@ -1112,19 +1043,7 @@ namespace Pangolin.Core.Test
         {
             '\u2193'.ShouldBeParsedAs(typeof(TokenImplementations.Descend));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_OrderIterationVariable()
-        {
-            'o'.ShouldBeParsedAs(typeof(TokenImplementations.OrderIterationVariable));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_OrderIterationIndex()
-        {
-            '\u1ECD'.ShouldBeParsedAs(typeof(TokenImplementations.OrderIterationIndex));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_AllButFirst_ModTen()
         {
@@ -1172,37 +1091,13 @@ namespace Pangolin.Core.Test
         {
             'A'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirst));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_AggregateFirstVariableConstantCurrent()
-        {
-            'a'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirstVariableConstantCurrent));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_AggregateFirstVariableConstantNext()
-        {
-            'b'.ShouldBeParsedAs(typeof(TokenImplementations.AggregateFirstVariableConstantNext));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_CollapseFunction()
         {
             'C'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunction));
         }
-
-        [Fact]
-        public void Tokeniser_should_parse_CollapseFunctionVariableConstantCurrent()
-        {
-            'c'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunctionVariableConstantCurrent));
-        }
-
-        [Fact]
-        public void Tokeniser_should_parse_CollapseFunctionVariableConstantNext()
-        {
-            'd'.ShouldBeParsedAs(typeof(TokenImplementations.CollapseFunctionVariableConstantNext));
-        }
-
+        
         [Fact]
         public void Tokeniser_should_parse_ConditionalApply()
         {

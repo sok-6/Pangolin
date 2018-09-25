@@ -1,6 +1,7 @@
 ﻿using Pangolin.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace Pangolin.Core
 {
     public class ProgramState
     {
+        public const string AVAILABLE_ITERATION_CONSTANTS = "abcdefghijklmnopqrstuvwxyz";
+
         private const int VARIABLE_COUNT = 10;
         private List<DataValue> _argumentList;
         private DataValue[] _variables;
@@ -21,22 +24,24 @@ namespace Pangolin.Core
         public int CurrentTokenIndex { get; private set; }
         public bool ExecutionInProgress => CurrentTokenIndex < TokenList.Count;
 
-        private Dictionary<string, DataValue> _iterationFunctionConstants;
-        public IReadOnlyDictionary<string, DataValue> IterationFunctionConstants => _iterationFunctionConstants;
-        public Stack<string> DefaultTokenStack { get; private set; }
+        private Dictionary<IterationConstantDetails, DataValue> _iterationFunctionConstants;
+        public IReadOnlyDictionary<IterationConstantDetails, DataValue> IterationFunctionConstants => _iterationFunctionConstants;
+        public Stack<IterationConstantDetails> DefaultTokenStack { get; private set; }
 
         public bool IsInPartialTokenApplication { get; private set; }
         private Queue<DataValue> _partialApplicationTokenQueue;
 
         public int CurrentBlockLevel { get; private set; }
 
+        public int AssignedIterationConstantsCount { get; private set; } = 0;
+
         public ProgramState()
         {
             CurrentTokenIndex = 0;
             TokenList = new List<Token>();
             _argumentList = new List<DataValue>();
-            _iterationFunctionConstants = new Dictionary<string, DataValue>();
-            DefaultTokenStack = new Stack<string>();
+            _iterationFunctionConstants = new Dictionary<IterationConstantDetails, DataValue>();
+            DefaultTokenStack = new Stack<IterationConstantDetails>();
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
@@ -50,8 +55,8 @@ namespace Pangolin.Core
             CurrentTokenIndex = 0;
             TokenList = tokens;
             _argumentList = new List<DataValue>(argumentList ?? new DataValue[0]);
-            _iterationFunctionConstants = new Dictionary<string, DataValue>();
-            DefaultTokenStack = new Stack<string>();
+            _iterationFunctionConstants = new Dictionary<IterationConstantDetails, DataValue>();
+            DefaultTokenStack = new Stack<IterationConstantDetails>();
 
             _variables = new DataValue[VARIABLE_COUNT];
             for (int i = 0; i < VARIABLE_COUNT; i++) _variables[i] = DataValueImplementations.NumericValue.Zero;
@@ -120,14 +125,24 @@ namespace Pangolin.Core
             return _variables[index];
         }
 
-        public virtual void SetIterationFunctionConstant(string token, DataValue value)
+        public virtual void SetIterationFunctionConstant(IterationConstantDetails token, DataValue value)
         {
             _iterationFunctionConstants[token] = value;
         }
 
-        public virtual void ClearIterationFunctionConstant(string token)
+        public virtual void ClearIterationFunctionConstant(IterationConstantDetails token)
         {
             _iterationFunctionConstants.Remove(token);
+        }
+
+        public IReadOnlyList<IterationConstantDetails> GetIterationConstants(int numConstantsRequired)
+        {
+            return Enumerable
+                .Range(AssignedIterationConstantsCount, numConstantsRequired)
+                .Select(i => new IterationConstantDetails(
+                    AVAILABLE_ITERATION_CONSTANTS.Substring(i % AVAILABLE_ITERATION_CONSTANTS.Length, 1),
+                    i / AVAILABLE_ITERATION_CONSTANTS.Length))
+                .ToList();
         }
 
         /// <summary>
@@ -168,6 +183,38 @@ namespace Pangolin.Core
         public void DecreaseBlockLevel()
         {
             CurrentBlockLevel--;
+        }
+
+        [DebuggerDisplay("{Depth}{TokenString}")]
+        public class IterationConstantDetails
+        {
+            public string TokenString { get; private set; }
+            public int Depth { get; private set; }
+
+            public IterationConstantDetails(string tokenString, int depth)
+            {
+                TokenString = tokenString;
+                Depth = depth;
+            }
+
+            public override int GetHashCode() => $"{Depth}{TokenString}".GetHashCode();
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(obj, null))
+                {
+                    return false;
+                }
+
+                var that = obj as IterationConstantDetails;
+
+                if (ReferenceEquals((object)that, null))
+                {
+                    return false;
+                }
+
+                return this.Depth == that.Depth && this.TokenString == that.TokenString;
+            }
         }
     }
 }

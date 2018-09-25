@@ -8,25 +8,12 @@ namespace Pangolin.Core.TokenImplementations
 {
     public class Where : FunctionToken
     {
-        private const string ITERATION_VARIABLE_TOKENS = "wx";
-        private const string ITERATION_INDEX_TOKENS = "gh";
-
         public override int Arity => 2;
         public override string ToString() => "W";
 
         private IReadOnlyList<DataValue> _iterationValues = null;
 
-        protected override void ClearIterationConstants(ProgramState programState, int nestingLevel)
-        {
-            programState.ClearIterationFunctionConstant(ITERATION_VARIABLE_TOKENS.Substring(nestingLevel, 1));
-            programState.ClearIterationFunctionConstant(ITERATION_INDEX_TOKENS.Substring(nestingLevel, 1));
-        }
-
-        protected override string GetDefaultToken(int nestingLevel) => ITERATION_VARIABLE_TOKENS.Substring(nestingLevel, 1);
-        
-        protected override int GetNestedAmount(ProgramState programState) => ITERATION_VARIABLE_TOKENS.Count(c => programState.IterationFunctionConstants.ContainsKey(c.ToString()));
-
-        protected override int GetNestingLimit() => ITERATION_VARIABLE_TOKENS.Length;
+        public Where() : base(2) { }
 
         protected override DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results)
         {
@@ -55,15 +42,12 @@ namespace Pangolin.Core.TokenImplementations
             return _iterationValues.Count;
         }
 
-        protected override void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex)
+        protected override ProgramState.IterationConstantDetails GetDefaultToken(IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens) => allocatedTokens[0];
+
+        protected override void SetIterationConstants(ProgramState programState, IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens, int iterationIndex)
         {
-            programState.SetIterationFunctionConstant(ITERATION_VARIABLE_TOKENS.Substring(nestingLevel, 1), _iterationValues[iterationIndex]);
-            programState.SetIterationFunctionConstant(ITERATION_INDEX_TOKENS.Substring(nestingLevel, 1), new NumericValue(iterationIndex));
+            programState.SetIterationFunctionConstant(allocatedTokens[0], _iterationValues[iterationIndex]);
+            programState.SetIterationFunctionConstant(allocatedTokens[1], new NumericValue(iterationIndex));
         }
     }
-    
-    public class WhereIterationVariable0 : IterationConstantToken { public override string ToString() => "w"; }
-    public class WhereIterationVariable1 : IterationConstantToken { public override string ToString() => "x"; }
-    public class WhereIterationIndex0 : IterationConstantToken { public override string ToString() => "g"; }
-    public class WhereIterationIndex1 : IterationConstantToken { public override string ToString() => "h"; }
 }

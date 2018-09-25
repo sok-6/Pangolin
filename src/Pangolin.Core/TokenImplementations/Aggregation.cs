@@ -94,17 +94,7 @@ namespace Pangolin.Core.TokenImplementations
         private IReadOnlyList<DataValue> _iterationValueSet = null;
         private DataValue _current;
 
-        protected override void ClearIterationConstants(ProgramState programState, int nestingLevel)
-        {
-            programState.ClearIterationFunctionConstant("a");
-            programState.ClearIterationFunctionConstant("b");
-        }
-
-        protected override string GetDefaultToken(int nestingLevel) => "b";
-
-        protected override int GetNestedAmount(ProgramState programState) => programState.IterationFunctionConstants.ContainsKey("a") ? 1 : 0;
-
-        protected override int GetNestingLimit() => 1;
+        public AggregateFirst() : base(3) { }
 
         protected override void PostExecutionAction(DataValue executionResult)
         {
@@ -139,16 +129,16 @@ namespace Pangolin.Core.TokenImplementations
 
             return _iterationValueSet.Count;
         }
+        
+        protected override ProgramState.IterationConstantDetails GetDefaultToken(IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens) => allocatedTokens[1];
 
-        protected override void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex)
+        protected override void SetIterationConstants(ProgramState programState, IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens, int iterationIndex)
         {
-            programState.SetIterationFunctionConstant("a", _current);
-            programState.SetIterationFunctionConstant("b", _iterationValueSet.Skip(iterationIndex).First());
+            programState.SetIterationFunctionConstant(allocatedTokens[0], _current);
+            programState.SetIterationFunctionConstant(allocatedTokens[1], _iterationValueSet.Skip(iterationIndex).First());
+            programState.SetIterationFunctionConstant(allocatedTokens[2], new NumericValue(iterationIndex));
         }
     }
-
-    public class AggregateFirstVariableConstantCurrent : IterationConstantToken { public override string ToString() => "a"; }
-    public class AggregateFirstVariableConstantNext : IterationConstantToken { public override string ToString() => "b"; }
 
     public class CollapseFunction : FunctionToken
     {
@@ -157,19 +147,9 @@ namespace Pangolin.Core.TokenImplementations
 
         private IReadOnlyList<DataValue> _iterationValueSet = null;
         private DataValue _current;
-                
-        protected override void ClearIterationConstants(ProgramState programState, int nestingLevel)
-        {
-            programState.ClearIterationFunctionConstant("c");
-            programState.ClearIterationFunctionConstant("d");
-        }
 
-        protected override string GetDefaultToken(int nestingLevel) => "d";
-
-        protected override int GetNestedAmount(ProgramState programState) => programState.IterationFunctionConstants.ContainsKey("c") ? 1 : 0;
-
-        protected override int GetNestingLimit() => 1;
-
+        public CollapseFunction() : base(3) { }
+        
         protected override DataValue ProcessResults(IReadOnlyList<IterationResultContainer> results)
         {
             return _current;
@@ -198,14 +178,14 @@ namespace Pangolin.Core.TokenImplementations
             
             return _iterationValueSet.Count;
         }
+        
+        protected override ProgramState.IterationConstantDetails GetDefaultToken(IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens) => allocatedTokens[1];
 
-        protected override void SetIterationConstants(ProgramState programState, int nestingLevel, int iterationIndex)
+        protected override void SetIterationConstants(ProgramState programState, IReadOnlyList<ProgramState.IterationConstantDetails> allocatedTokens, int iterationIndex)
         {
-            programState.SetIterationFunctionConstant("c", _current);
-            programState.SetIterationFunctionConstant("d", _iterationValueSet[iterationIndex]);
+            programState.SetIterationFunctionConstant(allocatedTokens[0], _current);
+            programState.SetIterationFunctionConstant(allocatedTokens[1], _iterationValueSet[iterationIndex]);
+            programState.SetIterationFunctionConstant(allocatedTokens[2], new NumericValue(iterationIndex));
         }
     }
-
-    public class CollapseFunctionVariableConstantCurrent : IterationConstantToken { public override string ToString() => "c"; }
-    public class CollapseFunctionVariableConstantNext : IterationConstantToken { public override string ToString() => "d"; }
 }

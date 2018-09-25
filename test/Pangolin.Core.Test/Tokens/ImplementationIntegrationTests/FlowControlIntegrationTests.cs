@@ -92,7 +92,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
 
             // Act/Assert
             Should.Throw<PangolinInvalidArgumentTypeException>(() => programState1.DequeueAndEvaluate()).Message.ShouldBe("Token \u00BF first argument must be arity 1 - + is arity 2");
-            Should.Throw<PangolinInvalidArgumentTypeException>(() => programState2.DequeueAndEvaluate()).Message.ShouldBe("Token \u00BF first argument must be arity 1 - e is arity 0");
+            Should.Throw<PangolinInvalidArgumentTypeException>(() => programState2.DequeueAndEvaluate()).Message.ShouldBe("Token \u00BF first argument must be arity 1 - \u1EB9 is arity 0");
         }
 
         [Fact(Skip = "Need at least 1 implementation of types block, function led, token led")]

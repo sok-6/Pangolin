@@ -30,7 +30,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new Where(),
                     new LessThan(),
                     new NumericLiteral(10),
-                    new WhereIterationVariable0(),
+                    new LatestIterationConstant(0),
                     new ArgumentArray()
                 });
 
@@ -51,7 +51,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                 {
                     new Where(),
                     new Membership(),
-                    new WhereIterationVariable0(),
+                    new LatestIterationConstant(0),
                     new StringLiteral("aeiou"),
                     new StringLiteral("it was the best of times, it was the worst of times")
                 });
@@ -74,7 +74,7 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new Where(),
                     new Modulo(),
                     new NumericLiteral(3),
-                    new WhereIterationVariable0(),
+                    new LatestIterationConstant(0),
                     new NumericLiteral(10)
                 });
 

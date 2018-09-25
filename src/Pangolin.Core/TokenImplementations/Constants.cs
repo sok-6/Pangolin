@@ -7,6 +7,29 @@ using System.Threading.Tasks;
 
 namespace Pangolin.Core.TokenImplementations
 {
+    public class LatestIterationConstant : Token
+    {
+        public int IterationConstantIndex { get; private set; }
+
+        public LatestIterationConstant(int i)
+        {
+            IterationConstantIndex = i;
+        }
+
+        public override int Arity => 0;
+
+        public override DataValue Evaluate(ProgramState programState)
+        {
+            var key = new ProgramState.IterationConstantDetails(
+                ProgramState.AVAILABLE_ITERATION_CONSTANTS.Substring(IterationConstantIndex, 1),
+                programState.AssignedIterationConstantsCount / ProgramState.AVAILABLE_ITERATION_CONSTANTS.Length);
+
+            return programState.IterationFunctionConstants[key];
+        }
+
+        public override string ToString() => ProgramState.AVAILABLE_ITERATION_CONSTANTS.Substring(IterationConstantIndex, 1);
+    }
+
     public class ConstantNewline : Token
     {
         public override int Arity => 0;
@@ -40,7 +63,7 @@ namespace Pangolin.Core.TokenImplementations
             return new DataValueImplementations.StringValue();
         }
 
-        public override string ToString() => "e";
+        public override string ToString() => "\u1EB9";
     }
 
     public class ConstantLowercaseAlphabet : Token

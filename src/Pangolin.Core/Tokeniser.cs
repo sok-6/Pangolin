@@ -220,6 +220,10 @@ namespace Pangolin.Core
                 {
                     result.Add(Token.GetSetVariable(current));
                 }
+                else if (ProgramState.AVAILABLE_ITERATION_CONSTANTS.Contains(current))
+                {
+                    result.Add(Token.GetLatestIterationConstant(ProgramState.AVAILABLE_ITERATION_CONSTANTS.IndexOf(current)));
+                }
                 // Other single character token
                 else
                 {

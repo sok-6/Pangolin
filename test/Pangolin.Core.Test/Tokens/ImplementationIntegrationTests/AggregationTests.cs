@@ -29,8 +29,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new AggregateFirst(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new AggregateFirstVariableConstantCurrent(),
-                    new AggregateFirstVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new ArgumentArray()
                 });
 
@@ -55,8 +55,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new AggregateFirst(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new AggregateFirstVariableConstantCurrent(),
-                    new AggregateFirstVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new StringLiteral("abcd")
                 });
 
@@ -81,8 +81,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new AggregateFirst(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new AggregateFirstVariableConstantCurrent(),
-                    new AggregateFirstVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new NumericLiteral(5)
                 });
 
@@ -110,8 +110,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new CollapseFunction(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new CollapseFunctionVariableConstantCurrent(),
-                    new CollapseFunctionVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new NumericLiteral(3),
                     new ArgumentArray()
                 });
@@ -137,8 +137,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new CollapseFunction(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new CollapseFunctionVariableConstantCurrent(),
-                    new CollapseFunctionVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new NumericLiteral(3),
                     new StringLiteral("abcd")
                 });
@@ -164,8 +164,8 @@ namespace Pangolin.Core.Test.Tokens.ImplementationIntegrationTests
                     new CollapseFunction(),
                     new Add(),
                     new TokenImplementations.Double(),
-                    new CollapseFunctionVariableConstantCurrent(),
-                    new CollapseFunctionVariableConstantNext(),
+                    new LatestIterationConstant(0),
+                    new LatestIterationConstant(1),
                     new NumericLiteral(3),
                     new NumericLiteral(5)
                 });

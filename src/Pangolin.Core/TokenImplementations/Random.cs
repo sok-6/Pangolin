@@ -59,6 +59,6 @@ namespace Pangolin.Core.TokenImplementations
             return new NumericValue(RandomSource.RandomDouble());
         }
 
-        public override string ToString() => "r";
+        public override string ToString() => "\u1E5B";
     }
 }

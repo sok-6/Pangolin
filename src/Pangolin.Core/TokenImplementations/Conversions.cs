@@ -404,6 +404,8 @@ namespace Pangolin.Core.TokenImplementations
 
         public override int Arity => 0;
 
+        public ArrayConstruction() : base(0) { }
+
         public override DataValue Evaluate(ProgramState programState)
         {
             var elements = new List<DataValue>();
